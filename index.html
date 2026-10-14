@@ -108,7 +108,9 @@ select { font: inherit; padding: 10px; border-radius: 8px; border: 2px solid var
 .qhead b { font-family: var(--font-display); color: var(--ink); font-size: 16px; }
 .qcard { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; margin-bottom: 14px; }
 .fig { margin: 0; flex: 0 0 auto; width: min(100%, 230px); background: #e9edf2; border-radius: 10px; border: 1px solid var(--line); padding: 8px; }
-.fig svg { display: block; width: 100%; height: auto; }
+.fig svg, .fig img { display: block; width: 100%; height: auto; }
+.fig.sign { width: min(100%, 150px); padding: 12px; }
+.fig.wide { width: min(100%, 380px); margin-top: 10px; }
 .qtext { flex: 1 1 280px; min-width: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(19px, 3.4vw, 23px); line-height: 1.3; }
 .opts { display: grid; gap: 10px; }
 .opt { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; }
@@ -190,7 +192,7 @@ const BANK = [];
 function Q(t, f, q, o, e, x, k) { BANK.push({ id: BANK.length, t, f, q, o, e, x, k }); }
 
 /* ---- SEÑALES Y MARCAS ---- */
-Q("senales", "stop", "¿Qué obliga a hacer esta señal?",
+Q("senales", "img:r2", "¿Qué obliga a hacer esta señal?",
   ["Detenerme siempre en la línea de detención (o antes de entrar en la intersección) y ceder el paso a los vehículos de la otra vía.",
    "Reducir la velocidad y ceder el paso solo si viene algún vehículo.",
    "Detenerme únicamente si hay otros vehículos o peatones esperando."],
@@ -198,7 +200,7 @@ Q("senales", "stop", "¿Qué obliga a hacer esta señal?",
   ["Eso describe la señal de CEDA EL PASO. El STOP es más estricto: la parada es obligatoria siempre.",
    "El STOP no depende de que haya tráfico. Hay que quedar completamente inmovilizado aunque nadie más esté presente."],
   "STOP = parar del todo, siempre. CEDA = solo paro si hace falta.");
-Q("senales", "ceda", "Al llegar a esta señal, ¿qué debe hacer?",
+Q("senales", "img:r1", "Al llegar a esta señal, ¿qué debe hacer?",
   ["Ceder el paso a los vehículos de la vía a la que me incorporo, deteniéndome si es necesario.",
    "Detenerme siempre, como en un STOP.",
    "Continuar, porque tengo prioridad sobre los vehículos de la otra vía."],
@@ -236,7 +238,7 @@ Q("senales", "road:mixedNO", "Ahora la línea mixta tiene la continua del lado d
   ["Mirar la línea del lado contrario es el error clásico. Cuenta la que está junto a su carril.",
    "La velocidad nunca justifica cruzar una línea continua; además, superar el límite es otra infracción."],
   "La que está pegada a mi coche es la que manda.");
-Q("senales", "noadel", "¿Qué prohíbe esta señal?",
+Q("senales", "img:r305", "¿Qué prohíbe esta señal?",
   ["Adelantar a vehículos de motor que no sean motocicletas de dos ruedas sin sidecar.",
    "Adelantar a cualquier vehículo, incluidas motos y bicicletas.",
    "Circular a una velocidad superior a la del vehículo de delante."],
@@ -244,7 +246,7 @@ Q("senales", "noadel", "¿Qué prohíbe esta señal?",
   ["Tiene excepción: las motos de dos ruedas sin sidecar sí se pueden adelantar. Además la señal habla de vehículos de motor.",
    "Esta señal no regula la velocidad, solo el adelantamiento."],
   "Coche rojo y coche negro: no adelanto a coches, sí a motos de dos ruedas.");
-Q("senales", "prio", "¿Qué indica esta señal?",
+Q("senales", "img:r3", "¿Qué indica esta señal?",
   ["Que circulo por una vía con prioridad de paso respecto a las vías que la cruzan, hasta que se indique su fin.",
    "Que debo ceder el paso en la próxima intersección.",
    "Que está prohibido parar y estacionar en esta calzada."],
@@ -252,7 +254,7 @@ Q("senales", "prio", "¿Qué indica esta señal?",
   ["Eso lo indicaría la señal de ceda el paso, que es un triángulo con el vértice hacia abajo.",
    "La prohibición de parar o estacionar se señaliza con un círculo azul con borde rojo, no con este rombo."],
   "Rombo amarillo = vía prioritaria. Preferencia hasta que se cancele.");
-Q("senales", "senprohi", "Esta señal significa:",
+Q("senales", "img:r101", "Esta señal significa:",
   ["Entrada prohibida: no puedo acceder a esa vía en este sentido.",
    "Fin de la prohibición de adelantar.",
    "Calzada cortada por obras: puedo pasar con precaución."],
@@ -276,7 +278,7 @@ Q("senales", "light:amberflash", "¿Qué significa una luz ámbar intermitente e
   ["Parar siempre lo obliga la luz roja. La intermitente solo exige precaución.",
    "No da prioridad: se circula con cuidado y se cede donde corresponda."],
   "Ámbar intermitente: precaución, no prioridad.");
-Q("senales", "peat", "Se aproxima a esta señal y hay un peatón a punto de cruzar. ¿Qué debe hacer?",
+Q("senales", "img:s13", "Se aproxima a esta señal y hay un peatón a punto de cruzar. ¿Qué debe hacer?",
   ["Reducir la velocidad y detenerme si es necesario para dejarle cruzar.",
    "Tocar el claxon para que se aparte y seguir.",
    "Continuar, porque yo circulo por la calzada y él debe esperar."],
@@ -284,7 +286,7 @@ Q("senales", "peat", "Se aproxima a esta señal y hay un peatón a punto de cruz
   ["El claxon no concede prioridad. Es el vehículo quien debe ceder el paso al peatón.",
    "La prioridad en el paso de peatones es del peatón, no del vehículo."],
   "En el paso de peatones el rey es el peatón.");
-Q("senales", "rot", "Esta señal indica una glorieta (intersección de circulación giratoria). Si no hay otra señal, ¿quién tiene prioridad?",
+Q("senales", "img:p4", "Esta señal de peligro avisa de que se acerca una glorieta (intersección de circulación giratoria). Si no hay otra señal, ¿quién tiene prioridad dentro de ella?",
   ["Los vehículos que ya circulan dentro de la glorieta.",
    "Los vehículos que se aproximan para entrar.",
    "El que llegue primero a la entrada, vengan de donde vengan."],
@@ -816,32 +818,225 @@ Q("eco", null, "¿Qué ocurre si deja una baca con carga o objetos innecesarios 
   ["Más peso y más resistencia solo pueden aumentar el consumo.", "Sí influye, y de forma notable en autopista."],
   "Más peso y más aire = más consumo.");
 
+/* ---- SEÑALES: reconocer cada señal (imágenes oficiales) ---- */
+Q("senales", null, "¿Qué significan la forma y el color de las señales de tráfico?",
+  ["Triángulo con borde rojo: peligro. Círculo con borde rojo: prohibición o restricción. Círculo azul: obligación. Cuadrado o rectángulo azul: indicación.",
+   "Triángulo azul: peligro. Círculo rojo: obligación. Cuadrado rojo: indicación.",
+   "El color no tiene significado; solo la figura que lleva dentro."],
+  "La forma y el color ya te adelantan el tipo de mensaje antes de leer el dibujo. Triángulo = advierte de un peligro; círculo de borde rojo = prohíbe o restringe; círculo azul = obliga; cuadrado o rectángulo azul = informa.",
+  ["Mezcla los colores: los triángulos son de borde rojo y los círculos azules son de obligación.",
+   "Sí lo tiene. Forma y color son el primer dato que da una señal."],
+  "Triángulo = cuidado. Círculo rojo = no. Círculo azul = sí, obligatorio. Cuadrado azul = información.");
+Q("senales", "img:r4", "¿Qué indica esta señal?",
+  ["El fin de la prioridad: a partir de aquí rigen de nuevo las normas generales en las intersecciones.",
+   "El comienzo de una calzada con prioridad.",
+   "Que debo detenerme en la próxima intersección."],
+  "Es el rombo de calzada con prioridad tachado con una banda negra. Anula la preferencia que daba la señal anterior. Desde ese punto, las intersecciones sin señalizar se resuelven con la norma de la derecha.",
+  ["El inicio de prioridad es el rombo amarillo sin tachar. Esta señal indica lo contrario.",
+   "No ordena parar. Solo indica que ya no tengo la prioridad que tenía."],
+  "Rombo tachado = se acabó mi prioridad.");
+Q("senales", "img:r5", "En un tramo estrecho ve esta señal. ¿Qué significa para usted?",
+  ["Tengo prioridad de paso respecto a los vehículos que vienen en sentido contrario.",
+   "Debo ceder el paso a los vehículos que vienen en sentido contrario.",
+   "La vía pasa a ser de un solo sentido."],
+  "La señal «prioridad respecto al sentido contrario» muestra la flecha grande en el sentido propio y la pequeña en el contrario. Se instala en estrechamientos: quien la ve tiene preferencia y el otro debe esperar.",
+  ["Eso lo indicaría la señal contraria, donde la flecha grande va en sentido opuesto.",
+   "Sigue habiendo circulación en ambos sentidos. Solo se regula quién pasa primero."],
+  "Flecha grande a mi favor: paso yo.");
+Q("senales", "img:r100", "¿Qué prohíbe esta señal?",
+  ["La circulación de toda clase de vehículos, en ambos sentidos.",
+   "Solo la entrada en este sentido.",
+   "Solo la entrada de vehículos de más de 3.500 kg."],
+  "El círculo blanco vacío con borde rojo es la señal de circulación prohibida: no puede pasar ninguna clase de vehículo en ninguno de los dos sentidos. Solo se puede entrar con una autorización indicada en un cartel.",
+  ["Eso es la señal de entrada prohibida: círculo rojo con una barra horizontal blanca.",
+   "Las restricciones por peso llevan la cifra de toneladas en el interior."],
+  "Círculo blanco vacío con borde rojo: nadie pasa.");
+Q("senales", "img:r102", "¿A qué vehículos prohíbe la entrada esta señal?",
+  ["A los vehículos de motor (el coche y la moto del dibujo).",
+   "Solo a los coches.",
+   "A todos los vehículos, incluidas las bicicletas."],
+  "El coche y la motocicleta dentro del círculo indican que está prohibido el acceso a los vehículos de motor. Los ciclistas y peatones no están afectados por esta señal.",
+  ["El dibujo muestra un coche y una moto. Está prohibida la entrada a todos los vehículos de motor.",
+   "Para vetar a todos los vehículos se usa la señal de círculo blanco vacío."],
+  "Coche y moto dibujados: no entran los vehículos de motor.");
+Q("senales", "img:r104", "Esta señal de entrada prohibida, ¿a qué vehículos afecta?",
+  ["A las motocicletas.", "A los ciclomotores y bicicletas.", "A los vehículos de más de dos ruedas."],
+  "La silueta de una moto dentro del círculo rojo prohíbe la entrada de motocicletas. Se mira siempre el dibujo: indica exactamente qué vehículo no puede pasar.",
+  ["Las bicicletas y los ciclomotores tienen sus propias señales de prohibición.",
+   "El dibujo es de una moto, no de vehículos de más de dos ruedas."],
+  "Lo que está dibujado es lo que no puede pasar.");
+Q("senales", "img:r301-90", "Circula por una autovía (límite genérico 120 km/h) y ve esta señal. ¿Qué velocidad máxima debe respetar?",
+  ["90 km/h, porque la señal prevalece sobre el límite genérico.",
+   "120 km/h, que es el límite de la vía.",
+   "Cualquiera de las dos, la que prefiera."],
+  "Una señal de velocidad máxima fija un límite específico en ese tramo y prevalece sobre el genérico. Si es más restrictiva, es la que hay que respetar hasta que otra señal la modifique o la cancele.",
+  ["El límite genérico de 120 solo vale cuando no hay una señal distinta.",
+   "No es opcional. Hay que respetar el límite más restrictivo señalizado."],
+  "La señal concreta manda más que el límite genérico.");
+Q("senales", "img:r302", "¿Qué prohíbe esta señal?",
+  ["Girar a la derecha.", "Girar a la izquierda.", "Seguir recto."],
+  "La flecha tachada indica la maniobra prohibida. Aquí la flecha gira a la derecha, así que está prohibido girar a la derecha en ese punto, pero se puede seguir recto o girar a la izquierda.",
+  ["Para prohibir el giro a la izquierda la flecha iría hacia ese lado.",
+   "La flecha dibuja un giro, no la marcha recta."],
+  "Flecha tachada: esa maniobra no.");
+Q("senales", "img:r303", "¿Qué prohíbe esta señal?",
+  ["Girar a la izquierda.", "Girar a la derecha.", "Cambiar de sentido en una calle."],
+  "La flecha gira a la izquierda y está tachada: se prohíbe el giro a la izquierda. Se puede seguir recto o girar a la derecha.",
+  ["La flecha dibujada hacia la derecha correspondería a esa prohibición, no esta.",
+   "El cambio de sentido tiene su propia señal, con una flecha en forma de U."],
+  "Miro hacia dónde apunta la flecha tachada.");
+Q("senales", "img:r304", "Esta señal con una flecha en forma de «U» tachada indica:",
+  ["Media vuelta prohibida: no puedo cambiar de sentido en ese lugar.",
+   "Fin de la prohibición de adelantar.",
+   "Obligación de dar la vuelta."],
+  "La flecha en U tachada prohíbe el cambio de sentido en ese punto. Si necesita dar la vuelta, tiene que buscar otro lugar donde esté permitido.",
+  ["Para el fin de la prohibición de adelantar se usa la señal con dos coches y rayas diagonales.",
+   "Está tachada: prohíbe, no obliga."],
+  "U tachada: aquí no doy la vuelta.");
+Q("senales", "img:r306", "Esta señal muestra un coche y un camión. ¿Qué significa?",
+  ["Prohíbe a los camiones adelantar a otros vehículos de motor (salvo motos de dos ruedas).",
+   "Prohíbe a todos los vehículos adelantar a camiones.",
+   "Solo se puede adelantar a camiones."],
+  "La señal de adelantamiento prohibido a camiones afecta a los camiones: ellos no pueden adelantar. Un turismo sí puede hacerlo cumpliendo las normas generales.",
+  ["La prohibición es para los camiones, no para quien los adelanta.",
+   "No autoriza nada especial. Solo restringe a los camiones."],
+  "Dibujo con camión: el prohibido es el camión.");
+Q("senales", "img:r307", "¿Qué prohíbe esta señal del círculo azul con dos rayas rojas cruzadas?",
+  ["Parar y estacionar.", "Solo estacionar.", "Solo parar más de dos minutos."],
+  "Las dos rayas cruzadas son la señal de parada y estacionamiento prohibidos: no se puede detener el vehículo ni un momento, salvo que una señal complementaria indique lo contrario.",
+  ["La señal que prohíbe solo estacionar tiene una única raya diagonal.",
+   "La prohibición de parada no depende del tiempo."],
+  "X cruzada: ni paro ni aparco.");
+Q("senales", "img:r308", "¿Qué prohíbe esta señal con una sola raya roja diagonal sobre fondo azul?",
+  ["Estacionar. Se puede parar un momento.", "Parar y estacionar.", "Circular."],
+  "Con una sola raya está prohibido estacionar (inmovilizar más de dos minutos o abandonar el coche). Sí se puede parar brevemente, por ejemplo para subir o bajar personas, sin que el conductor se aleje.",
+  ["Para prohibir también la parada se usan dos rayas en cruz.",
+   "No es una señal de prohibición de circulación."],
+  "Una raya: no aparco, pero puedo parar. Dos rayas: no paro.");
+Q("senales", "img:r400a", "¿Qué obliga a hacer esta señal azul con una flecha a la derecha?",
+  ["Seguir únicamente hacia la derecha.", "Tengo prioridad si giro a la derecha.", "Se prohíbe girar a la derecha."],
+  "Las señales azules redondas indican obligaciones. La flecha hacia la derecha señala que la única dirección permitida es girar a la derecha.",
+  ["No concede prioridad. Es una obligación de dirección.",
+   "Una prohibición llevaría un círculo de borde rojo, no azul."],
+  "Círculo azul = obligación.");
+Q("senales", "img:r400c", "¿Qué obliga a hacer esta señal con una flecha hacia arriba?",
+  ["Seguir recto, sin girar en esa intersección.", "Seguir recto o girar a la derecha.", "Circular a mayor velocidad."],
+  "La flecha vertical en círculo azul es un sentido obligatorio hacia delante: en ese punto no se puede girar ni a la izquierda ni a la derecha.",
+  ["Para permitir recto o derecha se usa otra señal con dos flechas.", "No se refiere a velocidad."],
+  "Flecha azul: solo ese camino.");
+Q("senales", "img:r402", "Esta señal azul con flechas en círculo, ¿qué significa?",
+  ["Sentido giratorio obligatorio: debo circular alrededor de la glorieta en el sentido de las flechas.",
+   "Prohibido entrar en la glorieta.",
+   "Fin de la glorieta."],
+  "Se coloca en el centro o en la entrada de una glorieta. Las flechas indican el sentido obligatorio de giro, que en España es el contrario a las agujas del reloj.",
+  ["No prohíbe nada: obliga a circular en un sentido concreto.",
+   "Indica cómo circular dentro, no su final."],
+  "Glorieta: sentido contrario a las agujas del reloj.");
+Q("senales", "img:r500", "¿Qué indica esta señal de círculo blanco con rayas negras diagonales?",
+  ["El fin de todas las prohibiciones impuestas por señales anteriores a los vehículos en circulación.",
+   "Que está prohibido circular.",
+   "El fin de una vía con prioridad."],
+  "Las rayas diagonales negras sobre fondo blanco anulan prohibiciones. Esta, sin dibujo, cancela todas las prohibiciones anteriores para los vehículos en circulación: velocidad, adelantamiento, etc.",
+  ["Es lo contrario: cancela prohibiciones.", "El fin de prioridad es el rombo amarillo con una banda negra."],
+  "Rayas diagonales = se acaba la prohibición.");
+Q("senales", "img:r501", "¿Qué indica esta señal?",
+  ["El fin de la limitación de velocidad: vuelve a regir el límite genérico de la vía.",
+   "Una limitación de velocidad de 50 km/h.",
+   "El fin de la prohibición de adelantar."],
+  "Fin de limitación de velocidad: se acaba el límite específico señalizado y pasa a aplicarse el genérico de ese tipo de vía.",
+  ["No contiene cifra de velocidad máxima: precisamente anula la señal con cifra.", "Para el adelantamiento hay que mirar el dibujo de los dos coches."],
+  "Tachada la cifra: vuelve el límite genérico.");
+Q("senales", "img:r502", "¿Qué indica esta señal con dos coches y rayas diagonales?",
+  ["El fin de la prohibición de adelantar.", "Que está prohibido adelantar.", "Que se puede adelantar solo a motos."],
+  "Dos coches con rayas diagonales cancelan la prohibición de adelantar impuesta antes. A partir de ahí se puede adelantar según las normas generales, con visibilidad y respetando las marcas viales.",
+  ["La prohibición lleva los coches sin rayas diagonales.", "Es el fin de la prohibición para todos los vehículos de motor."],
+  "Coches tachados = termina la prohibición.");
+Q("senales", "img:s1a", "¿Qué indica esta señal azul que dice AUTOVÍA?",
+  ["El comienzo de una autovía, con sus normas propias.", "El fin de la autovía.", "Una vía con peaje."],
+  "La señal informa de que desde ese punto se circula por una autovía: con calzadas separadas, normalmente dos carriles por sentido, y las normas específicas de este tipo de vía (por ejemplo, 120 km/h para turismos).",
+  ["El fin de la autovía se indica con la señal tachada con una raya roja.", "El peaje no tiene relación con esta señal."],
+  "Autovía azul: empieza. Tachada en rojo: termina.");
+Q("senales", "img:s2a", "¿Qué indica esta señal con la palabra AUTOVÍA tachada?",
+  ["El fin de la autovía.", "El comienzo de la autovía.", "Que la autovía está cortada."],
+  "La raya roja sobre la señal informativa indica que termina ese tipo de vía. A partir de ahí dejan de aplicarse las normas propias de la autovía.",
+  ["El inicio se señala sin tachar.", "No es una señal de corte, sino de final del tipo de vía."],
+  "Raya roja diagonal: se acabó.");
+
+/* ---- SEÑALES DE PELIGRO ---- */
+Q("senales", "img:p3", "¿Qué advierte esta señal triangular?",
+  ["La proximidad de un semáforo.", "Una intersección con prioridad.", "Un paso de peatones."],
+  "El triángulo con tres luces avisa de que más adelante hay un semáforo. Conviene reducir y estar preparado para detenerse si se pone en rojo.",
+  ["No habla de prioridad, sino de un semáforo.", "El paso de peatones se avisa con un peatón dibujado."],
+  "Triángulo con 3 luces: semáforo cerca.");
+Q("senales", "img:p13a", "¿Qué advierte esta señal?",
+  ["Curva peligrosa hacia la derecha.", "Cambio de sentido a la derecha.", "Prohibido girar a la derecha."],
+  "Es una señal de peligro: viene una curva hacia la derecha. Hay que reducir antes de entrar en ella, no durante la curva.",
+  ["No es un cambio de sentido, es una curva en la carretera.", "No es una prohibición: es un triángulo de advertencia."],
+  "Triángulo con curva: freno antes de la curva.");
+Q("senales", "img:p15", "¿Qué advierte esta señal?",
+  ["Perfil irregular: badenes o resaltos en la calzada.", "Obras en la calzada.", "Pavimento deslizante."],
+  "El dibujo de una superficie ondulada indica un tramo con firme irregular (resaltos, badenes o baches). Se reduce la velocidad para evitar perder el control o dañar el vehículo.",
+  ["Las obras se advierten con un obrero con pala.", "El pavimento deslizante lleva un coche con trazos de derrape."],
+  "Línea ondulada: bultos en la calzada.");
+Q("senales", "img:p17", "¿Qué advierte esta señal?",
+  ["Estrechamiento de la calzada.", "Fin de la autovía.", "Calzada de dos sentidos."],
+  "Las líneas que se acercan indican que la calzada se estrecha más adelante. Hay que reducir la velocidad y, si hay vehículos en sentido contrario, extremar la precaución.",
+  ["El fin de la autovía es una señal informativa, no un triángulo.", "Los dos sentidos se indican con dos flechas."],
+  "Líneas que se juntan: calzada más estrecha.");
+Q("senales", "img:p18", "Ve esta señal triangular con un obrero. ¿Qué debe hacer?",
+  ["Reducir la velocidad y extremar la precaución: hay obras más adelante.", "Detenerme.", "Mantener la velocidad: las obras no afectan a los vehículos."],
+  "Avisa de obras en la calzada o cerca de ella. Puede haber operarios, maquinaria, estrechamientos o firme en mal estado. Se reduce la velocidad y se obedece la señalización de obra, que prevalece sobre la habitual.",
+  ["Solo habría que parar si lo indica un operario, un semáforo o una señal de STOP.", "Sí afectan: hay riesgo para los operarios y para el propio vehículo."],
+  "Obrero: bajo la velocidad.");
+Q("senales", "img:p19", "¿Qué advierte esta señal con un coche que derrapa?",
+  ["Pavimento deslizante: la calzada puede tener poca adherencia.", "Una curva peligrosa.", "Una zona de obras."],
+  "Avisa de un tramo con riesgo de bajo agarre (humedad, hielo, barro, resbaladizo). Hay que reducir la velocidad, no frenar ni girar bruscamente y aumentar la distancia de seguridad.",
+  ["La curva peligrosa se dibuja con una línea curva.", "Las obras llevan un obrero."],
+  "Coche con trazos: el suelo resbala.");
+Q("senales", "img:p21", "¿Qué advierte esta señal con dos niños?",
+  ["La proximidad de un lugar frecuentado por niños (colegio, parque…): hay que extremar la precaución.", "Un paso de peatones.", "Una zona escolar donde se puede aparcar."],
+  "Los niños pueden cruzar de forma imprevista. Se reduce la velocidad y se está preparado para frenar. Cerca de colegios, la prudencia es todavía mayor en las horas de entrada y salida.",
+  ["El paso de peatones es una señal cuadrada azul.", "No tiene relación con la posibilidad de aparcar."],
+  "Niños: bajo y atento.");
+Q("senales", "img:p22", "¿Qué advierte esta señal con una bicicleta?",
+  ["La posible presencia de ciclistas en la calzada o cruzándola.", "Que la vía está prohibida a ciclistas.", "Que la bici tiene prioridad en toda la vía."],
+  "El triángulo avisa de que puede haber ciclistas más adelante. Hay que reducir la velocidad y, para adelantarlos, dejar al menos 1,5 m de separación lateral.",
+  ["Una prohibición lleva círculo rojo, no un triángulo.", "Solo avisa de la posible presencia de ciclistas, sin concederles una prioridad general."],
+  "Triángulo con bici: cuidado y 1,5 m.");
+Q("senales", "img:p25", "¿Qué advierte esta señal con dos flechas en sentidos contrarios?",
+  ["Que la circulación pasa a ser en los dos sentidos.", "Un estrechamiento de la calzada.", "Que está prohibido adelantar."],
+  "Se coloca al final de un tramo de sentido único o de calzadas separadas. A partir de ahí, pueden venir vehículos de frente, por lo que hay que ir por la derecha y extremar la precaución.",
+  ["El estrechamiento se dibuja con líneas que se acercan.", "No es una señal de prohibición."],
+  "Dos flechas opuestas: vendrán de frente.");
+Q("senales", "img:p26", "¿Qué advierte esta señal con piedras cayendo por una ladera?",
+  ["Posible caída de piedras o desprendimientos en la calzada.", "Obras de picapedrero.", "Firme irregular."],
+  "Hay riesgo de que caigan rocas o haya piedras sobre la calzada. Se reduce la velocidad, se circula atento por si hay obstáculos y no se detiene el vehículo en ese tramo.",
+  ["No hay obras: es un peligro natural.", "El firme irregular se dibuja con una línea ondulada."],
+  "Ladera con piedras: pueden caer.");
+Q("senales", "img:p23", "¿Qué advierte esta señal con una vaca?",
+  ["Paso de ganado o animales domésticos por la vía.", "Una zona de caza.", "Un mercado de ganado."],
+  "Avisa de que pueden cruzar animales domésticos. Se reduce la velocidad, se evita el claxon y los cambios bruscos, y se espera a que se despeje.",
+  ["La zona de caza se señaliza distinto.", "No tiene que ver con mercados, sino con riesgo en la carretera."],
+  "Animal dibujado: pueden cruzar.");
+Q("senales", "img:p24", "¿Qué advierte esta señal con un ciervo?",
+  ["Posible presencia de animales en libertad (fauna salvaje) en la vía.", "Que está permitida la caza.", "Que hay una granja cercana."],
+  "Los animales salvajes pueden irrumpir en la calzada, sobre todo al amanecer y al anochecer. Hay que reducir la velocidad y estar preparado para frenar.",
+  ["No se refiere a la caza.", "El ganado doméstico se señala con otra silueta."],
+  "Ciervo: fauna salvaje al amanecer y de noche.");
+Q("senales", "img:p50", "¿Qué indica esta señal de triángulo con un signo de exclamación?",
+  ["Otros peligros no recogidos en otras señales: hay que extremar la precaución.", "Una prohibición.", "Que debe detenerse."],
+  "Es la señal genérica de «peligro indeterminado». Suele ir acompañada de un panel que explica el peligro. Si no lo hay, reduzca la velocidad y observe con atención.",
+  ["Un triángulo avisa de un peligro; no prohíbe nada.", "No obliga a detenerse, sino a extremar la precaución."],
+  "Exclamación: peligro, cuidado extra.");
+Q("senales", "img:p20", "Esta señal triangular con un peatón avisa de:",
+  ["La proximidad de un lugar con presencia frecuente de peatones.", "Un paso de peatones obligatorio con prioridad total.", "Una calle peatonal."],
+  "No es el paso de peatones en sí (cuadrado azul), sino un aviso de que pueden cruzar peatones. Hay que reducir velocidad y estar preparado para frenar.",
+  ["El paso de peatones se señala con el cuadrado azul.", "Una calle peatonal tiene su propia señal informativa."],
+  "Triángulo con peatón: aviso, no paso.");
+
 /* ================= FIGURAS (SVG) ================= */
-const SIGN = {
-  stop: () => '<polygon points="31,4 69,4 96,31 96,69 69,96 31,96 4,69 4,31" fill="#c1121f" stroke="#fff" stroke-width="4"/><text x="50" y="60" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="25" fill="#fff">STOP</text>',
-  ceda: () => '<polygon points="50,94 6,14 94,14" fill="#fff" stroke="#c1121f" stroke-width="10" stroke-linejoin="round"/>',
-  senprohi: () => '<circle cx="50" cy="50" r="46" fill="#c1121f"/><rect x="20" y="42" width="60" height="16" rx="1" fill="#fff"/>',
-  prio: () => '<polygon points="50,3 97,50 50,97 3,50" fill="#fff" stroke="#111" stroke-width="1.5"/><polygon points="50,15 85,50 50,85 15,50" fill="#f6c21c" stroke="#111" stroke-width="3"/>',
-  noadel: () => '<circle cx="50" cy="50" r="44" fill="#fff" stroke="#c1121f" stroke-width="9"/>' +
-    '<g><rect x="19" y="46" width="30" height="13" rx="3" fill="#c1121f"/><polygon points="26,46 31,37 42,37 46,46" fill="#c1121f"/><circle cx="26" cy="60" r="4" fill="#111"/><circle cx="43" cy="60" r="4" fill="#111"/></g>' +
-    '<g><rect x="51" y="46" width="30" height="13" rx="3" fill="#111"/><polygon points="58,46 63,37 74,37 78,46" fill="#111"/><circle cx="58" cy="60" r="4" fill="#555"/><circle cx="75" cy="60" r="4" fill="#555"/></g>',
-  peat: () => '<rect x="3" y="3" width="94" height="94" rx="6" fill="#0057b8" stroke="#fff" stroke-width="2"/><polygon points="50,12 88,82 12,82" fill="#fff" stroke="#111" stroke-width="3" stroke-linejoin="round"/>' +
-    '<circle cx="50" cy="42" r="5" fill="#111"/><path d="M50 49 L50 64 M50 64 L43 77 M50 64 L57 77 M50 52 L41 60 M50 52 L58 57" stroke="#111" stroke-width="4.5" stroke-linecap="round" fill="none"/>',
-  rot: () => {
-    let s = '<circle cx="50" cy="50" r="46" fill="#0057b8" stroke="#fff" stroke-width="2"/>';
-    const r = 22, d2r = Math.PI / 180;
-    for (let i = 0; i < 3; i++) {
-      const a0 = (i * 120 + 12) * d2r, a1 = (i * 120 + 92) * d2r;
-      const p = (a) => [50 + r * Math.cos(a), 50 - r * Math.sin(a)];
-      const [x0, y0] = p(a0), [x1, y1] = p(a1);
-      const tx = -Math.sin(a1), ty = -Math.cos(a1), nx = Math.cos(a1), ny = -Math.sin(a1);
-      const tip = [x1 + tx * 11, y1 + ty * 11], b1 = [x1 + nx * 7, y1 + ny * 7], b2 = [x1 - nx * 7, y1 - ny * 7];
-      s += `<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 0 ${x1.toFixed(1)} ${y1.toFixed(1)}" stroke="#fff" stroke-width="6" fill="none"/>`;
-      s += `<polygon points="${tip.map(n => n.toFixed(1)).join(',')} ${b1.map(n => n.toFixed(1)).join(',')} ${b2.map(n => n.toFixed(1)).join(',')}" fill="#fff"/>`;
-    }
-    return s;
-  }
-};
+/* Señales oficiales: img/senales/<código>.svg (Wikimedia Commons, ver README). */
+const SIGN_FILE = { stop: 'r2', ceda: 'r1' };
 function svgWrap(inner, vb, label) { return `<svg viewBox="${vb}" role="img" aria-label="${label}">${inner}</svg>`; }
 
 function light(kind) {
@@ -886,18 +1081,83 @@ function cruce(spec) {
     const [, id, dir, turn, sign] = m;
     const [x, y, rot, sp] = POS[dir];
     s += `<g transform="translate(${x} ${y}) rotate(${rot})"><rect x="-10" y="-17" width="20" height="34" rx="5" fill="${COL[id]}" stroke="#fff" stroke-width="1.5"/><rect x="-7" y="-12" width="14" height="9" rx="2" fill="#cfe8ff"/><g transform="rotate(${-rot}) translate(0 7)"><text text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="12" fill="#fff">${id}</text></g>${turn ? arrow(turn, COL[id]) : ''}</g>`;
-    if (sign && SIGN[sign]) s += `<svg x="${sp[0] - 14}" y="${sp[1] - 14}" width="28" height="28" viewBox="0 0 100 100">${SIGN[sign]()}</svg>`;
+    if (sign && SIGN_FILE[sign]) s += `<image href="img/senales/${SIGN_FILE[sign]}.svg" x="${sp[0] - 15}" y="${sp[1] - 15}" width="30" height="30"/>`;
   });
   return svgWrap(s, '0 0 240 240', 'Intersección');
 }
 
+const isSign = (f) => f.startsWith('img:');
 function figure(f) {
   if (!f) return '';
   const [k, v] = f.split(':');
   if (k === 'light') return light(v);
   if (k === 'road') return road(v);
   if (k === 'cruce') return cruce(f.slice(6));
-  if (SIGN[k]) return svgWrap(SIGN[k](), '0 0 100 100', 'Señal de tráfico');
+  if (k === 'img') return `<img src="img/senales/${v}.svg" alt="Señal de tráfico ${v.toUpperCase()}">`;
+  return '';
+}
+
+
+/* ================= ESQUEMAS PROPIOS (se muestran en la explicación) ================= */
+function attachDiag(prefix, d) { const q = BANK.find(x => x.q.startsWith(prefix)); if (q) q.d = d; }
+attachDiag("Si duplica la velocidad", "detencion");
+attachDiag("¿Qué distancia de seguridad", "dosseg");
+attachDiag("Sobre una carretera encharcada", "aqua");
+attachDiag("Un herido está inconsciente", "pls");
+attachDiag("¿Cómo debe ajustarse el reposacabezas", "cabeza");
+
+function diagram(d) {
+  const T = (x, y, t, o = '') => `<text x="${x}" y="${y}" font-family="Arial,Helvetica,sans-serif" font-size="11" ${o.includes('fill=') ? '' : 'fill="#1c2733"'} ${o}>${t}</text>`;
+  const car = (x, y, c) => `<g transform="translate(${x} ${y})"><rect width="54" height="22" rx="6" fill="${c}"/><rect x="30" y="3" width="18" height="9" rx="2" fill="#cfe8ff"/><circle cx="13" cy="23" r="5" fill="#222"/><circle cx="41" cy="23" r="5" fill="#222"/></g>`;
+  if (d === 'detencion') {
+    const k = 2.6, x0 = 64, bar = (y, r, f, lab, tot) => {
+      const a = r * k, b = f * k;
+      return T(4, y + 17, lab, 'font-weight="700"') +
+        `<rect x="${x0}" y="${y}" width="${a}" height="26" fill="#f0b429"/><rect x="${x0 + a}" y="${y}" width="${b}" height="26" fill="#d64545"/>` +
+        T(x0 + a / 2, y + 17, r + ' m', 'text-anchor="middle"') + T(x0 + a + b / 2, y + 17, f + ' m', 'text-anchor="middle" fill="#fff"') +
+        T(x0 + a + b + 6, y + 17, '= ' + tot + ' m', 'font-weight="700"');
+    };
+    return svgWrap(T(4, 16, 'Distancia de detención (aproximada, asfalto seco)', 'font-weight="700"') + bar(30, 14, 14, '50 km/h', 28) + bar(76, 28, 56, '100 km/h', 84) +
+      `<rect x="64" y="124" width="12" height="12" fill="#f0b429"/>` + T(82, 134, 'Reacción (≈ 1 segundo)') + `<rect x="222" y="124" width="12" height="12" fill="#d64545"/>` + T(240, 134, 'Frenado') +
+      T(4, 158, 'Al doble de velocidad, la reacción se duplica') + T(4, 173, 'y el frenado se multiplica por 4.'), '0 0 380 182', 'Barras de distancia de reacción y frenado');
+  }
+  if (d === 'dosseg') {
+    return svgWrap('<rect x="0" y="52" width="340" height="38" fill="#4b5563"/><line x1="0" y1="71" x2="340" y2="71" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="12 9"/>' +
+      car(60, 54, '#1f5fd6') + car(230, 54, '#d33a2f') + '<line x1="200" y1="30" x2="200" y2="96" stroke="#c1121f" stroke-width="2" stroke-dasharray="4 3"/>' +
+      T(200, 24, 'punto fijo', 'text-anchor="middle"') + T(114, 112, 'Tú', 'text-anchor="middle" font-weight="700"') + T(257, 112, 'Coche de delante', 'text-anchor="middle" font-weight="700"') +
+      '<path d="M200 40 L120 40" stroke="#1c2733" stroke-width="2" marker-end="url(#a)"/><defs><marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#1c2733"/></marker></defs>' +
+      T(160, 36, '≥ 2 s', 'text-anchor="middle" font-weight="700"') + T(4, 135, 'Cuando el de delante pasa el punto fijo, cuenta') + T(4, 150, '«mil uno, mil dos» antes de pasar tú.') +
+      T(4, 166, 'Con lluvia, duplica el tiempo (4 segundos).'), '0 0 380 176', 'Regla de los dos segundos');
+  }
+  if (d === 'aqua') {
+    return svgWrap('<rect x="0" y="112" width="340" height="38" fill="#4b5563"/><rect x="10" y="104" width="320" height="10" fill="#4aa3e0" opacity=".85"/>' +
+      '<circle cx="170" cy="76" r="28" fill="#222"/><circle cx="170" cy="76" r="13" fill="#9ca3af"/>' +
+      '<path d="M120 100 q25 -8 50 0" stroke="#4aa3e0" stroke-width="3" fill="none"/>' +
+      T(170, 18, 'Aquaplaning: la rueda flota sobre el agua', 'text-anchor="middle" font-weight="700"') +
+      T(10, 98, 'capa de agua') + T(10, 138, 'asfalto', 'fill="#fff"') +
+      T(170, 164, 'Sin contacto con el asfalto no hay agarre: ni frenar ni girar.', 'text-anchor="middle"') +
+      '<path d="M270 60 L318 60" stroke="#1c2733" stroke-width="2" marker-end="url(#b)"/><defs><marker id="b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#1c2733"/></marker></defs>' + T(272, 54, 'avance'),
+      '0 0 380 175', 'Rueda flotando sobre una lámina de agua');
+  }
+  if (d === 'pls') {
+    return svgWrap('<line x1="0" y1="128" x2="340" y2="128" stroke="#6b7280" stroke-width="3"/>' +
+      '<circle cx="52" cy="108" r="14" fill="#f2c9a0" stroke="#1c2733" stroke-width="2"/>' +
+      '<path d="M68 112 L168 112" stroke="#1f5fd6" stroke-width="22" stroke-linecap="round"/>' +
+      '<path d="M170 112 L255 122" stroke="#374151" stroke-width="14" stroke-linecap="round"/>' +
+      '<path d="M170 106 L212 86 L240 112" stroke="#374151" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+      '<path d="M84 104 L74 84 L56 92" stroke="#1f5fd6" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+      T(170, 18, 'Posición lateral de seguridad', 'text-anchor="middle" font-weight="700"') +
+      T(212, 76, 'pierna superior flexionada', 'text-anchor="middle"') + T(60, 66, 'mano bajo la mejilla', 'text-anchor="middle"') +
+      T(170, 150, 'La boca queda hacia abajo y la lengua no tapa la vía aérea.', 'text-anchor="middle"'), '0 0 380 160', 'Persona tumbada de lado en posición lateral de seguridad');
+  }
+  if (d === 'cabeza') {
+    return svgWrap('<path d="M120 170 L120 70 Q120 52 138 52 L168 52 L168 170z" fill="#6b7280"/>' +
+      '<rect x="122" y="22" width="40" height="26" rx="8" fill="#374151"/>' +
+      '<circle cx="146" cy="44" r="22" fill="#f2c9a0" stroke="#1c2733" stroke-width="2" transform="translate(30 -4)"/>' +
+      '<line x1="40" y1="18" x2="230" y2="18" stroke="#c1121f" stroke-width="2" stroke-dasharray="5 4"/>' +
+      T(4, 14, 'Borde superior = parte alta de la cabeza') + T(4, 100, 'Reposacabezas', 'font-weight="700"') + T(4, 114, 'alto y cerca de la nuca') + T(40, 190, 'Evita el latigazo cervical en choques por alcance.'),
+      '0 0 380 200', 'Reposacabezas a la altura de la cabeza');
+  }
   return '';
 }
 
@@ -1036,7 +1296,7 @@ function qHtml() {
   const okSoFar = s.ids.filter(i => s.done[i] && s.ans[i] === 0).length;
   let h = `<div class="ticks" aria-hidden="true">${ticks}</div>
     <div class="qhead"><b>Pregunta ${s.cur + 1} de ${s.ids.length}</b><span>${study ? 'Aciertos: ' + okSoFar + ' · ' : ''}${TOPICS[q.t]}</span></div>
-    <div class="qcard">${q.f ? `<figure class="fig">${figure(q.f)}</figure>` : ''}<div class="qtext">${q.q}</div></div><div class="opts">`;
+    <div class="qcard">${q.f ? `<figure class="fig${isSign(q.f) ? ' sign' : ''}">${figure(q.f)}</figure>` : ''}<div class="qtext">${q.q}</div></div><div class="opts">`;
   perm.forEach((o, p) => {
     let c = 'opt';
     if (rev) c += o === 0 ? ' right' : (o === ch ? ' wrong' : '');
@@ -1056,7 +1316,7 @@ function explain(q, perm, ch) {
   const head = ch === undefined ? 'Sin contestar' : ch === 0 ? 'Correcto' : 'Incorrecto';
   const correctPos = perm.indexOf(0);
   let h = `<div class="fb ${kind}"><div class="fb-h">${head}${kind !== 'ok' ? ` · la correcta es la ${'ABC'[correctPos]}` : ''}</div><div class="fb-b">
-    <div><h4>Por qué</h4><p>${q.e}</p></div><div><h4>Qué pasa con cada opción</h4><ul class="why">`;
+    <div><h4>Por qué</h4><p>${q.e}</p>${q.d ? `<figure class="fig wide">${diagram(q.d)}</figure>` : ''}</div><div><h4>Qué pasa con cada opción</h4><ul class="why">`;
   perm.forEach((o, p) => {
     const c = o === 0;
     h += `<li class="${c ? 'c' : 'w'}"><span class="lt">${'ABC'[p]}</span><span>${c ? '<b>Correcta.</b> ' + q.o[o] : '<b>No.</b> ' + q.x[o - 1]}${ch === o ? '<span class="tag">tu respuesta</span>' : ''}</span></li>`;
@@ -1083,7 +1343,7 @@ function resultHtml() {
   s.ids.forEach((id, i) => {
     const q = BANK[id], ch = s.ans[id], ok = ch === 0;
     if (s.filter === 'bad' && ok) return;
-    h += `<details class="rev ${ok ? 'ok' : 'no'}" ${ok ? '' : 'open'}><summary><span class="st">${i + 1}</span><span>${q.q}</span></summary>${q.f ? `<figure class="fig rev-fig">${figure(q.f)}</figure>` : ''}${explain(q, s.perm[id], ch)}</details>`;
+    h += `<details class="rev ${ok ? 'ok' : 'no'}" ${ok ? '' : 'open'}><summary><span class="st">${i + 1}</span><span>${q.q}</span></summary>${q.f ? `<figure class="fig rev-fig${isSign(q.f) ? ' sign' : ''}">${figure(q.f)}</figure>` : ''}${explain(q, s.perm[id], ch)}</details>`;
   });
   h += `<div class="actions" style="margin-top:22px"><button class="btn ghost" data-act="home">Volver al inicio</button><button class="btn" data-act="${s.mode === 'exam' ? 'exam' : 'again'}">${s.mode === 'exam' ? 'Otro examen' : 'Seguir estudiando'}</button></div>`;
   return h;
