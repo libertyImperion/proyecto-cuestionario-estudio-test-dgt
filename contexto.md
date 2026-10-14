@@ -1,0 +1,15 @@
+# Test DGT · Permiso B
+
+**Objetivo:** aprobar el examen teórico del permiso B practicando con un simulador que explique cada respuesta.
+**Estado (2026-10-14):** v1 creada. 108 preguntas, 13 temas, modos examen / estudio / repaso de fallos.
+**Repo:** privado, `libertyImperion/test-dgt-clase-b`. Acceso directo en el escritorio: `Test DGT.app`.
+**Prioridad:** trámite personal. El foco sigue siendo el curso de Platzi.
+
+## Próximos pasos
+- Añadir ilustraciones reales (señales oficiales y esquemas) a las explicaciones. `[POR CONFIRMAR: descarga de imágenes]`
+- Ampliar el banco a 200 o más preguntas, con más cruces y rotondas.
+- Anotar aquí cuándo está previsto el examen real `[POR CONFIRMAR]` y la nota de los simulacros.
+
+## Notas técnicas
+- Un solo archivo (`index.html`); progreso en `localStorage` bajo la clave `dgt-clase-b-v1`.
+- Versión web (artifact de claude.ai): https://claude.ai/artifact/FXr9dU4xnHP4ZptmsGat2U (privada, es una copia; la fuente de verdad es este repo).

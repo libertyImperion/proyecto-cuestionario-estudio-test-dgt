@@ -1,0 +1,1141 @@
+<title>Test DGT Clase B</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@600;700;800&family=Overpass+Mono:wght@500;700&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: pantalla de examen en una columna de 760px. Barra superior fija con progreso y reloj,
+   lámina (figura) junto al enunciado, opciones A/B/C, y debajo el panel de explicación. */
+:root {
+  --bg: #eef1f6;
+  --surface: #ffffff;
+  --ink: #14202e;
+  --muted: #566475;
+  --line: #d3dbe6;
+  --blue: #0a4aa3;
+  --on-blue: #ffffff;
+  --blue-soft: #dce8f8;
+  --yellow: #f6c21c;
+  --tip: #fff2bd;
+  --tip-ink: #4a3a00;
+  --ok: #17703f;
+  --ok-soft: #dcf2e5;
+  --bad: #b3261e;
+  --bad-soft: #fbe2df;
+  --font-display: "Overpass", "Arial Narrow", Arial, sans-serif;
+  --font-mono: "Overpass Mono", ui-monospace, Menlo, monospace;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1520; --surface: #152031; --ink: #e8eef6; --muted: #9aa8ba; --line: #2a3a50;
+    --blue: #7db0f5; --on-blue: #07121f; --blue-soft: #1a2d49; --yellow: #f6c21c;
+    --tip: #3a3110; --tip-ink: #f7e6a0; --ok: #59cc8d; --ok-soft: #12301f; --bad: #ff8d84; --bad-soft: #3a1b1a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1520; --surface: #152031; --ink: #e8eef6; --muted: #9aa8ba; --line: #2a3a50;
+  --blue: #7db0f5; --on-blue: #07121f; --blue-soft: #1a2d49; --yellow: #f6c21c;
+  --tip: #3a3110; --tip-ink: #f7e6a0; --ok: #59cc8d; --ok-soft: #12301f; --bad: #ff8d84; --bad-soft: #3a1b1a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 56px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* barra superior */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.bar-in { max-width: 760px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+.brand { font-family: var(--font-display); font-weight: 800; letter-spacing: .02em; display: flex; align-items: center; gap: 8px; }
+.brand i { font-style: normal; background: var(--blue); color: var(--on-blue); padding: 1px 8px; border-radius: 4px; font-size: 14px; }
+.bar .sp { flex: 1; }
+.clock { font-family: var(--font-mono); font-weight: 700; font-size: 18px; padding: 2px 10px; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); }
+.clock.low { color: var(--bad); border-color: var(--bad); }
+.linkbtn { background: none; border: 0; color: var(--muted); font-size: 14px; padding: 6px 4px; text-decoration: underline; }
+
+.btn { background: var(--blue); color: var(--on-blue); border: 0; border-radius: 10px; padding: 12px 20px; font-family: var(--font-display); font-weight: 700; font-size: 17px; }
+.btn:hover { filter: brightness(1.08); }
+.btn[disabled] { opacity: .4; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--blue); border: 2px solid var(--blue); }
+.btn.big { padding: 18px 22px; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.btn small { font-family: var(--font-body); font-weight: 500; font-size: 14px; opacity: .85; display: block; }
+
+/* inicio */
+.hero { display: grid; gap: 6px; margin-bottom: 18px; }
+.hero h1 { font-size: clamp(30px, 6vw, 42px); font-weight: 800; }
+.hero p { margin: 0; color: var(--muted); max-width: 60ch; }
+.rule { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; color: var(--muted); margin-top: 6px; }
+.rule b { color: var(--ink); font-family: var(--font-mono); }
+.stats { display: flex; flex-wrap: wrap; gap: 4px 28px; padding: 14px 0; border-block: 1px solid var(--line); margin-bottom: 20px; }
+.stat { display: flex; flex-direction: column; min-width: 88px; }
+.stat b { font-family: var(--font-display); font-size: 26px; font-weight: 800; line-height: 1.1; }
+.stat span { font-size: 13px; color: var(--muted); }
+.modes { display: grid; gap: 10px; margin-bottom: 28px; }
+.modes .btn.alt { background: var(--surface); color: var(--ink); border: 2px solid var(--line); }
+.modes .btn.alt:hover { border-color: var(--blue); filter: none; }
+h2.sec { font-size: 20px; margin-bottom: 10px; }
+.topics { display: grid; gap: 8px; margin-bottom: 28px; }
+.topic { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.topic:hover { border-color: var(--blue); }
+.topic .n { font-weight: 600; }
+.topic .c { font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
+.meter { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; display: flex; }
+.meter i { display: block; height: 100%; }
+.meter .m { background: var(--ok); } .meter .f { background: var(--bad); }
+.hist { display: flex; align-items: flex-end; gap: 6px; height: 76px; margin-bottom: 4px; }
+.hist div { flex: 1; max-width: 34px; min-height: 6px; border-radius: 3px 3px 0 0; position: relative; }
+.hist div span { position: absolute; top: -18px; left: 0; right: 0; text-align: center; font-size: 12px; font-family: var(--font-mono); color: var(--muted); }
+.hist .p { background: var(--ok); } .hist .x { background: var(--bad); }
+.note { font-size: 13px; color: var(--muted); max-width: 70ch; }
+
+/* config */
+.cfg { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; }
+.cfg label { font-weight: 600; font-size: 14px; display: grid; gap: 6px; }
+select { font: inherit; padding: 10px; border-radius: 8px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 2px solid var(--line); background: var(--bg); border-radius: 999px; padding: 6px 16px; font-weight: 600; }
+.chip.on { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
+
+/* pregunta */
+.ticks { display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 16px; }
+.tick { width: 14px; height: 8px; border-radius: 2px; background: var(--line); }
+.tick.done { background: var(--blue); }
+.tick.now { background: var(--yellow); outline: 2px solid var(--ink); outline-offset: 1px; }
+.tick.ok { background: var(--ok); } .tick.no { background: var(--bad); }
+.qhead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; font-size: 14px; color: var(--muted); }
+.qhead b { font-family: var(--font-display); color: var(--ink); font-size: 16px; }
+.qcard { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; margin-bottom: 14px; }
+.fig { margin: 0; flex: 0 0 auto; width: min(100%, 230px); background: #e9edf2; border-radius: 10px; border: 1px solid var(--line); padding: 8px; }
+.fig svg { display: block; width: 100%; height: auto; }
+.qtext { flex: 1 1 280px; min-width: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(19px, 3.4vw, 23px); line-height: 1.3; }
+.opts { display: grid; gap: 10px; }
+.opt { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.opt:hover:not([disabled]) { border-color: var(--blue); }
+.opt .lt { width: 34px; height: 34px; border-radius: 8px; background: var(--bg); border: 2px solid var(--line); display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; }
+.opt.sel { border-color: var(--blue); background: var(--blue-soft); }
+.opt.sel .lt { background: var(--blue); color: var(--on-blue); border-color: var(--blue); }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.right .lt { background: var(--ok); color: var(--surface); border-color: var(--ok); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .lt { background: var(--bad); color: var(--surface); border-color: var(--bad); }
+.opt[disabled] { cursor: default; }
+.actions { display: flex; gap: 10px; justify-content: space-between; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.hint { font-size: 13px; color: var(--muted); }
+
+/* explicación */
+.fb { margin-top: 18px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); overflow: hidden; }
+.fb.ok { border-color: var(--ok); } .fb.no { border-color: var(--bad); } .fb.nil { border-color: var(--muted); }
+.fb-h { padding: 10px 16px; font-family: var(--font-display); font-weight: 800; font-size: 18px; }
+.fb.ok .fb-h { background: var(--ok-soft); color: var(--ok); }
+.fb.no .fb-h { background: var(--bad-soft); color: var(--bad); }
+.fb.nil .fb-h { background: var(--bg); color: var(--muted); }
+.fb-b { padding: 14px 16px 16px; display: grid; gap: 14px; }
+.fb h4 { margin: 0 0 4px; font-family: var(--font-display); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.fb p { margin: 0; }
+.why { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.why li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; font-size: 15px; }
+.why .lt { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 14px; background: var(--bad-soft); color: var(--bad); }
+.why li.c .lt { background: var(--ok-soft); color: var(--ok); }
+.why .tag { font-size: 12px; font-weight: 600; background: var(--ink); color: var(--bg); border-radius: 4px; padding: 0 6px; margin-left: 6px; white-space: nowrap; }
+.tip { background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 10px 14px; }
+.tip h4 { color: inherit; opacity: .75; }
+
+/* resultado */
+.verdict { border-radius: 14px; padding: 20px; margin-bottom: 20px; border: 2px solid; }
+.verdict.ok { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.verdict.no { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+.verdict.neutral { background: var(--surface); border-color: var(--line); color: var(--ink); }
+.verdict h1 { font-size: clamp(32px, 7vw, 46px); font-weight: 800; }
+.verdict p { margin: 4px 0 0; color: var(--ink); }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 18px; }
+.pill { background: var(--bad-soft); color: var(--bad); border-radius: 999px; padding: 2px 12px; font-size: 14px; font-weight: 600; }
+.rev { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; }
+.rev > summary { list-style: none; cursor: pointer; padding: 10px 14px; display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
+.rev > summary::-webkit-details-marker { display: none; }
+.rev .st { width: 30px; height: 30px; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 700; font-size: 13px; }
+.rev.ok .st { background: var(--ok-soft); color: var(--ok); }
+.rev.no .st { background: var(--bad-soft); color: var(--bad); }
+.rev .fb { margin: 0 12px 12px; }
+.rev-fig { margin: 0 14px 12px; max-width: 210px; }
+.seg { display: flex; gap: 8px; margin: 10px 0 12px; }
+
+@media (max-width: 520px) { .fig { width: 100%; max-width: 260px; } }
+@media (prefers-reduced-motion: no-preference) { .btn, .opt, .topic { transition: border-color .12s, filter .12s, background .12s; } }
+</style>
+
+<div class="bar"><div class="bar-in" id="bar"></div></div>
+<main class="wrap" id="app"></main>
+
+<script>
+/* ================= BANCO DE PREGUNTAS =================
+   Q(tema, figura, enunciado, [correcta, falsa1, falsa2], explicación, [por qué falla falsa1, falsa2], regla para recordar) */
+const TOPICS = {
+  senales: "Señales y marcas viales",
+  velocidad: "Velocidad",
+  prioridad: "Prioridad de paso",
+  maniobras: "Adelantamientos y maniobras",
+  alcohol: "Alcohol, drogas y fatiga",
+  distancias: "Distancias y frenado",
+  docs: "Documentación y permiso por puntos",
+  luces: "Luces y avisos",
+  seguridad: "Seguridad activa y pasiva",
+  auxilio: "Accidentes y primeros auxilios",
+  especial: "Situaciones especiales de conducción",
+  parada: "Parada y estacionamiento",
+  eco: "Conducción eficiente y entorno"
+};
+const BANK = [];
+function Q(t, f, q, o, e, x, k) { BANK.push({ id: BANK.length, t, f, q, o, e, x, k }); }
+
+/* ---- SEÑALES Y MARCAS ---- */
+Q("senales", "stop", "¿Qué obliga a hacer esta señal?",
+  ["Detenerme siempre en la línea de detención (o antes de entrar en la intersección) y ceder el paso a los vehículos de la otra vía.",
+   "Reducir la velocidad y ceder el paso solo si viene algún vehículo.",
+   "Detenerme únicamente si hay otros vehículos o peatones esperando."],
+  "El STOP exige una parada total, aunque la vía esté vacía. Se para en la línea de detención; si no existe, en el punto desde el que haya visibilidad suficiente antes de entrar en la intersección. Después se cede el paso a todos los vehículos de la vía a la que se accede.",
+  ["Eso describe la señal de CEDA EL PASO. El STOP es más estricto: la parada es obligatoria siempre.",
+   "El STOP no depende de que haya tráfico. Hay que quedar completamente inmovilizado aunque nadie más esté presente."],
+  "STOP = parar del todo, siempre. CEDA = solo paro si hace falta.");
+Q("senales", "ceda", "Al llegar a esta señal, ¿qué debe hacer?",
+  ["Ceder el paso a los vehículos de la vía a la que me incorporo, deteniéndome si es necesario.",
+   "Detenerme siempre, como en un STOP.",
+   "Continuar, porque tengo prioridad sobre los vehículos de la otra vía."],
+  "La señal de ceda el paso obliga a dejar pasar a los vehículos que circulan por la vía a la que se accede. Solo hay que detenerse cuando sea necesario para cederles el paso; si la vía está libre y se ve bien, se puede continuar.",
+  ["La parada obligatoria es del STOP. Con el ceda solo se para si hace falta.",
+   "Es lo contrario: esta señal indica que NO tengo prioridad."],
+  "Triángulo hacia abajo = cedo. Miro, y paro solo si es preciso.");
+Q("senales", null, "Un agente de circulación le ordena detenerse mientras el semáforo está en verde. ¿A quién obedece?",
+  ["Al agente de circulación.", "Al semáforo, porque está en verde.", "A la señal vertical que haya en ese tramo."],
+  "Las órdenes se obedecen en este orden de prioridad: 1) agentes de la circulación, 2) señalización circunstancial (por ejemplo, de obras), 3) semáforos, 4) señales verticales, 5) marcas viales. El agente manda sobre todo lo demás.",
+  ["El semáforo es el tercero en prioridad. Un agente puede ordenar algo distinto y su orden prevalece.",
+   "Las señales verticales están por debajo del agente y del semáforo en el orden de prioridad."],
+  "Orden: AGENTE > OBRAS > SEMÁFORO > SEÑAL VERTICAL > MARCA VIAL.");
+Q("senales", "road:cont", "Circula por la carretera de la figura (vehículo azul) y quiere adelantar al vehículo rojo, que va lento. ¿Puede hacerlo?",
+  ["No, la línea longitudinal continua prohíbe sobrepasarla para adelantar.",
+   "Sí, si no viene nadie en sentido contrario.",
+   "Sí, si lo hago rápidamente y vuelvo enseguida a mi carril."],
+  "Una línea continua no se puede pisar ni sobrepasar. Adelantar al vehículo rojo obligaría a invadir el carril contrario cruzando esa línea, y eso está prohibido aunque la carretera parezca libre.",
+  ["Que no venga nadie no cambia nada: la prohibición es de la marca vial, no depende del tráfico.",
+   "La rapidez no es excusa. Cruzar una línea continua para adelantar es infracción siempre."],
+  "Línea continua = pared. No se cruza, se mire como se mire.");
+Q("senales", "road:mixedOK", "El vehículo azul es el suyo. La línea central es mixta (una continua y una discontinua), y la discontinua está del lado de su carril. ¿Puede adelantar al rojo?",
+  ["Sí, si hay visibilidad suficiente y no hay otros impedimentos, porque la línea más próxima a mi carril es discontinua.",
+   "No, una línea mixta siempre prohíbe adelantar.",
+   "Solo puede si el otro conductor me hace una señal."],
+  "En una línea mixta cuenta la línea que está junto a su carril. Si es la discontinua, puede cruzarla para adelantar (con visibilidad y comprobando que no viene nadie). El conductor del carril contrario, que tiene la continua pegada, no podría.",
+  ["Una línea mixta prohíbe adelantar solo a quien tiene la continua junto a su carril. Aquí no es su caso.",
+   "Nadie necesita permiso del otro conductor. Lo que manda es la marca vial y la seguridad de la maniobra."],
+  "Mixta: obedezco a la línea que tengo pegada a mi coche.");
+Q("senales", "road:mixedNO", "Ahora la línea mixta tiene la continua del lado de su carril (vehículo azul) y la discontinua del lado contrario. ¿Puede adelantar al vehículo rojo?",
+  ["No, porque la línea continua está junto a mi carril.",
+   "Sí, porque la otra línea es discontinua.",
+   "Sí, si lo hago a más de 90 km/h para tardar menos."],
+  "Con línea mixta se obedece a la que queda más cerca de su carril. Aquí es continua, así que no puede cruzarla para adelantar. Quien circula en sentido contrario, con la discontinua pegada, sí podría.",
+  ["Mirar la línea del lado contrario es el error clásico. Cuenta la que está junto a su carril.",
+   "La velocidad nunca justifica cruzar una línea continua; además, superar el límite es otra infracción."],
+  "La que está pegada a mi coche es la que manda.");
+Q("senales", "noadel", "¿Qué prohíbe esta señal?",
+  ["Adelantar a vehículos de motor que no sean motocicletas de dos ruedas sin sidecar.",
+   "Adelantar a cualquier vehículo, incluidas motos y bicicletas.",
+   "Circular a una velocidad superior a la del vehículo de delante."],
+  "La señal de adelantamiento prohibido veta el adelantamiento a los vehículos de motor, con una excepción: las motocicletas de dos ruedas sin sidecar, que sí pueden ser adelantadas.",
+  ["Tiene excepción: las motos de dos ruedas sin sidecar sí se pueden adelantar. Además la señal habla de vehículos de motor.",
+   "Esta señal no regula la velocidad, solo el adelantamiento."],
+  "Coche rojo y coche negro: no adelanto a coches, sí a motos de dos ruedas.");
+Q("senales", "prio", "¿Qué indica esta señal?",
+  ["Que circulo por una vía con prioridad de paso respecto a las vías que la cruzan, hasta que se indique su fin.",
+   "Que debo ceder el paso en la próxima intersección.",
+   "Que está prohibido parar y estacionar en esta calzada."],
+  "El rombo amarillo con borde blanco es la señal de «calzada con prioridad». Quien circula por ella tiene preferencia en las intersecciones siguientes hasta que otra señal (fin de prioridad) la cancele.",
+  ["Eso lo indicaría la señal de ceda el paso, que es un triángulo con el vértice hacia abajo.",
+   "La prohibición de parar o estacionar se señaliza con un círculo azul con borde rojo, no con este rombo."],
+  "Rombo amarillo = vía prioritaria. Preferencia hasta que se cancele.");
+Q("senales", "senprohi", "Esta señal significa:",
+  ["Entrada prohibida: no puedo acceder a esa vía en este sentido.",
+   "Fin de la prohibición de adelantar.",
+   "Calzada cortada por obras: puedo pasar con precaución."],
+  "El círculo rojo con una barra blanca horizontal es la señal de «entrada prohibida» (sentido prohibido). Se coloca para quien se acerca a una vía por la que solo se puede circular en sentido contrario. Entrar en ella es una infracción muy grave: 6 puntos.",
+  ["El fin de prohibiciones se indica con señales de borde gris tachadas, no con esta.",
+   "Las obras se avisan con señales de peligro y balizas. Esta señal prohíbe la entrada, no es una advertencia."],
+  "Barra blanca en círculo rojo = por ahí no entro.");
+Q("senales", "light:amber", "Llega a un semáforo cuya luz ámbar acaba de encenderse fija. ¿Qué debe hacer?",
+  ["Detenerme, salvo que ya esté tan cerca que no pueda parar en condiciones de seguridad.",
+   "Acelerar para cruzar antes de que cambie a rojo.",
+   "Pasar siempre, porque el ámbar es una luz de precaución."],
+  "El ámbar fijo equivale a «prepárese para parar». Se debe detener, salvo que al encenderse esté tan próximo que no pueda frenar con seguridad (un frenazo brusco puede provocar una colisión por alcance).",
+  ["Acelerar con el ámbar es una maniobra peligrosa y mal planteada. La obligación es detenerse si puede hacerlo con seguridad.",
+   "El ámbar fijo no autoriza a pasar. Es la intermitente la que permite avanzar con precaución."],
+  "Ámbar fijo: freno si puedo. Ámbar intermitente: paso con cuidado.");
+Q("senales", "light:amberflash", "¿Qué significa una luz ámbar intermitente en un semáforo?",
+  ["Que puedo avanzar con precaución, cediendo el paso a peatones y a vehículos que tengan prioridad.",
+   "Que debo detenerme igual que con luz roja.",
+   "Que tengo prioridad absoluta sobre el resto."],
+  "El ámbar intermitente no ordena parar. Indica que se extreme la precaución: se puede pasar, pero cediendo el paso a peatones y a los vehículos que tengan preferencia.",
+  ["Parar siempre lo obliga la luz roja. La intermitente solo exige precaución.",
+   "No da prioridad: se circula con cuidado y se cede donde corresponda."],
+  "Ámbar intermitente: precaución, no prioridad.");
+Q("senales", "peat", "Se aproxima a esta señal y hay un peatón a punto de cruzar. ¿Qué debe hacer?",
+  ["Reducir la velocidad y detenerme si es necesario para dejarle cruzar.",
+   "Tocar el claxon para que se aparte y seguir.",
+   "Continuar, porque yo circulo por la calzada y él debe esperar."],
+  "En un paso para peatones, el peatón tiene prioridad sobre los vehículos. Hay que disminuir la velocidad al acercarse y detenerse si hay peatones cruzando o a punto de cruzar. Se puede pasar cuando el paso queda libre.",
+  ["El claxon no concede prioridad. Es el vehículo quien debe ceder el paso al peatón.",
+   "La prioridad en el paso de peatones es del peatón, no del vehículo."],
+  "En el paso de peatones el rey es el peatón.");
+Q("senales", "rot", "Esta señal indica una glorieta (intersección de circulación giratoria). Si no hay otra señal, ¿quién tiene prioridad?",
+  ["Los vehículos que ya circulan dentro de la glorieta.",
+   "Los vehículos que se aproximan para entrar.",
+   "El que llegue primero a la entrada, vengan de donde vengan."],
+  "En una glorieta se circula en sentido contrario a las agujas del reloj. Salvo que haya señalización distinta, la preferencia es de quienes ya están dentro; quien se aproxima debe ceder el paso.",
+  ["Quien va a entrar es quien cede. La prioridad la tiene el que ya circula dentro de la glorieta.",
+   "El orden de llegada no decide. Importa quién está ya en el anillo."],
+  "Dentro manda, fuera cede.");
+
+/* ---- VELOCIDAD ---- */
+Q("velocidad", null, "¿Cuál es la velocidad máxima genérica para un turismo en autopistas y autovías?",
+  ["120 km/h", "100 km/h", "130 km/h"],
+  "La velocidad máxima de un turismo en autopistas y autovías es de 120 km/h, salvo que una señal indique un límite inferior.",
+  ["100 km/h es un límite que se aplica a otros vehículos concretos (por ejemplo autobuses), no al turismo.",
+   "130 km/h no está permitido en España; el máximo genérico es 120."],
+  "Autopista/autovía: 120. Convencional: 90.");
+Q("velocidad", null, "¿Qué velocidad máxima genérica tiene un turismo en una carretera convencional?",
+  ["90 km/h", "100 km/h", "80 km/h"],
+  "En carreteras convencionales el límite genérico del turismo es 90 km/h. Una señal puede rebajarlo, y hay que hacerlo siempre que la situación (lluvia, curvas, tráfico) lo aconseje.",
+  ["100 km/h fue el límite en vías con arcén ancho hasta 2019; hoy es 90 en todas las convencionales.",
+   "80 km/h no es el límite genérico del turismo en convencional."],
+  "Convencional = 90.");
+Q("velocidad", null, "Circula por una calle urbana con un único carril por sentido de circulación y sin señal de velocidad. ¿Cuál es el límite?",
+  ["30 km/h", "50 km/h", "40 km/h"],
+  "Desde mayo de 2021, las vías urbanas con un solo carril por sentido tienen un límite genérico de 30 km/h. En las de dos o más carriles por sentido el límite es 50 km/h.",
+  ["50 km/h aplica a vías urbanas de dos o más carriles por sentido, no a las de un solo carril.",
+   "40 km/h no es un límite genérico en la normativa; solo aparecería si una señal lo indicara."],
+  "Urbana: 1 carril por sentido = 30. 2 o más = 50.");
+Q("velocidad", null, "En una calle urbana de plataforma única (calzada y acera al mismo nivel), ¿cuál es el límite genérico?",
+  ["20 km/h", "30 km/h", "10 km/h"],
+  "En las vías de plataforma única, donde peatones y vehículos comparten el espacio, el límite es de 20 km/h. Los peatones pueden estar en cualquier punto, por eso la velocidad baja tanto.",
+  ["30 km/h es para calles de un carril por sentido con acera diferenciada.",
+   "10 km/h no es el límite genérico en estas vías."],
+  "Sin escalón entre acera y calzada = 20.");
+Q("velocidad", null, "¿A partir de qué exceso sobre el límite de velocidad, en una vía interurbana, la conducción pasa a ser un delito?",
+  ["Más de 80 km/h por encima del límite.",
+   "Más de 60 km/h por encima del límite.",
+   "Más de 40 km/h por encima del límite."],
+  "Es delito conducir a más de 60 km/h sobre el límite en vía urbana o a más de 80 km/h sobre el límite en vía interurbana. Por debajo de esos umbrales sigue siendo una infracción administrativa, con multa y pérdida de puntos según el exceso.",
+  ["Esos 60 km/h son el umbral para vías URBANAS. En interurbana es más alto: 80.",
+   "Con 40 km/h de exceso es una infracción grave o muy grave (multa y puntos), pero no un delito."],
+  "Delito: +60 en ciudad, +80 en carretera.");
+Q("velocidad", null, "En carretera convencional, ¿puede rebasar el límite de velocidad para adelantar?",
+  ["Sí, hasta 20 km/h por encima del límite, solo durante la maniobra de adelantamiento.",
+   "No, nunca se puede superar el límite.",
+   "Sí, sin ningún límite, mientras dure el adelantamiento."],
+  "Los turismos pueden superar en 20 km/h la velocidad máxima de la vía únicamente mientras adelantan a otro vehículo más lento. Terminado el adelantamiento hay que volver al límite. La maniobra debe ser breve y segura.",
+  ["Existe esa tolerancia concreta de 20 km/h para adelantar en carretera convencional.",
+   "La tolerancia es limitada (20 km/h), no ilimitada."],
+  "Adelantando en convencional: +20, solo mientras adelanto.");
+Q("velocidad", null, "Un límite de velocidad señalizado de 90 km/h, ¿garantiza que es seguro circular a esa velocidad?",
+  ["No: debo adaptar la velocidad a las circunstancias (lluvia, niebla, tráfico, estado de la vía).",
+   "Sí, siempre que no lo supere es seguro.",
+   "Solo en carreteras con arcén."],
+  "El límite es un máximo, no una recomendación. El conductor debe regular su velocidad según el estado de la vía, el tráfico, la visibilidad, el clima y su vehículo. Con lluvia o niebla, 90 km/h puede ser excesivo.",
+  ["Ir por debajo del límite no garantiza seguridad; hay que ajustarse a las condiciones.",
+   "El arcén no es lo que determina la velocidad segura, sino el conjunto de condiciones."],
+  "Límite = techo. Mi velocidad la decide la situación.");
+Q("velocidad", null, "¿En qué tipo de vías no pueden circular los vehículos que no son capaces de alcanzar al menos 60 km/h?",
+  ["En autopistas y autovías.",
+   "En carreteras convencionales.",
+   "En calles urbanas."],
+  "En autopistas y autovías hay un mínimo de capacidad: los vehículos que no pueden alcanzar 60 km/h no pueden circular por ellas. Además, nadie debe ir tan despacio que entorpezca la marcha de los demás sin motivo.",
+  ["En una convencional pueden circular vehículos lentos (tractores, ciclomotores...). No hay ese mínimo.",
+   "En ciudad tampoco existe ese mínimo; son vías de uso mixto con vehículos de todo tipo."],
+  "Autopista: se entra a partir de 60 km/h.");
+
+/* ---- PRIORIDAD DE PASO ---- */
+Q("prioridad", "cruce:A=S,B=E", "Se aproxima a una intersección sin señalizar. Usted conduce el vehículo azul (A). ¿Quién pasa primero?",
+  ["El vehículo B, que viene por mi derecha.", "Yo, porque voy recto.", "El que llegue antes, vengan de donde vengan."],
+  "En una intersección sin señalizar rige la «norma de la derecha»: tiene preferencia el vehículo que se acerca por la derecha. El vehículo B llega por la derecha de A, así que pasa primero.",
+  ["Ir recto no da preferencia. La derecha es lo que manda en una intersección sin señales.",
+   "El orden de llegada no es el criterio. Se mira desde dónde viene cada vehículo."],
+  "Sin señales: pasa quien viene por mi derecha.");
+Q("prioridad", "cruce:A=S,B=W", "Intersección sin señalizar. Usted conduce el vehículo azul (A) y el rojo (B) viene por su izquierda. ¿Quién pasa primero?",
+  ["Yo (A), porque B se acerca por mi izquierda y yo tengo preferencia por la derecha.", "B, porque llegó antes.", "B, porque viene de la vía principal."],
+  "Sin señales, tiene prioridad quien viene por la derecha. Para B, el vehículo A llega por su derecha; por tanto A pasa primero y B debe cederle el paso.",
+  ["Llegar antes no da prioridad. Se aplica la norma de la derecha.",
+   "No hay ninguna señal que haga principal ninguna de las dos vías."],
+  "Yo veo a otro por la izquierda: paso yo.");
+Q("prioridad", "cruce:A=S:stop,B=W", "Usted conduce el vehículo azul (A) y tiene una señal de STOP. El vehículo rojo (B) viene por su izquierda sin señal. ¿Qué debe hacer?",
+  ["Detenerme y ceder el paso a B (y a cualquier otro vehículo de la vía), antes de continuar.", "Parar y pasar antes que B, porque ya estoy detenido.", "No parar, porque B viene por mi izquierda y no por mi derecha."],
+  "El STOP obliga a detenerse y ceder el paso a todos los vehículos de la otra vía, vengan por la izquierda o por la derecha. La señal manda sobre la norma de la derecha.",
+  ["Estar parado no da preferencia. El STOP obliga a ceder a todos los de la vía transversal.",
+   "El STOP obliga siempre a parar. Hacerlo en función de la dirección es incorrecto."],
+  "STOP manda más que la regla de la derecha.");
+Q("prioridad", "cruce:A=S>L,B=N", "Usted (A) quiere girar a la izquierda y el vehículo rojo (B) viene de frente en línea recta. ¿Quién pasa primero?",
+  ["El vehículo B, porque yo cruzo su trayectoria al girar a la izquierda.", "Yo, porque estoy señalizando el giro.", "El que vaya más rápido."],
+  "Al girar a la izquierda se cruza el carril contrario, por lo que hay que ceder el paso a los vehículos que vienen de frente. Señalizar el giro avisa, pero no da preferencia.",
+  ["El intermitente avisa de lo que va a hacer, pero no concede prioridad.",
+   "La velocidad no determina quién pasa primero."],
+  "Giro a la izquierda: cedo a los que vienen de frente.");
+Q("prioridad", null, "Se aproxima a un paso a nivel con las barreras bajadas. ¿Qué debe hacer?",
+  ["Detenerme antes de la línea de detención o de la señal y esperar a que se levanten.", "Rodear la barrera si veo que no viene el tren.", "Parar, pero cruzar en cuanto deje de ver el tren."],
+  "Con las barreras bajadas, las luces rojas o el sonido de aviso, hay que detenerse y esperar. Nunca se bordea la barrera ni se cruza hasta que esté completamente levantada y las luces apagadas.",
+  ["Es muy peligroso y es infracción grave. Un tren llega más rápido de lo que parece.",
+   "Hay que esperar a que se levanten las barreras y se apaguen las luces, no basta con no ver el tren."],
+  "Barrera baja: espero. Siempre.");
+Q("prioridad", null, "Va a girar a la derecha y, al cruzar un carril bici, un ciclista circula por él en línea recta. ¿Quién tiene prioridad?",
+  ["El ciclista, y debo cederle el paso.", "Yo, porque estoy en la calzada.", "El que llegue antes."],
+  "Los vehículos que giran deben ceder el paso a los ciclistas que circulan por el carril bici y a los peatones que cruzan. El ciclista que sigue recto tiene preferencia sobre quien gira.",
+  ["Estar en la calzada no me da preferencia sobre un ciclista en su carril bici.",
+   "La prioridad la marca la norma, no el orden de llegada."],
+  "Quien gira, cede a ciclistas y peatones.");
+Q("prioridad", null, "Una ambulancia con luces y sirena en servicio urgente se acerca por detrás. ¿Qué debo hacer?",
+  ["Facilitar su paso apartándome a la derecha y deteniéndome si es necesario, sin crear peligro.", "Acelerar para dejarla atrás.", "Mantener mi velocidad y carril, porque ya la veo."],
+  "Los vehículos prioritarios en servicio urgente, con las señales luminosas y acústicas en funcionamiento, tienen preferencia. Hay que facilitar su paso, apartándose y parando si es necesario, siempre sin provocar peligro.",
+  ["Acelerar no es apartarse: solo entorpece y puede ser peligroso.",
+   "No ceder cuando se acerca un vehículo prioritario en servicio urgente es infracción."],
+  "Sirena detrás: me aparto y facilito.");
+Q("prioridad", null, "Se encuentra con otro vehículo en un tramo estrecho, y hay un obstáculo en su carril (por ejemplo, un coche mal aparcado). ¿Quién cede?",
+  ["Yo, que tengo el obstáculo en mi lado, debo detenerme y dejar pasar al que viene de frente.", "El que no tiene obstáculo.", "El que lleve más pasajeros."],
+  "Cuando hay un obstáculo en una calzada estrecha, quien lo tiene en su lado debe detenerse y esperar a que pase el vehículo contrario. Es una norma de sentido común: el que está bloqueado cede.",
+  ["Es al revés: quien se ve obstaculizado debe esperar.",
+   "El número de pasajeros no tiene ningún peso en las reglas de prioridad."],
+  "Tengo el obstáculo en mi lado, cedo yo.");
+Q("prioridad", null, "Va a incorporarse a la calzada desde un aparcamiento o una vía privada. ¿Quién tiene prioridad?",
+  ["Los vehículos que ya circulan por la calzada.", "Yo, porque estoy señalizando.", "Quien tenga el vehículo más grande."],
+  "Al incorporarse a la circulación desde un lugar no destinado a ella (aparcamientos, accesos, vías privadas) se debe ceder el paso a todos los que circulan por la vía.",
+  ["Señalizar la maniobra avisa pero no otorga prioridad.", "El tamaño del vehículo no cambia las normas de prioridad."],
+  "Entro a la vía: me toca esperar.");
+
+/* ---- ADELANTAMIENTOS Y MANIOBRAS ---- */
+Q("maniobras", null, "¿Cuál es el orden correcto para realizar un adelantamiento?",
+  ["Mirar por los espejos, señalizar a la izquierda, comprobar el ángulo muerto, adelantar y volver a la derecha señalizando.", "Señalizar, acelerar y comprobar mientras adelanto.", "Tocar el claxon, cambiar de carril y señalizar después."],
+  "La secuencia segura es: observar (espejos y ángulo muerto), señalizar con antelación, ejecutar la maniobra con rapidez razonable, volver al carril derecho tras dejar espacio suficiente y señalizar el regreso.",
+  ["Señalizar y comprobar mientras se adelanta es tarde: antes de iniciar hay que asegurarse de que se puede.", "El claxon no avisa de un adelantamiento correcto, y señalizar después llega tarde."],
+  "Observo, aviso, ejecuto, regreso y aviso.");
+Q("maniobras", null, "¿En cuál de estos lugares está prohibido adelantar?",
+  ["En un cambio de rasante de visibilidad reducida.", "En una autopista de tres carriles.", "En una recta con visibilidad total y línea discontinua."],
+  "No se puede adelantar en curvas y cambios de rasante de visibilidad reducida, en intersecciones, en pasos a nivel y en lugares con línea continua. Si no se ve bien lo que viene en sentido contrario, no se adelanta.",
+  ["En autopista se adelanta con normalidad por el carril de la izquierda.", "Con buena visibilidad y línea discontinua, es un lugar donde se puede adelantar si no hay otros impedimentos."],
+  "Si no veo, no adelanto.");
+Q("maniobras", null, "Va a adelantar a un ciclista en una carretera convencional. ¿Qué distancia lateral mínima debe respetar?",
+  ["1,5 metros, pudiendo ocupar el carril contrario si es necesario.", "0,5 metros.", "No hay distancia mínima fijada."],
+  "Para adelantar a ciclistas hay que dejar al menos 1,5 m de separación lateral. Para ello se permite ocupar parte o la totalidad del carril contrario, siempre que sea seguro y no haya peligro de colisión.",
+  ["0,5 m es muy poco: pondría en riesgo al ciclista. La norma exige 1,5 m.", "Sí hay distancia mínima fijada: 1,5 m, y salirse del carril contrario está autorizado para respetarla."],
+  "Ciclista: un metro y medio.");
+Q("maniobras", null, "Un vehículo le está adelantando. ¿Qué debe hacer?",
+  ["Mantenerme a la derecha y no aumentar mi velocidad para facilitarle la maniobra.", "Acelerar para que no me adelante.", "Moverme hacia el centro de la calzada."],
+  "Quien es adelantado no debe aumentar su velocidad ni dificultar la maniobra. Conviene arrimarse a su derecha y, si hace falta, reducir ligeramente para que el adelantamiento sea más corto y seguro.",
+  ["Acelerar para impedir el adelantamiento es infracción y muy peligroso.", "Ir hacia el centro entorpece la maniobra y reduce el espacio disponible."],
+  "Me adelantan: me hago pequeño, no corro.");
+Q("maniobras", null, "¿En qué caso se permite adelantar por la derecha?",
+  ["Cuando el vehículo de delante ha indicado que va a girar a la izquierda y se ha situado para ello.", "Cuando voy con prisa.", "Nunca, bajo ninguna circunstancia."],
+  "Está permitido adelantar por la derecha cuando el vehículo de delante ha señalizado un giro a la izquierda y se ha colocado en posición de realizarlo. También en retenciones, cuando el carril izquierdo va más lento y se circula en filas paralelas.",
+  ["La prisa no es motivo para adelantar por la derecha.", "Sí existen supuestos en los que se puede adelantar por la derecha."],
+  "Derecha solo si el de delante se ha preparado para girar a la izquierda.");
+Q("maniobras", null, "¿Se puede cambiar de sentido en una autopista?",
+  ["No, está prohibido; debo salir por la siguiente salida.", "Sí, en cualquier punto si no hay tráfico.", "Sí, aprovechando un hueco de la mediana."],
+  "En autopistas y autovías está prohibido cambiar de sentido, circular marcha atrás y parar en la calzada. Si se pasa la salida, hay que continuar hasta la siguiente. No se cruza la mediana en ningún caso.",
+  ["Aunque no haya tráfico, el cambio de sentido en autopista está prohibido.", "Los pasos de mediana son exclusivos de servicios de emergencia o mantenimiento."],
+  "Me pasé la salida: sigo hasta la siguiente.");
+Q("maniobras", null, "Para estacionar, necesita retroceder. ¿Qué condiciones debe cumplir la marcha atrás?",
+  ["Es solo una maniobra complementaria: no puede superar 15 metros ni invadir un cruce de vías, y debo asegurarme de que no hay peligro.", "Puedo retroceder todo lo que haga falta si pongo los intermitentes.", "Puedo hacerla a la velocidad que quiera si la vía está despejada."],
+  "La marcha atrás solo se admite como maniobra complementaria de parar, estacionar o incorporarse a la circulación. El recorrido no puede superar 15 metros ni invadir un cruce de vías, se hace despacio y comprobando que no hay peatones ni vehículos. En autopistas y autovías está prohibida.",
+  ["Los intermitentes avisan, pero no amplían el límite: máximo 15 metros.", "Se hace despacio y con máxima precaución, aunque la vía parezca libre."],
+  "Marcha atrás: 15 m como máximo, despacio, mirando, y nunca en autopista.");
+Q("maniobras", null, "Se incorpora a una autopista desde un carril de aceleración. ¿Qué debe hacer?",
+  ["Usar el carril de aceleración para alcanzar la velocidad de la vía y ceder el paso a los vehículos que ya circulan por ella.", "Entrar de golpe, señalizando para que me cedan.", "Detenerme al final del carril de aceleración y esperar un hueco."],
+  "Se usa todo el carril de aceleración para igualar la velocidad del tráfico y se entra cuando hay hueco, cediendo el paso. Pararse al final del carril de aceleración es peligroso porque se entra a baja velocidad.",
+  ["Los que circulan por la autopista no tienen que ceder: quien se incorpora lo hace con seguridad y cediendo.", "No hay que detenerse en el carril: se acelera para entrar con la velocidad adecuada."],
+  "Carril de aceleración: acelero y entro cuando cabe.");
+Q("maniobras", null, "Circula por una carretera de dos carriles por sentido (autovía). ¿Por qué carril debe ir normalmente?",
+  ["Por el carril de la derecha, utilizando el de la izquierda solo para adelantar.", "Por el carril de la izquierda, porque es más rápido.", "Por el que prefiera, no hay norma."],
+  "Se circula por el carril más a la derecha que esté libre y se usa el de la izquierda para adelantar. Ir por el carril izquierdo sin necesidad entorpece a los vehículos más rápidos y es infracción.",
+  ["Circular por el izquierdo sin adelantar, estando libre el derecho, no está permitido.", "La norma es circular por la derecha, no por preferencia personal."],
+  "Derecha para circular, izquierda para adelantar.");
+
+/* ---- ALCOHOL, DROGAS Y FATIGA ---- */
+Q("alcohol", null, "¿Cuál es la tasa máxima de alcohol en aire espirado permitida para un conductor general (no novel ni profesional)?",
+  ["0,25 mg/l", "0,15 mg/l", "0,50 mg/l"],
+  "Para conductores generales la tasa máxima es 0,25 mg/l en aire espirado (0,5 g/l en sangre). Para noveles y profesionales baja a 0,15 mg/l en aire (0,3 g/l en sangre).",
+  ["0,15 mg/l es el límite de noveles y profesionales.", "0,50 mg/l es el umbral a partir del cual la infracción se agrava (multa mayor y más puntos)."],
+  "General 0,25. Novel y profesional 0,15.");
+Q("alcohol", null, "¿Durante cuánto tiempo se considera «novel» a un conductor a efectos de la tasa de alcohol reducida?",
+  ["Durante los dos primeros años desde la obtención del permiso.", "Durante el primer año.", "Durante cinco años."],
+  "Los conductores con menos de dos años de antigüedad del permiso tienen una tasa máxima de 0,15 mg/l en aire espirado (0,3 g/l en sangre). Superada esa antigüedad, aplica la tasa general.",
+  ["El periodo es de dos años, no solo uno.", "Cinco años es demasiado: la limitación para noveles es de dos años."],
+  "Novel = menos de 2 años con carnet.");
+Q("alcohol", null, "A partir de qué tasa de alcohol en aire espirado la conducta puede considerarse delito?",
+  ["Más de 0,60 mg/l.", "Más de 0,25 mg/l.", "Cualquier cantidad."],
+  "Conducir con una tasa superior a 0,60 mg/l en aire espirado (o 1,2 g/l en sangre) es un delito contra la seguridad vial. También lo es conducir bajo los efectos del alcohol aunque se supere o no la tasa si hay afectación demostrable.",
+  ["Entre 0,25 y 0,50 es infracción administrativa grave, no delito.", "Hay un umbral definido (0,60 mg/l) para el delito, aunque con menor tasa puede haber sanción administrativa."],
+  "Más de 0,60 en aire: delito.");
+Q("alcohol", null, "¿Qué sucede si da positivo en drogas (cannabis, cocaína…) en un control, aunque no note efectos?",
+  ["Es infracción muy grave: multa de 1.000 € y pérdida de 6 puntos.", "Solo si estoy conduciendo de forma peligrosa.", "Solo se sanciona si supera una cantidad concreta."],
+  "En drogas no hay tasa permitida. Basta la presencia de la sustancia en el organismo para ser sancionado: multa de 1.000 € y pérdida de 6 puntos. No importa que uno se sienta «bien».",
+  ["No hace falta una conducción peligrosa para ser sancionado: la presencia ya es infracción.", "No existe ninguna cantidad «tolerada» en drogas."],
+  "Alcohol: hay tasa. Drogas: tolerancia cero.");
+Q("alcohol", null, "¿Cuál de estas afirmaciones sobre el alcohol y la conducción es CORRECTA?",
+  ["El alcohol reduce el campo visual y aumenta el tiempo de reacción, aunque el conductor se sienta con más confianza.", "Un café o una ducha fría reducen la tasa de alcohol rápidamente.", "Comer mucho antes de beber elimina el efecto del alcohol."],
+  "El alcohol provoca visión «en túnel», peor percepción de distancias y velocidades, reacciones más lentas y exceso de confianza. Solo el tiempo elimina el alcohol del cuerpo (aproximadamente 0,10–0,15 g/l por hora).",
+  ["Café y ducha pueden despejar sensaciones, pero no bajan la tasa en sangre.", "Comer retrasa la absorción, pero no elimina el alcohol ni sus efectos."],
+  "Solo el tiempo baja el alcohol.");
+Q("alcohol", null, "Conduce desde hace mucho tiempo y siente cansancio y bostezos frecuentes. ¿Qué es lo más acertado?",
+  ["Parar en un lugar seguro y descansar; se recomienda parar cada 2 horas o 200 km.", "Abrir la ventanilla y poner música alta para seguir.", "Tomar café y continuar hasta llegar."],
+  "La fatiga y el sueño reducen la atención y aumentan el tiempo de reacción de forma comparable al alcohol. La única solución es parar y descansar (incluso una siesta corta). Se aconseja una parada cada dos horas o 200 km.",
+  ["Aire y música alivian unos minutos, pero no resuelven el cansancio.", "El café ayuda poco y puede dar falsa sensación de seguridad; el descanso es lo que funciona."],
+  "Cansado = paro. Cada 2 horas o 200 km.");
+Q("alcohol", null, "Si toma un medicamento que puede afectar a la conducción, ¿qué debe hacer?",
+  ["Leer el prospecto y consultar con el médico o farmacéutico; no conducir si advierte somnolencia.", "Conducir con normalidad, porque son legales.", "Tomar una dosis mayor para que el efecto pase antes."],
+  "Algunos medicamentos (ansiolíticos, antihistamínicos, opioides…) provocan somnolencia o reducen los reflejos. Los envases pueden llevar un pictograma de advertencia (triángulo con coche). Que sean legales no significa que sean compatibles con la conducción.",
+  ["Que un fármaco sea legal no lo hace seguro para conducir.", "Subir la dosis empeora los efectos secundarios y nunca debe hacerse por cuenta propia."],
+  "Medicina con triángulo: pregunto antes de conducir.");
+Q("alcohol", null, "¿Qué puntos pierde un conductor al que se le detecta una tasa superior a 0,50 mg/l en aire espirado (sin llegar a delito)?",
+  ["6 puntos y multa de 1.000 €.", "2 puntos.", "No pierde puntos, solo multa."],
+  "Con una tasa de entre 0,25 y 0,50 mg/l, la sanción es de 500 € y 4 puntos. Si supera 0,50 mg/l, 1.000 € de multa y 6 puntos.",
+  ["Dos puntos no se corresponde con ninguna de las sanciones por alcohol.", "Las infracciones por alcohol sí restan puntos."],
+  "0,25–0,50: 4 puntos. Más de 0,50: 6 puntos.");
+
+/* ---- DISTANCIAS Y FRENADO ---- */
+Q("distancias", null, "¿Cómo se calcula la distancia de detención de un vehículo?",
+  ["Distancia de reacción + distancia de frenado.", "Solo la distancia de frenado.", "Distancia de reacción × velocidad."],
+  "Para detenerse hacen falta dos fases: lo que se recorre mientras el conductor percibe el peligro y reacciona (reacción) y lo que se recorre desde que se pisa el freno hasta que el coche se detiene (frenado). La suma es la distancia de detención.",
+  ["Olvida el tiempo que pasa antes de pisar el freno, durante el cual el coche sigue avanzando.", "Esa fórmula no existe."],
+  "Detención = reacción + frenado.");
+Q("distancias", null, "Si duplica la velocidad, ¿qué ocurre aproximadamente con la distancia de frenado?",
+  ["Se multiplica por cuatro.", "Se duplica.", "Se mantiene igual."],
+  "La distancia de frenado crece con el cuadrado de la velocidad. Si pasa de 50 a 100 km/h, necesita unas cuatro veces más distancia para detenerse. La energía del choque también se multiplica por cuatro.",
+  ["Se duplicaría la distancia de reacción, pero la de frenado crece al cuadrado.", "La velocidad influye muchísimo en la distancia de frenado."],
+  "Velocidad ×2 = frenado ×4.");
+Q("distancias", null, "Circula a 90 km/h. Si tarda un segundo en reaccionar, ¿cuántos metros recorre aproximadamente antes de empezar a frenar?",
+  ["25 metros.", "9 metros.", "90 metros."],
+  "Se pasa de km/h a m/s dividiendo entre 3,6: 90 / 3,6 = 25 m/s. En un segundo de reacción el vehículo avanza 25 metros sin haber empezado a frenar.",
+  ["Dividir entre 10 no es la conversión correcta. Para pasar de km/h a m/s se divide entre 3,6.", "90 m serían 3,6 segundos de recorrido. En 1 segundo son 25 m."],
+  "km/h ÷ 3,6 = metros por segundo.");
+Q("distancias", null, "¿Qué distancia de seguridad se recomienda con el vehículo que precede, en condiciones normales?",
+  ["La que permita al menos dos segundos de separación.", "Un segundo, aunque llueva.", "La que quepa un coche en medio."],
+  "Una regla práctica es mantener 2 segundos de separación: se cuenta el tiempo desde que el coche de delante pasa por un punto fijo hasta que lo hace usted. Con lluvia o mala visibilidad hay que duplicarla.",
+  ["Un segundo es insuficiente, y menos con lluvia: se debe aumentar.", "No es un criterio fiable: la distancia depende de la velocidad."],
+  "Regla de los 2 segundos; con lluvia, 4.");
+Q("distancias", null, "¿Cuál de estas circunstancias AUMENTA la distancia de frenado?",
+  ["Neumáticos desgastados y asfalto mojado.", "Neumáticos nuevos y asfalto seco.", "Conducir con el depósito lleno de combustible a la mitad."],
+  "La distancia de frenado aumenta con la velocidad, el peso, el mal estado de los neumáticos, de los frenos o de los amortiguadores, la pendiente en bajada y un firme mojado, helado o con gravilla.",
+  ["Eso mejora el agarre y reduce la distancia de frenado.", "El nivel del depósito apenas influye en el frenado frente al resto de factores."],
+  "Mojado + gastado = frenada larga.");
+Q("distancias", null, "Entra en una curva más rápido de lo debido. ¿Qué tiende a ocurrir?",
+  ["El vehículo tiende a seguir recto, saliéndose hacia el exterior de la curva.", "El vehículo se pega a la parte interior de la curva.", "No ocurre nada si las ruedas están bien."],
+  "En la curva, la inercia empuja el vehículo hacia el exterior (fuerza centrífuga). A mayor velocidad, mayor es ese efecto, y si supera el agarre de los neumáticos el coche se sale. Hay que reducir antes de entrar en la curva, no dentro.",
+  ["Ocurre al revés: la inercia empuja hacia fuera.", "Aunque las ruedas estén bien, la velocidad excesiva supera el agarre."],
+  "Freno antes de la curva, no en ella.");
+Q("distancias", null, "En una bajada larga y pronunciada, ¿cómo conviene frenar?",
+  ["Utilizar el freno motor con una marcha corta y frenar de forma intermitente si hace falta.", "Pisar el freno de forma continua.", "Bajar en punto muerto para gastar menos."],
+  "Frenar continuamente recalienta los frenos y pierden eficacia («fading»). Es mejor engranar una marcha corta antes de la bajada para que el motor retenga el vehículo y reservar el freno para ajustes puntuales.",
+  ["El frenado continuo calienta los frenos y puede dejarlos sin eficacia.", "Ir en punto muerto elimina el freno motor y es peligroso."],
+  "Bajada larga: marcha corta antes de empezar.");
+Q("distancias", null, "El alcohol y la fatiga influyen en la conducción principalmente porque:",
+  ["Aumentan el tiempo de reacción y, con él, la distancia recorrida antes de empezar a frenar.", "Reducen la distancia de frenado.", "Mejoran la percepción de la velocidad."],
+  "Un conductor cansado o con alcohol tarda más en percibir el peligro y en actuar. Con el coche en movimiento, ese retraso se traduce en metros de más sin frenar.",
+  ["No afectan a la mecánica del freno; empeoran el tiempo de reacción del conductor.", "Es todo lo contrario: distorsionan la percepción."],
+  "Más tiempo de reacción = más metros a ciegas.");
+
+/* ---- DOCUMENTACIÓN Y PERMISO POR PUNTOS ---- */
+Q("docs", null, "¿Con cuántos puntos se inicia el permiso de conducir clase B?",
+  ["8 puntos.", "12 puntos.", "15 puntos."],
+  "Un conductor inicia con 8 puntos. Si pasa 3 años sin perder ningún punto y sin ser sancionado, pasa a tener 12, que es el máximo.",
+  ["12 es el máximo al que se llega con el buen comportamiento mantenido durante tres años.", "15 puntos no se alcanza en la normativa."],
+  "Empiezo con 8, el tope es 12.");
+Q("docs", null, "¿Qué ocurre cuando un conductor pierde todos sus puntos?",
+  ["Pierde la vigencia del permiso y para recuperarlo debe hacer un curso y superar un examen.", "Solo recibe un aviso.", "Puede seguir conduciendo hasta pagar la multa."],
+  "Con saldo cero, el permiso pierde su vigencia: hay que esperar el plazo establecido, superar un curso de sensibilización y reeducación y aprobar el examen teórico para recuperarlo.",
+  ["La pérdida de todos los puntos implica la pérdida de vigencia, no un aviso.", "No se puede seguir conduciendo: conducir sin vigencia es delito en determinados supuestos."],
+  "Saldo cero: curso + examen para volver.");
+Q("docs", null, "Tiene un permiso B. ¿Cuántos años de vigencia tiene normalmente?",
+  ["10 años, y 5 años si el titular tiene 65 años o más.", "5 años para todos.", "Toda la vida."],
+  "El permiso de clase B tiene una vigencia de 10 años, que se reduce a 5 años a partir de los 65 años del titular. Para renovarlo hay que superar el reconocimiento médico.",
+  ["5 años solo para titulares con 65 años o más.", "Los permisos caducan y deben renovarse."],
+  "B: 10 años. Desde los 65: 5 años.");
+Q("docs", null, "¿Qué vehículos permite conducir el permiso de clase B?",
+  ["Turismos y furgonetas con masa máxima autorizada hasta 3.500 kg y hasta 8 plazas más el conductor.", "Cualquier vehículo de hasta 7.500 kg.", "Motocicletas de más de 125 cc."],
+  "El permiso B autoriza vehículos de hasta 3.500 kg de MMA y hasta 8 plazas además del conductor, con remolque de hasta 750 kg (o mayor si el conjunto no supera 4.250 kg).",
+  ["Hasta 7.500 kg se requiere otro permiso (C1).", "Las motos tienen permisos distintos (A1, A2 o A)."],
+  "B: 3.500 kg y 8 plazas + conductor.");
+Q("docs", null, "¿A qué edad puede obtener el permiso de conducir clase B?",
+  ["A los 18 años.", "A los 16 años.", "A los 21 años."],
+  "La edad mínima para obtener el permiso B es 18 años cumplidos. Con 16 se puede conducir ciclomotores (AM) y con 21 se accede a determinados permisos profesionales.",
+  ["16 años da acceso a ciclomotores, no a turismos.", "21 años es un requisito de otros permisos, no del B."],
+  "Turismo: 18 años.");
+Q("docs", null, "Un turismo nuevo, ¿cuándo debe pasar la primera ITV?",
+  ["A los 4 años de la matriculación.", "Al año.", "A los 10 años."],
+  "La primera inspección técnica de un turismo nuevo se pasa a los 4 años. Luego cada 2 años hasta los 10 y anualmente a partir de entonces.",
+  ["Al año no corresponde para turismos.", "A los 10 años pasaría a ser anual."],
+  "ITV: 4 años, luego cada 2, desde los 10 cada año.");
+Q("docs", null, "¿Cuántos puntos pierde por conducir sujetando el móvil con la mano?",
+  ["6 puntos.", "3 puntos.", "No pierde puntos."],
+  "Usar el teléfono móvil mientras se conduce con la mano es una distracción muy grave: multa de 200 € y pérdida de 6 puntos.",
+  ["3 puntos es la sanción por manejar auriculares o cascos conectados, no el teléfono con la mano.", "Sí hay detracción de puntos."],
+  "Móvil en mano: 6 puntos.");
+Q("docs", null, "¿Cuántos puntos pierde por no usar el cinturón de seguridad?",
+  ["4 puntos.", "2 puntos.", "6 puntos."],
+  "No usar el cinturón (o el casco, o el sistema de retención infantil) supone multa de 200 € y pérdida de 4 puntos.",
+  ["Dos puntos es menos de lo que corresponde.", "Seis puntos se pierden, por ejemplo, por el móvil en mano."],
+  "Sin cinturón: 4 puntos.");
+
+/* ---- LUCES Y AVISOS ---- */
+Q("luces", null, "En un túnel, ¿qué luces debe llevar encendidas?",
+  ["Las luces de cruce (y de posición).", "Las luces largas.", "Solo las de posición."],
+  "En un túnel hay que llevar encendidas las luces de cruce, incluso de día. Las largas deslumbran y las de posición no ofrecen visibilidad suficiente.",
+  ["Las largas deslumbrarían a otros conductores.", "No son suficientes: se necesita cruce."],
+  "Túnel: luces de cruce.");
+Q("luces", null, "Circula con luz larga y se aproxima otro vehículo en sentido contrario. ¿Qué debe hacer?",
+  ["Cambiar a luz de cruce con antelación suficiente para no deslumbrarle.", "Mantener las largas, porque es su obligación avisar.", "Apagar todas las luces."],
+  "La luz larga se cambia por luz de cruce al cruzarse con otro vehículo, y también al seguir de cerca a otro vehículo por detrás, para evitar deslumbrar.",
+  ["Mantener largas deslumbra y puede provocar un accidente.", "Apagar todas las luces es peligroso."],
+  "Me cruzo o sigo a alguien: cruce.");
+Q("luces", null, "¿Cuándo debe usar la luz antiniebla trasera?",
+  ["Cuando haya niebla densa, lluvia o nieve intensas o nubes de humo o polvo que reduzcan la visibilidad.", "Siempre que anochezca.", "Cuando quiera que me vean más en la ciudad."],
+  "La luz antiniebla trasera solo se usa con visibilidad muy reducida (niebla, lluvia o nieve intensas...). Si se usa sin necesidad deslumbra a quien va detrás y puede confundirse con las luces de freno.",
+  ["Sin condiciones de visibilidad reducida, deslumbra a los de atrás.", "Es una luz de uso restringido, no de decoración."],
+  "Antiniebla trasera: solo con visibilidad muy mala.");
+Q("luces", null, "Se acerca a una retención de tráfico en carretera. ¿Qué debe hacer?",
+  ["Reducir la velocidad y activar los cuatro intermitentes para avisar a los de atrás.", "Frenar bruscamente.", "Adelantar por el arcén."],
+  "Al aproximarse a una cola, se reduce con antelación y se encienden los intermitentes de emergencia (warning) para avisar a quienes vienen detrás. Frenar bruscamente o usar el arcén es peligroso e infracción.",
+  ["Una frenada brusca puede provocar una colisión por alcance.", "El arcén no se puede usar para adelantar."],
+  "Cola delante: warning y freno suave.");
+Q("luces", null, "¿Cuándo se puede usar el claxon (señal acústica) dentro de poblado?",
+  ["Solo para evitar un accidente inminente.", "Para avisar a un conocido.", "Para pedir paso."],
+  "En poblado solo se puede usar la señal acústica para evitar un accidente. Fuera de poblado también para advertir en adelantamientos. Usarla sin motivo es infracción y molesta.",
+  ["No es un uso permitido del claxon.", "El claxon no es un instrumento para exigir el paso."],
+  "En ciudad, claxon solo si evita un accidente.");
+Q("luces", null, "¿Cuándo debe señalizar con el intermitente un cambio de dirección?",
+  ["Con antelación suficiente, antes de iniciar la maniobra, y mantenerlo mientras dure.", "Justo al iniciar el giro.", "Solo si hay otros vehículos cerca."],
+  "Hay que avisar con tiempo suficiente para que los demás reaccionen. Se mantiene activo durante la maniobra y se apaga al finalizar. Señalizar siempre, aunque parezca que no hay nadie.",
+  ["Si se indica justo al mover el volante, no da tiempo a reaccionar.", "Hay que señalizar siempre, incluso sin tráfico aparente."],
+  "Aviso antes de moverme.");
+
+/* ---- SEGURIDAD ---- */
+Q("seguridad", null, "¿Quiénes deben usar el cinturón de seguridad en un turismo?",
+  ["Todos los ocupantes, en cualquier plaza, tanto en vías urbanas como interurbanas.", "Solo el conductor.", "Solo los ocupantes de las plazas delanteras fuera de poblado."],
+  "El cinturón es obligatorio en todas las plazas, en ciudad y fuera de ella. Es el elemento de seguridad pasiva más eficaz y también debe usarse por embarazadas.",
+  ["Es obligatorio para todos los ocupantes.", "Las plazas traseras también están obligadas, y en vías urbanas también."],
+  "Todos, siempre, en todas las plazas.");
+Q("seguridad", null, "Un niño mide 120 cm. ¿Cómo debe viajar en un turismo?",
+  ["En un sistema de retención infantil homologado adecuado a su talla y peso.", "Con el cinturón de adulto, porque ya es mayor.", "En brazos de un adulto."],
+  "Los menores de hasta 135 cm de estatura deben viajar con un SRI homologado adecuado a su talla y peso. Un cinturón de adulto sin SRI no le sujeta bien y puede dañarle.",
+  ["El cinturón de adulto no protege bien a quien mide menos de 135 cm.", "Ir en brazos es muy peligroso: en un choque el niño sale despedido."],
+  "Hasta 135 cm: SRI homologado.");
+Q("seguridad", null, "¿Cuál es la profundidad mínima legal del dibujo de los neumáticos?",
+  ["1,6 mm.", "3 mm.", "0,5 mm."],
+  "El dibujo debe tener una profundidad mínima de 1,6 mm. Por debajo, el neumático evacúa mal el agua y aumenta el riesgo de aquaplaning. Se recomienda cambiarlo antes de ese límite.",
+  ["3 mm es una cifra recomendable de seguridad, pero no es el mínimo legal.", "0,5 mm es insuficiente: es muy peligroso."],
+  "Mínimo legal: 1,6 mm.");
+Q("seguridad", null, "¿Cuándo debe comprobarse la presión de los neumáticos?",
+  ["En frío, con regularidad, siguiendo los valores del fabricante.", "Con los neumáticos calientes después de un viaje largo.", "Solo cuando se pinchan."],
+  "La presión se revisa en frío, porque al rodar el aire se calienta y la lectura sube. Una presión inadecuada aumenta el consumo, el desgaste y la distancia de frenado.",
+  ["Con neumáticos calientes la medición sale más alta y no es fiable.", "No hay que esperar a un pinchazo: se revisa cada cierto tiempo."],
+  "Presión: en frío y a menudo.");
+Q("seguridad", null, "¿Cómo debe ajustarse el reposacabezas?",
+  ["Con su parte superior a la altura de la parte superior de la cabeza y lo más cerca posible de la nuca.", "Lo más bajo posible.", "Debe quitarse para ver mejor."],
+  "El reposacabezas evita el latigazo cervical en choques por alcance. Debe quedar alto, a la altura de la parte superior de la cabeza, y cerca de la nuca.",
+  ["Bajo no protege la cabeza, solo el cuello.", "Quitarlo elimina la protección frente al latigazo cervical."],
+  "Reposacabezas alto y cerca de la nuca.");
+Q("seguridad", null, "En una frenada de emergencia con ABS, ¿qué debe hacer?",
+  ["Pisar el pedal a fondo y mantenerlo pisado, sin bombear, y orientar el volante.", "Bombear el pedal rápidamente.", "Soltar el freno al notar vibración."],
+  "El ABS evita el bloqueo de las ruedas y permite seguir dirigiendo el vehículo mientras se frena. La vibración y el ruido en el pedal son normales. Hay que mantener el pedal pisado a fondo.",
+  ["Bombear el pedal con ABS anula su funcionamiento.", "Las vibraciones indican que el ABS funciona; soltar el pedal alarga la frenada."],
+  "ABS: piso a fondo, mantengo y esquivo.");
+Q("seguridad", null, "¿Cuál es la función del airbag?",
+  ["Complementar al cinturón de seguridad; no lo sustituye.", "Sustituir al cinturón de seguridad.", "Evitar accidentes."],
+  "El airbag es un sistema de seguridad pasiva que funciona junto al cinturón. Sin cinturón, el airbag no retiene bien al ocupante y puede provocar lesiones. Reduce las consecuencias, no previene el accidente.",
+  ["Sin cinturón, el airbag no protege correctamente.", "Es seguridad pasiva: actúa durante el choque, no antes."],
+  "Airbag + cinturón, nunca airbag solo.");
+Q("seguridad", null, "¿Qué es el ESP (control de estabilidad)?",
+  ["Un sistema de seguridad activa que ayuda a mantener la trayectoria frenando ruedas de forma individual.", "Un sistema que sustituye al conductor.", "Un sistema que solo mejora el consumo."],
+  "El ESP detecta pérdidas de adherencia o derrapes y actúa sobre los frenos de cada rueda y el motor para recuperar la trayectoria. Ayuda, pero no elimina las leyes de la física.",
+  ["Es una ayuda, el conductor sigue siendo el responsable.", "El ESP es un sistema de seguridad, no de ahorro de combustible."],
+  "ESP = ayuda para no perder la trayectoria.");
+Q("seguridad", null, "¿Cómo debe colocarse el equipaje y los objetos sueltos en el interior de un turismo?",
+  ["Bien sujetos y en el maletero, ya que en una frenada pueden convertirse en proyectiles.", "En la bandeja trasera, para tenerlo a mano.", "En el asiento delantero libre."],
+  "En un choque o frenazo, un objeto sin sujetar adquiere la inercia del coche y puede golpear a los ocupantes. Hay que dejar la carga en el maletero, repartida y sujeta.",
+  ["Los objetos en la bandeja pueden salir disparados hacia delante en una frenada.", "Dejar objetos en el asiento los hace salir proyectados."],
+  "Lo que no está sujeto vuela.");
+
+/* ---- ACCIDENTES Y PRIMEROS AUXILIOS ---- */
+Q("auxilio", null, "Al presenciar un accidente, ¿qué significa la conducta PAS?",
+  ["Proteger, Avisar, Socorrer.", "Parar, Atender, Salir.", "Prevenir, Alertar, Señalizar."],
+  "PAS es el protocolo básico: Proteger (señalizar y evitar nuevos accidentes), Avisar (llamar al 112) y Socorrer (atender a las víctimas sin ponerse en peligro).",
+  ["No se corresponde con las siglas PAS.", "Se parece, pero no son los tres pasos establecidos."],
+  "Primero protejo, luego aviso, luego socorro.");
+Q("auxilio", null, "¿A qué número se debe llamar para pedir ayuda urgente tras un accidente?",
+  ["112", "091", "062"],
+  "El 112 es el número único de emergencias en la Unión Europea. Atiende y coordina a bomberos, sanitarios y policía. Hay que indicar el lugar exacto, el número de heridos y las circunstancias.",
+  ["El 091 es el de la Policía Nacional, que no coordina emergencias sanitarias.", "El 062 es el de la Guardia Civil, y no es la vía principal de emergencias."],
+  "Emergencias: 112.");
+Q("auxilio", null, "Su vehículo se ha averiado en una carretera. ¿Qué dispositivo debe usar para señalizar el peligro?",
+  ["La baliza V16 conectada, colocada en un punto elevado del vehículo.", "El triángulo de preseñalización.", "Los cuatro intermitentes únicamente."],
+  "Desde el 1 de enero de 2026, la baliza V16 conectada es el dispositivo válido para señalizar un vehículo inmovilizado. Se coloca en el techo y envía la ubicación a la DGT 3.0. Mejora la seguridad porque no obliga a salir a la calzada a colocar triángulos.",
+  ["Desde el 1 de enero de 2026 los triángulos ya no cumplen la obligación de señalizar un vehículo inmovilizado.", "Los intermitentes ayudan, pero no sustituyen a la baliza V16."],
+  "Avería: baliza V16 conectada en el techo.");
+Q("auxilio", null, "Un motorista accidentado está consciente. ¿Qué debe hacer con su casco?",
+  ["No quitárselo, salvo que sea imprescindible para que pueda respirar.", "Quitárselo inmediatamente.", "Quitárselo y moverlo para que descanse."],
+  "Retirar el casco sin formación puede agravar lesiones en la columna cervical. Solo se retira si es imprescindible para mantener la respiración, y con la máxima precaución, mejor entre dos personas.",
+  ["Esa maniobra puede dañar el cuello y la médula si hay lesiones.", "Mover al herido puede agravar sus lesiones."],
+  "Casco puesto, salvo que no respire.");
+Q("auxilio", null, "Un herido está inconsciente pero respira. Antes de que llegue la ayuda, ¿qué debe hacer?",
+  ["Colocarlo en posición lateral de seguridad y vigilar su respiración.", "Dejarlo boca arriba y darle agua.", "Sentarlo con la cabeza hacia atrás."],
+  "En la posición lateral de seguridad (PLS) la lengua no obstruye la vía aérea y, si vomita, no se atraganta. Se coloca solo si no hay sospecha grave de lesión de columna que haga más peligroso moverlo, o si es necesario para mantener la respiración.",
+  ["Nunca hay que dar de beber a un herido, y boca arriba la lengua puede bloquear la respiración.", "Esa postura puede obstruir la vía aérea y dañar el cuello."],
+  "Inconsciente que respira: de lado.");
+Q("auxilio", null, "Una persona está sangrando mucho por una herida en el brazo. ¿Qué es lo primero que debe hacer?",
+  ["Presionar directamente sobre la herida con un apósito o tela limpia.", "Aplicar agua oxigenada sin presión.", "Aplicar un torniquete siempre."],
+  "La presión directa sobre la herida frena la mayor parte de las hemorragias. Si hay objetos clavados no se retiran. El torniquete queda como último recurso.",
+  ["Sin presión no se detiene la hemorragia.", "El torniquete es el último recurso, no la primera medida."],
+  "Sangra: presiono fuerte y sin soltar.");
+Q("auxilio", null, "Ante un herido en parada cardiorrespiratoria, ¿cuál es la secuencia de reanimación básica del adulto?",
+  ["30 compresiones torácicas seguidas de 2 insuflaciones.", "15 compresiones y 1 insuflación.", "Solo insuflaciones."],
+  "La RCP en adultos alterna 30 compresiones torácicas (a un ritmo de 100–120 por minuto, con el talón de la mano en el centro del pecho) con 2 insuflaciones. Se llama antes al 112.",
+  ["No es la relación recomendada para adultos.", "Las compresiones son lo fundamental: sin ellas no circula la sangre."],
+  "30 compresiones, 2 soplos.");
+Q("auxilio", null, "Una persona tiene una quemadura leve. ¿Qué se debe hacer?",
+  ["Enfriarla con agua fría abundante durante varios minutos.", "Aplicar pasta de dientes o aceite.", "Reventar las ampollas."],
+  "Se enfría la zona con agua corriente templada o fría durante 10–20 minutos. No se aplican cremas caseras, no se revientan ampollas y no se retira la ropa adherida a la piel.",
+  ["Estos remedios pueden infectar la herida y retener el calor.", "Reventar las ampollas facilita la infección."],
+  "Quemadura: agua, no remedios caseros.");
+Q("auxilio", null, "Está implicado en un accidente leve con otro vehículo y no hay heridos. ¿Qué debe hacer?",
+  ["Señalizar, retirar los vehículos si es posible y cumplimentar el parte amistoso o el de la aseguradora.", "Marcharse para no bloquear la circulación.", "Discutir quién tiene la culpa antes de hacer nada."],
+  "Se señaliza, se mueve el vehículo si no hay riesgo, se intercambian datos y se rellena el parte. Marcharse del lugar puede considerarse omisión del deber de socorro o abandono del lugar del siniestro.",
+  ["Abandonar el lugar es una infracción.", "Primero se asegura la zona, luego se intercambian los datos."],
+  "Accidente leve: asegurar, datos, parte.");
+
+/* ---- SITUACIONES ESPECIALES ---- */
+Q("especial", null, "Sobre una carretera encharcada nota que el volante se queda ligero y el coche no responde (aquaplaning). ¿Qué debe hacer?",
+  ["Soltar el acelerador sin frenar, sujetar el volante con firmeza y esperar a que las ruedas recuperen adherencia.", "Frenar a fondo.", "Girar el volante bruscamente."],
+  "En el aquaplaning, las ruedas flotan sobre una lámina de agua. Frenar o girar bruscamente es lo peor. Hay que soltar el acelerador, sostener el volante recto y esperar a recuperar el agarre.",
+  ["Frenar bloquea las ruedas y pierde aún más el control.", "Maniobras bruscas hacen que el coche derrape cuando recupere agarre."],
+  "Aquaplaning: ni freno ni giro, suelto gas.");
+Q("especial", null, "Circula con niebla densa. ¿Qué luces debe utilizar?",
+  ["Luz de cruce y, si es necesario, antinieblas; nunca las largas.", "Solo las de posición.", "Las largas para ver más."],
+  "Con niebla las luces largas reflejan en las gotas y reducen la visibilidad. Se usa el cruce (y antinieblas), se reduce la velocidad y se aumenta la distancia de seguridad.",
+  ["Las de posición no bastan.", "Las largas producen un efecto pantalla y ven menos."],
+  "Niebla: cruce y antinieblas, nunca largas.");
+Q("especial", null, "De noche, un vehículo que viene de frente le deslumbra con las luces largas. ¿Qué debe hacer?",
+  ["Reducir la velocidad y desviar la mirada hacia el borde derecho de la calzada.", "Mirar fijamente a sus faros.", "Acelerar para cruzarse antes."],
+  "Al desviar la vista al borde derecho se mantiene la referencia de la trayectoria sin recibir de frente la luz del otro vehículo. Reduzca la velocidad hasta que se normalice la visión.",
+  ["Mirar los faros provoca deslumbramiento prolongado.", "Acelerar con visibilidad nula es muy peligroso."],
+  "Deslumbramiento: frenar suave y mirar a la derecha.");
+Q("especial", null, "En conducción nocturna, ¿cómo debe ser su velocidad?",
+  ["La suficiente para poder detenerme dentro de la zona iluminada por mis luces.", "La misma que de día.", "Mayor que de día, porque hay menos tráfico."],
+  "De noche se ve a menor distancia. La velocidad ha de permitir detenerse dentro del campo que alumbran las luces. Si no, se podría atropellar un obstáculo que se ve demasiado tarde.",
+  ["De noche la visibilidad es menor, hay que ir más despacio.", "Menos tráfico no implica mejor visibilidad."],
+  "Voy lo bastante lento para frenar donde llega mi luz.");
+Q("especial", null, "Sufre un reventón de un neumático delantero en marcha. ¿Qué debe hacer?",
+  ["Sujetar firmemente el volante, soltar el acelerador y frenar de forma suave y progresiva.", "Frenar bruscamente.", "Soltar el volante para que el coche se estabilice solo."],
+  "Con un reventón el coche tiende a irse hacia el lado del neumático dañado. Hay que mantener firme el volante, levantar el pie del acelerador y frenar con suavidad hasta detenerse en lugar seguro.",
+  ["Un frenazo brusco puede provocar un trompo.", "Soltar el volante supone perder el control."],
+  "Reventón: volante firme, freno suave.");
+Q("especial", null, "Tiene que circular sobre una calzada con hielo o nieve. ¿Cómo se debe conducir?",
+  ["Con suavidad: marchas largas, maniobras progresivas, velocidad baja y mucha distancia.", "Con acelerones para no atascarse.", "Frenando fuerte para comprobar el agarre."],
+  "Con poca adherencia, cualquier movimiento brusco (freno, acelerador o volante) puede provocar un patinazo. Se usan marchas largas, mayor distancia y, si es obligatorio, cadenas.",
+  ["Los acelerones hacen que patinen las ruedas motrices.", "Frenar fuerte bloquea las ruedas y provoca un derrape."],
+  "Hielo: todo suave y con tiempo.");
+Q("especial", null, "En un tramo con fuerte viento lateral, ¿qué debe hacer?",
+  ["Reducir la velocidad, sujetar bien el volante y tener cuidado al cruzarse o adelantar a vehículos grandes.", "Aumentar la velocidad para estabilizar el coche.", "Soltar el volante."],
+  "El viento lateral puede desplazar el vehículo, sobre todo al salir de un túnel, al cruzar un puente o al pasar junto a vehículos altos. Hay que reducir la velocidad y tener el volante firme.",
+  ["A mayor velocidad el efecto del viento se nota más.", "Soltar el volante provoca pérdida de control."],
+  "Viento lateral: despacio y manos firmes.");
+Q("especial", null, "Lleva un coche con los frenos recalentados tras una bajada larga y notan que frenan menos. ¿Qué ha ocurrido y qué debe hacer?",
+  ["Es el «fading»: debo parar en un lugar seguro y dejar enfriar los frenos; usar el freno motor.", "Pisar más fuerte el pedal para que frene.", "Seguir con normalidad, porque se recuperan solos al instante."],
+  "Con el uso continuo, los frenos se calientan y pierden eficacia. Si es posible, hay que detenerse para enfriar, y cuando se baja, utilizar una marcha corta.",
+  ["Pisar más fuerte no recupera la eficacia y calienta aún más.", "No se recuperan al instante: requieren enfriarse."],
+  "Frenos que no frenan: pararse y enfriar.");
+Q("especial", null, "Entra en un túnel de carretera. ¿Qué normas debe respetar?",
+  ["Encender las luces de cruce, no cambiar de sentido ni parar, y mantener la distancia de seguridad.", "Mantener la velocidad y las luces apagadas.", "Parar si hay retención, apagando todas las luces."],
+  "En túneles se enciende el cruce, se mantiene la distancia, no se adelanta si está prohibido y no se detiene el vehículo salvo causa de fuerza mayor. Hay que seguir las indicaciones de la señalización.",
+  ["En túnel la visibilidad es menor y es obligatorio llevar luces.", "Se deben mantener las luces para ser visto, también en caso de retención."],
+  "Túnel: luces de cruce y no parar.");
+
+/* ---- PARADA Y ESTACIONAMIENTO ---- */
+Q("parada", null, "¿Qué diferencia hay entre parada y estacionamiento?",
+  ["Parada: inmovilización de menos de 2 minutos con el conductor presente. Estacionamiento: más de 2 minutos.", "La parada es más de 5 minutos.", "No hay diferencia."],
+  "Se considera parada la inmovilización de un vehículo por tiempo inferior a 2 minutos sin que el conductor abandone el vehículo. Si dura más o si el conductor se aleja, es estacionamiento.",
+  ["La frontera son 2 minutos, no 5.", "Sí hay diferencia, y las prohibiciones pueden ser distintas."],
+  "Menos de 2 minutos: parada. Más: estacionamiento.");
+Q("parada", null, "¿En cuál de estos lugares está prohibido parar y estacionar?",
+  ["En un paso para peatones.", "En una calle sin salida con espacio libre.", "En un aparcamiento regulado con plaza libre."],
+  "Está prohibido parar y estacionar en pasos para peatones, intersecciones, curvas y cambios de rasante con poca visibilidad, túneles, pasos a nivel y carriles reservados. Hacerlo impide la visibilidad y el paso.",
+  ["Una calle sin salida no tiene esa prohibición, si no hay señal.", "Una plaza libre en un aparcamiento permite aparcar."],
+  "Paso de peatones, curva, cruce, túnel: ni parar ni aparcar.");
+Q("parada", null, "¿Está permitido estacionar en doble fila?",
+  ["No, está prohibido porque entorpece la circulación.", "Sí, durante un momento corto.", "Sí, si pongo los intermitentes."],
+  "Estacionar en doble fila está prohibido porque obstaculiza la circulación y reduce la visibilidad. Poner los intermitentes no lo legaliza.",
+  ["La duración corta no hace permitida la doble fila si hay obstrucción.", "Los intermitentes no sustituyen la prohibición."],
+  "Doble fila: nunca, ni con warning.");
+Q("parada", null, "¿Qué indica una línea amarilla continua junto al bordillo?",
+  ["Prohibición de parada y estacionamiento.", "Prohibición de estacionar solamente.", "Permiso de estacionar."],
+  "La línea amarilla continua en el borde de la calzada prohíbe parar. La amarilla discontinua prohíbe estacionar (se puede parar para dejar o recoger personas).",
+  ["La prohibición de estacionar sola corresponde a la línea amarilla discontinua.", "Es una prohibición, no un permiso."],
+  "Amarilla continua: no paro. Discontinua: no aparco.");
+Q("parada", null, "¿Qué debe hacer antes de abandonar el vehículo estacionado?",
+  ["Parar el motor, accionar el freno de mano, dejar una marcha engranada y retirar la llave.", "Dejar el motor en marcha por si hay que irse.", "Dejarlo en punto muerto."],
+  "Hay que asegurarse de que el coche no se mueva (freno de mano y marcha), parar el motor, retirar la llave y cerrar. Al abrir la puerta, comprobar que no viene nadie.",
+  ["Dejar el motor en marcha es infracción y facilita robos.", "En punto muerto puede rodar, sobre todo en pendiente."],
+  "Freno de mano, marcha, motor parado, llave fuera.");
+Q("parada", null, "Va a abrir la puerta del coche para salir en una calle con tráfico. ¿Qué debe hacer primero?",
+  ["Mirar por el espejo y por encima del hombro para comprobar que no viene ningún vehículo, moto o ciclista.", "Abrir con rapidez para no entorpecer.", "Abrir la puerta del todo y salir."],
+  "Muchos accidentes ocurren por abrir la puerta sin mirar. Se comprueba el retrovisor y se mira hacia atrás antes de abrir; es recomendable abrir primero una rendija.",
+  ["Abrir con prisa sin mirar es peligroso para ciclistas y motoristas.", "Hay que asegurar que no viene nadie antes de abrir."],
+  "Miro antes de abrir.");
+Q("parada", null, "¿Se puede estacionar delante de un vado de entrada de vehículos?",
+  ["No, está prohibido estacionar delante de un vado señalizado.", "Sí, si dejo a alguien en el coche.", "Sí, si es por poco tiempo."],
+  "No se puede estacionar frente a una salida o entrada de vehículos señalizada como vado. Impediría el paso del propietario. Si hay alguien en el coche, sigue siendo infracción.",
+  ["La presencia de otro ocupante no lo legitima.", "La brevedad no cambia la prohibición."],
+  "Vado: aparcar, nunca.");
+
+/* ---- CONDUCCIÓN EFICIENTE Y ENTORNO ---- */
+Q("eco", null, "¿Qué hábito reduce el consumo de combustible?",
+  ["Circular con marchas largas y bajas revoluciones, anticipándose al tráfico.", "Acelerar a fondo y frenar bruscamente.", "Circular siempre en marchas cortas."],
+  "La conducción eficiente se basa en suavidad y anticipación: cambiar pronto de marcha, mantener velocidades constantes y evitar acelerones y frenazos. Reduce consumo, emisiones y desgaste.",
+  ["Los acelerones y frenazos aumentan el consumo.", "Marchas cortas elevan las revoluciones y el consumo."],
+  "Suave, anticipado y marchas largas.");
+Q("eco", null, "¿Cómo afecta la presión baja de los neumáticos?",
+  ["Aumenta el consumo, el desgaste y la distancia de frenado.", "Reduce el consumo.", "No tiene efecto."],
+  "Con presión insuficiente, la rueda se deforma más, aumenta la resistencia a rodar, se gasta más combustible y se desgasta antes. Además, el comportamiento en curva y el frenado empeoran.",
+  ["Aumenta, no reduce, el consumo.", "Tiene efectos claros sobre seguridad y economía."],
+  "Menos presión, más gasto y menos seguridad.");
+Q("eco", null, "¿Qué vehículos pueden llevar la etiqueta ambiental «0 emisiones»?",
+  ["Eléctricos de batería y algunos híbridos enchufables con suficiente autonomía eléctrica.", "Cualquier coche de gasolina.", "Cualquier vehículo diésel nuevo."],
+  "La etiqueta 0 emisiones (azul) es para eléctricos de batería, de pila de combustible y enchufables con autonomía eléctrica superior a 40 km. Es la categoría más favorecida en las zonas de bajas emisiones.",
+  ["Los de gasolina reciben etiquetas B, C o ECO según su tecnología, no la 0.", "Los diésel nuevos, como mucho, C, no 0 emisiones."],
+  "Etiqueta 0: eléctricos puros y enchufables con 40 km o más.");
+Q("eco", null, "¿Qué es una zona de bajas emisiones (ZBE)?",
+  ["Un área urbana donde se restringe el acceso a vehículos más contaminantes según su etiqueta ambiental.", "Una zona donde se puede ir más rápido.", "Una zona exclusiva para aparcar."],
+  "Las ZBE limitan el acceso o la circulación de los vehículos más contaminantes para mejorar la calidad del aire. Las restricciones dependen de cada municipio y de la etiqueta del coche.",
+  ["No tiene que ver con la velocidad.", "No es una zona de aparcamiento."],
+  "ZBE: acceso según etiqueta ambiental.");
+Q("eco", null, "¿Qué ocurre si deja una baca con carga o objetos innecesarios en el coche?",
+  ["Aumentan el consumo y las emisiones por la mayor resistencia al aire y el peso.", "Disminuye el consumo.", "No influye en nada."],
+  "Un peso extra y una baca aumentan la resistencia aerodinámica y el esfuerzo del motor. Conviene retirar lo que no se necesite.",
+  ["Más peso y más resistencia solo pueden aumentar el consumo.", "Sí influye, y de forma notable en autopista."],
+  "Más peso y más aire = más consumo.");
+
+/* ================= FIGURAS (SVG) ================= */
+const SIGN = {
+  stop: () => '<polygon points="31,4 69,4 96,31 96,69 69,96 31,96 4,69 4,31" fill="#c1121f" stroke="#fff" stroke-width="4"/><text x="50" y="60" text-anchor="middle" font-family="Overpass,Arial,sans-serif" font-weight="800" font-size="25" fill="#fff">STOP</text>',
+  ceda: () => '<polygon points="50,94 6,14 94,14" fill="#fff" stroke="#c1121f" stroke-width="10" stroke-linejoin="round"/>',
+  senprohi: () => '<circle cx="50" cy="50" r="46" fill="#c1121f"/><rect x="20" y="42" width="60" height="16" rx="1" fill="#fff"/>',
+  prio: () => '<polygon points="50,3 97,50 50,97 3,50" fill="#fff" stroke="#111" stroke-width="1.5"/><polygon points="50,15 85,50 50,85 15,50" fill="#f6c21c" stroke="#111" stroke-width="3"/>',
+  noadel: () => '<circle cx="50" cy="50" r="44" fill="#fff" stroke="#c1121f" stroke-width="9"/>' +
+    '<g><rect x="19" y="46" width="30" height="13" rx="3" fill="#c1121f"/><polygon points="26,46 31,37 42,37 46,46" fill="#c1121f"/><circle cx="26" cy="60" r="4" fill="#111"/><circle cx="43" cy="60" r="4" fill="#111"/></g>' +
+    '<g><rect x="51" y="46" width="30" height="13" rx="3" fill="#111"/><polygon points="58,46 63,37 74,37 78,46" fill="#111"/><circle cx="58" cy="60" r="4" fill="#555"/><circle cx="75" cy="60" r="4" fill="#555"/></g>',
+  peat: () => '<rect x="3" y="3" width="94" height="94" rx="6" fill="#0057b8" stroke="#fff" stroke-width="2"/><polygon points="50,12 88,82 12,82" fill="#fff" stroke="#111" stroke-width="3" stroke-linejoin="round"/>' +
+    '<circle cx="50" cy="42" r="5" fill="#111"/><path d="M50 49 L50 64 M50 64 L43 77 M50 64 L57 77 M50 52 L41 60 M50 52 L58 57" stroke="#111" stroke-width="4.5" stroke-linecap="round" fill="none"/>',
+  rot: () => {
+    let s = '<circle cx="50" cy="50" r="46" fill="#0057b8" stroke="#fff" stroke-width="2"/>';
+    const r = 22, d2r = Math.PI / 180;
+    for (let i = 0; i < 3; i++) {
+      const a0 = (i * 120 + 12) * d2r, a1 = (i * 120 + 92) * d2r;
+      const p = (a) => [50 + r * Math.cos(a), 50 - r * Math.sin(a)];
+      const [x0, y0] = p(a0), [x1, y1] = p(a1);
+      const tx = -Math.sin(a1), ty = -Math.cos(a1), nx = Math.cos(a1), ny = -Math.sin(a1);
+      const tip = [x1 + tx * 11, y1 + ty * 11], b1 = [x1 + nx * 7, y1 + ny * 7], b2 = [x1 - nx * 7, y1 - ny * 7];
+      s += `<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 0 ${x1.toFixed(1)} ${y1.toFixed(1)}" stroke="#fff" stroke-width="6" fill="none"/>`;
+      s += `<polygon points="${tip.map(n => n.toFixed(1)).join(',')} ${b1.map(n => n.toFixed(1)).join(',')} ${b2.map(n => n.toFixed(1)).join(',')}" fill="#fff"/>`;
+    }
+    return s;
+  }
+};
+function svgWrap(inner, vb, label) { return `<svg viewBox="${vb}" role="img" aria-label="${label}">${inner}</svg>`; }
+
+function light(kind) {
+  const lamp = (cy, on, c, dim) => `<circle cx="50" cy="${cy}" r="12" fill="${on ? c : dim}"/>`;
+  const a = kind.startsWith('amber');
+  let s = '<rect x="28" y="6" width="44" height="88" rx="9" fill="#1d232b"/>';
+  s += lamp(26, kind === 'red', '#ff3b30', '#4a2321');
+  s += lamp(50, a, '#ffb300', '#4d3b10');
+  s += lamp(74, kind === 'green', '#31d158', '#17391f');
+  if (kind === 'amberflash') s += '<g stroke="#ffb300" stroke-width="3" stroke-linecap="round"><path d="M20 50h-8M80 50h8M25 36l-6-6M75 36l6-6M25 64l-6 6M75 64l6 6"/></g>';
+  return svgWrap(s, '0 0 100 100', 'Semáforo');
+}
+
+function road(kind) {
+  const mixed = kind.startsWith('mixed');
+  let s = '<rect width="240" height="200" fill="#c9d6b5"/><rect x="62" y="0" width="116" height="200" fill="#4b5563"/>';
+  s += '<rect x="66" y="0" width="2" height="200" fill="#f3f4f6"/><rect x="172" y="0" width="2" height="200" fill="#f3f4f6"/>';
+  if (kind === 'cont') s += '<rect x="118.5" y="0" width="3" height="200" fill="#fff"/>';
+  else {
+    const solidRight = kind === 'mixedNO';
+    const dash = (x) => `<line x1="${x}" y1="0" x2="${x}" y2="200" stroke="#fff" stroke-width="3" stroke-dasharray="14 10"/>`;
+    const solid = (x) => `<rect x="${x - 1.5}" y="0" width="3" height="200" fill="#fff"/>`;
+    s += solidRight ? solid(124) + dash(116) : solid(116) + dash(124);
+  }
+  const car = (x, y, c, l) => `<g transform="translate(${x} ${y})"><rect x="-13" y="-24" width="26" height="48" rx="6" fill="${c}"/><rect x="-9" y="-16" width="18" height="12" rx="3" fill="#cfe8ff"/><text y="16" text-anchor="middle" font-family="Overpass,Arial,sans-serif" font-weight="800" font-size="13" fill="#fff">${l}</text></g>`;
+  s += car(147, 60, '#d33a2f', 'B') + car(147, 150, '#1f5fd6', 'A');
+  return svgWrap(s, '0 0 240 200', 'Carretera con marca vial central');
+}
+
+function cruce(spec) {
+  const COL = { A: '#1f5fd6', B: '#d33a2f', C: '#d99a00', D: '#1a9b5b' };
+  const POS = { S: [130, 196, 0, [158, 168]], N: [110, 44, 180, [64, 62]], W: [44, 130, 90, [58, 160]], E: [196, 110, 270, [176, 62]] };
+  let s = '<rect width="240" height="240" fill="#c9d6b5"/><rect x="90" y="0" width="60" height="240" fill="#4b5563"/><rect x="0" y="90" width="240" height="60" fill="#4b5563"/><rect x="90" y="90" width="60" height="60" fill="#4b5563"/>';
+  s += '<g stroke="#e5e7eb" stroke-width="2" stroke-dasharray="10 8"><line x1="120" y1="0" x2="120" y2="86"/><line x1="120" y1="154" x2="120" y2="240"/><line x1="0" y1="120" x2="86" y2="120"/><line x1="154" y1="120" x2="240" y2="120"/></g>';
+  const arrow = (t, c) => {
+    const p = t === 'L' ? 'M0,-22 L0,-34 Q0,-46 -14,-46 L-30,-46' : t === 'R' ? 'M0,-22 L0,-34 Q0,-46 14,-46 L30,-46' : 'M0,-22 L0,-48';
+    return `<path d="${p}" fill="none" stroke="#fff" stroke-width="3.5"/><path d="${p}" fill="none" stroke="${c}" stroke-width="1.5"/>`;
+  };
+  spec.split(',').forEach(it => {
+    const m = it.match(/^([A-D])=([SNWE])(?:>([LRS]))?(?::(\w+))?$/);
+    if (!m) return;
+    const [, id, dir, turn, sign] = m;
+    const [x, y, rot, sp] = POS[dir];
+    s += `<g transform="translate(${x} ${y}) rotate(${rot})"><rect x="-10" y="-17" width="20" height="34" rx="5" fill="${COL[id]}" stroke="#fff" stroke-width="1.5"/><rect x="-7" y="-12" width="14" height="9" rx="2" fill="#cfe8ff"/><g transform="rotate(${-rot}) translate(0 7)"><text text-anchor="middle" font-family="Overpass,Arial,sans-serif" font-weight="800" font-size="12" fill="#fff">${id}</text></g>${turn ? arrow(turn, COL[id]) : ''}</g>`;
+    if (sign && SIGN[sign]) s += `<svg x="${sp[0] - 14}" y="${sp[1] - 14}" width="28" height="28" viewBox="0 0 100 100">${SIGN[sign]()}</svg>`;
+  });
+  return svgWrap(s, '0 0 240 240', 'Intersección');
+}
+
+function figure(f) {
+  if (!f) return '';
+  const [k, v] = f.split(':');
+  if (k === 'light') return light(v);
+  if (k === 'road') return road(v);
+  if (k === 'cruce') return cruce(f.slice(6));
+  if (SIGN[k]) return svgWrap(SIGN[k](), '0 0 100 100', 'Señal de tráfico');
+  return '';
+}
+
+/* ================= ESTADO Y ALMACENAMIENTO ================= */
+const KEY = 'dgt-clase-b-v1';
+function loadDB() { try { const j = localStorage.getItem(KEY); if (j) { const o = JSON.parse(j); if (o && o.stats) return o; } } catch (e) {} return { stats: {}, exams: [] }; }
+let DB = loadDB();
+function saveDB() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
+function record(id, ok) {
+  const s = DB.stats[id] || (DB.stats[id] = { c: 0, w: 0, l: 0 });
+  if (ok) { s.c++; s.l = 1; } else { s.w++; s.l = 0; }
+  saveDB();
+}
+const status = (id) => { const s = DB.stats[id]; if (!s) return 'new'; if (s.l === 0) return 'fail'; return s.c >= 2 ? 'mastered' : 'learning'; };
+const shuf = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fmt = (sec) => { sec = Math.max(0, sec); return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0'); };
+
+let view = 'home', ses = null, timerId = null, cfg = { topic: 'all', n: 20 }, resetAsk = false;
+const $app = document.getElementById('app'), $bar = document.getElementById('bar');
+const EXAM_N = 30, EXAM_SECS = 1800, EXAM_MAX_ERR = 3;
+
+function pickStudy(topic, n) {
+  const rank = { fail: 0, new: 1, learning: 2, mastered: 3 };
+  let pool = BANK.filter(q => topic === 'all' || q.t === topic).map(q => q.id);
+  pool = pool.map(id => [id, rank[status(id)] + Math.random() * 1.8]).sort((a, b) => a[0] === b[0] ? 0 : a[1] - b[1]).map(p => p[0]);
+  return shuf(pool.slice(0, n === 0 ? pool.length : n));
+}
+
+function start(mode, ids) {
+  clearInterval(timerId);
+  if (!ids.length) return;
+  ses = { mode, ids, perm: {}, ans: {}, done: {}, cur: 0, t0: Date.now(), left: EXAM_SECS, filter: 'all' };
+  ids.forEach(id => ses.perm[id] = shuf([0, 1, 2]));
+  view = 'q';
+  if (mode === 'exam') timerId = setInterval(tick, 1000);
+  render(); window.scrollTo(0, 0);
+}
+function tick() {
+  if (!ses || ses.mode !== 'exam' || view !== 'q') return;
+  ses.left--;
+  const c = document.getElementById('clock');
+  if (c) { c.textContent = fmt(ses.left); c.classList.toggle('low', ses.left <= 300); }
+  if (ses.left <= 0) finish();
+}
+function commit(id) {
+  if (ses.done[id]) return;
+  const ch = ses.ans[id];
+  ses.done[id] = true;
+  record(id, ch === 0);
+}
+function finish() {
+  clearInterval(timerId);
+  ses.ids.forEach(id => { if (!ses.done[id]) commit(id); });
+  ses.secs = Math.round((Date.now() - ses.t0) / 1000);
+  if (ses.mode === 'exam') {
+    const err = ses.ids.filter(id => ses.ans[id] !== 0).length;
+    DB.exams.push({ d: Date.now(), err, secs: Math.min(ses.secs, EXAM_SECS) });
+    DB.exams = DB.exams.slice(-12);
+    saveDB();
+  }
+  view = 'result'; render(); window.scrollTo(0, 0);
+}
+
+/* ================= RENDER ================= */
+function barHtml() {
+  let h = '<div class="brand"><i>B</i> Test DGT</div><div class="sp"></div>';
+  if (view === 'q' && ses) {
+    if (ses.mode === 'exam') h += `<span class="clock num${ses.left <= 300 ? ' low' : ''}" id="clock">${fmt(ses.left)}</span>`;
+    h += '<button class="linkbtn" data-act="quit">Salir</button>';
+  } else if (view !== 'home') h += '<button class="linkbtn" data-act="home">Inicio</button>';
+  return h;
+}
+function render() {
+  $bar.innerHTML = barHtml();
+  $app.innerHTML = view === 'home' ? homeHtml() : view === 'cfg' ? cfgHtml() : view === 'q' ? qHtml() : resultHtml();
+}
+
+function homeHtml() {
+  const ids = BANK.map(q => q.id);
+  const st = ids.map(status);
+  const cnt = (k) => st.filter(x => x === k).length;
+  let tot = 0, ok = 0;
+  Object.values(DB.stats).forEach(s => { tot += s.c + s.w; ok += s.c; });
+  const passed = DB.exams.filter(e => e.err <= EXAM_MAX_ERR).length;
+  const fails = cnt('fail');
+  let h = `<section class="hero"><h1>Examen teórico, permiso B</h1>
+    <p>Simulacro con el formato del examen de la DGT y explicación de cada respuesta, tanto si acierta como si falla.</p>
+    <div class="rule"><span><b>${EXAM_N}</b> preguntas</span><span><b>30</b> minutos</span><span>3 opciones, 1 correcta</span><span>Máximo <b>${EXAM_MAX_ERR}</b> fallos</span></div></section>`;
+  h += `<div class="stats num">
+    <div class="stat"><b>${tot ? Math.round(ok / tot * 100) + '%' : '–'}</b><span>aciertos totales</span></div>
+    <div class="stat"><b>${cnt('mastered')}/${BANK.length}</b><span>preguntas dominadas</span></div>
+    <div class="stat"><b>${DB.exams.length ? passed + '/' + DB.exams.length : '–'}</b><span>exámenes aprobados</span></div></div>`;
+  h += `<div class="modes">
+    <button class="btn big" data-act="exam"><span>Examen simulado<small>30 preguntas · 30 min · sin volver atrás, como el real</small></span><span>→</span></button>
+    <button class="btn big alt" data-act="cfg"><span>Modo estudio<small>Verás la explicación al contestar cada pregunta</small></span><span>→</span></button>
+    <button class="btn big alt" data-act="repaso" ${fails ? '' : 'disabled'}><span>Repasar mis fallos<small>${fails ? fails + ' preguntas pendientes de aprender' : 'Aún no tienes fallos pendientes'}</small></span><span>→</span></button></div>`;
+  h += '<h2 class="sec">Temas</h2><div class="topics">';
+  Object.keys(TOPICS).forEach(t => {
+    const qs = BANK.filter(q => q.t === t), n = qs.length;
+    const m = qs.filter(q => status(q.id) === 'mastered').length, f = qs.filter(q => status(q.id) === 'fail').length;
+    h += `<button class="topic" data-act="topic" data-t="${t}"><span class="n">${TOPICS[t]}</span><span class="c num">${m}/${n}</span>
+      <span class="meter"><i class="m" style="width:${m / n * 100}%"></i><i class="f" style="width:${f / n * 100}%"></i></span></button>`;
+  });
+  h += '</div>';
+  if (DB.exams.length) {
+    h += '<h2 class="sec">Últimos exámenes (fallos por examen)</h2><div class="hist num">';
+    DB.exams.slice(-12).forEach(e => { h += `<div class="${e.err <= EXAM_MAX_ERR ? 'p' : 'x'}" style="height:${Math.max(8, Math.min(e.err, 12) / 12 * 100)}%" title="${e.err} fallos"><span>${e.err}</span></div>`; });
+    h += '</div><p class="note">Verde: apto (3 fallos o menos). Rojo: no apto.</p>';
+  }
+  h += `<p class="note" style="margin-top:24px">Las preguntas son originales y siguen el temario y el estilo del examen oficial; el banco oficial de la DGT no es público. Las cifras corresponden a la normativa vigente en 2026. Antes de examinarte, repasa el manual de tu autoescuela por si hubiera cambios.</p>`;
+  h += resetAsk
+    ? '<p class="note">¿Borrar todo tu progreso? <button class="linkbtn" data-act="reset-yes">Sí, borrar</button> <button class="linkbtn" data-act="reset-no">Cancelar</button></p>'
+    : '<p class="note"><button class="linkbtn" data-act="reset">Borrar mi progreso</button></p>';
+  return h;
+}
+
+function cfgHtml() {
+  const opts = Object.keys(TOPICS).map(t => `<option value="${t}" ${cfg.topic === t ? 'selected' : ''}>${TOPICS[t]}</option>`).join('');
+  const chip = (n, l) => `<button class="chip${cfg.n === n ? ' on' : ''}" data-act="n" data-n="${n}">${l}</button>`;
+  return `<h1 style="font-size:30px;margin-bottom:14px">Modo estudio</h1><div class="cfg">
+    <label for="topic">Tema<select id="topic"><option value="all" ${cfg.topic === 'all' ? 'selected' : ''}>Todos los temas</option>${opts}</select></label>
+    <div><div style="font-weight:600;font-size:14px;margin-bottom:6px">Número de preguntas</div><div class="chips">${chip(10, '10')}${chip(20, '20')}${chip(40, '40')}${chip(0, 'Todas')}</div></div>
+    <p class="hint" style="margin:0">Se priorizan las que has fallado y las que aún no has visto.</p>
+    <button class="btn" data-act="go-study">Empezar</button></div>`;
+}
+
+function qHtml() {
+  const s = ses, id = s.ids[s.cur], q = BANK[id], perm = s.perm[id];
+  const ch = s.ans[id], study = s.mode !== 'exam', rev = study && ch !== undefined;
+  let ticks = '';
+  s.ids.forEach((qid, i) => {
+    let c = 'tick';
+    if (i === s.cur) c += ' now'; else if (s.done[qid]) c += s.mode === 'exam' ? ' done' : (s.ans[qid] === 0 ? ' ok' : ' no');
+    ticks += `<span class="${c}"></span>`;
+  });
+  const okSoFar = s.ids.filter(i => s.done[i] && s.ans[i] === 0).length;
+  let h = `<div class="ticks" aria-hidden="true">${ticks}</div>
+    <div class="qhead"><b>Pregunta ${s.cur + 1} de ${s.ids.length}</b><span>${study ? 'Aciertos: ' + okSoFar + ' · ' : ''}${TOPICS[q.t]}</span></div>
+    <div class="qcard">${q.f ? `<figure class="fig">${figure(q.f)}</figure>` : ''}<div class="qtext">${q.q}</div></div><div class="opts">`;
+  perm.forEach((o, p) => {
+    let c = 'opt';
+    if (rev) c += o === 0 ? ' right' : (o === ch ? ' wrong' : '');
+    else if (ch === o) c += ' sel';
+    h += `<button class="${c}" data-act="opt" data-p="${p}" ${rev ? 'disabled' : ''}><span class="lt">${'ABC'[p]}</span><span>${q.o[o]}</span></button>`;
+  });
+  h += '</div>';
+  if (rev) h += explain(q, perm, ch);
+  const last = s.cur === s.ids.length - 1;
+  h += `<div class="actions"><span class="hint">${study ? '' : 'Una vez pasas a la siguiente, no puedes volver atrás.'}</span>
+    <button class="btn" data-act="next" ${ch === undefined ? 'disabled' : ''}>${last ? (study ? 'Ver resumen' : 'Terminar examen') : 'Siguiente'}</button></div>`;
+  return h;
+}
+
+function explain(q, perm, ch) {
+  const kind = ch === undefined ? 'nil' : ch === 0 ? 'ok' : 'no';
+  const head = ch === undefined ? 'Sin contestar' : ch === 0 ? 'Correcto' : 'Incorrecto';
+  const correctPos = perm.indexOf(0);
+  let h = `<div class="fb ${kind}"><div class="fb-h">${head}${kind !== 'ok' ? ` · la correcta es la ${'ABC'[correctPos]}` : ''}</div><div class="fb-b">
+    <div><h4>Por qué</h4><p>${q.e}</p></div><div><h4>Qué pasa con cada opción</h4><ul class="why">`;
+  perm.forEach((o, p) => {
+    const c = o === 0;
+    h += `<li class="${c ? 'c' : 'w'}"><span class="lt">${'ABC'[p]}</span><span>${c ? '<b>Correcta.</b> ' + q.o[o] : '<b>No.</b> ' + q.x[o - 1]}${ch === o ? '<span class="tag">tu respuesta</span>' : ''}</span></li>`;
+  });
+  h += `</ul></div><div class="tip"><h4>Para recordarlo</h4><p>${q.k}</p></div></div></div>`;
+  return h;
+}
+
+function resultHtml() {
+  const s = ses, total = s.ids.length;
+  const bad = s.ids.filter(id => s.ans[id] !== 0), nBad = bad.length, nOk = total - nBad;
+  let h;
+  if (s.mode === 'exam') {
+    const apt = nBad <= EXAM_MAX_ERR;
+    h = `<div class="verdict ${apt ? 'ok' : 'no'}"><h1>${apt ? 'APTO' : 'NO APTO'}</h1><p class="num"><b>${nBad}</b> ${nBad === 1 ? 'fallo' : 'fallos'} de ${total} (máximo permitido: ${EXAM_MAX_ERR}) · tiempo ${fmt(Math.min(s.secs, EXAM_SECS))} de 30:00</p></div>`;
+  } else {
+    h = `<div class="verdict neutral"><h1 class="num">${nOk} / ${total}</h1><p>aciertos (${Math.round(nOk / total * 100)}%). Las falladas quedan guardadas en «Repasar mis fallos».</p></div>`;
+  }
+  if (nBad) {
+    const by = {}; bad.forEach(id => { const t = BANK[id].t; by[t] = (by[t] || 0) + 1; });
+    h += '<h2 class="sec">Dónde has fallado</h2><div class="pills">' + Object.keys(by).map(t => `<span class="pill">${TOPICS[t]} · ${by[t]}</span>`).join('') + '</div>';
+  }
+  h += `<div class="seg"><button class="chip${s.filter === 'all' ? ' on' : ''}" data-act="filter" data-f="all">Todas</button><button class="chip${s.filter === 'bad' ? ' on' : ''}" data-act="filter" data-f="bad">Solo fallos (${nBad})</button></div>`;
+  s.ids.forEach((id, i) => {
+    const q = BANK[id], ch = s.ans[id], ok = ch === 0;
+    if (s.filter === 'bad' && ok) return;
+    h += `<details class="rev ${ok ? 'ok' : 'no'}" ${ok ? '' : 'open'}><summary><span class="st">${i + 1}</span><span>${q.q}</span></summary>${q.f ? `<figure class="fig rev-fig">${figure(q.f)}</figure>` : ''}${explain(q, s.perm[id], ch)}</details>`;
+  });
+  h += `<div class="actions" style="margin-top:22px"><button class="btn ghost" data-act="home">Volver al inicio</button><button class="btn" data-act="${s.mode === 'exam' ? 'exam' : 'again'}">${s.mode === 'exam' ? 'Otro examen' : 'Seguir estudiando'}</button></div>`;
+  return h;
+}
+
+/* ================= EVENTOS ================= */
+function choose(p) {
+  if (view !== 'q') return;
+  const id = ses.ids[ses.cur];
+  if (ses.done[id]) return;
+  const o = ses.perm[id][p];
+  if (o === undefined) return;
+  ses.ans[id] = o;
+  if (ses.mode !== 'exam') commit(id);
+  render();
+}
+function next() {
+  const id = ses.ids[ses.cur];
+  if (ses.ans[id] === undefined) return;
+  commit(id);
+  if (ses.cur === ses.ids.length - 1) return finish();
+  ses.cur++; render(); window.scrollTo(0, 0);
+}
+function examIds() { return shuf(BANK.map(q => q.id)).slice(0, EXAM_N); }
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  const a = b.dataset.act;
+  if (a === 'exam') start('exam', examIds());
+  else if (a === 'cfg') { view = 'cfg'; render(); }
+  else if (a === 'n') { cfg.n = +b.dataset.n; render(); }
+  else if (a === 'go-study') start('study', pickStudy(cfg.topic, cfg.n));
+  else if (a === 'topic') start('study', pickStudy(b.dataset.t, 0));
+  else if (a === 'repaso') start('study', shuf(BANK.filter(q => status(q.id) === 'fail').map(q => q.id)));
+  else if (a === 'again') start('study', pickStudy(cfg.topic, cfg.n));
+  else if (a === 'opt') choose(+b.dataset.p);
+  else if (a === 'next') next();
+  else if (a === 'quit') { clearInterval(timerId); view = 'home'; ses = null; render(); }
+  else if (a === 'home') { clearInterval(timerId); view = 'home'; render(); window.scrollTo(0, 0); }
+  else if (a === 'filter') { ses.filter = b.dataset.f; render(); }
+  else if (a === 'reset') { resetAsk = true; render(); }
+  else if (a === 'reset-no') { resetAsk = false; render(); }
+  else if (a === 'reset-yes') { DB = { stats: {}, exams: [] }; saveDB(); resetAsk = false; render(); }
+});
+document.addEventListener('change', (e) => { if (e.target.id === 'topic') cfg.topic = e.target.value; });
+document.addEventListener('keydown', (e) => {
+  if (view !== 'q' || e.target.tagName === 'SELECT') return;
+  const k = e.key.toLowerCase();
+  const m = { '1': 0, '2': 1, '3': 2, a: 0, b: 1, c: 2 };
+  if (k in m) choose(m[k]);
+  else if (k === 'enter' && e.target.tagName !== 'BUTTON') next();
+});
+
+render();
+</script>
