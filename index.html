@@ -165,6 +165,23 @@ select { font: inherit; padding: 10px; border-radius: 8px; border: 2px solid var
 .rev-fig { margin: 0 14px 12px; max-width: 210px; }
 .seg { display: flex; gap: 8px; margin: 10px 0 12px; }
 
+/* vídeo de percepción del riesgo */
+.vid canvas, .vidbox canvas { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 3 / 2; border-radius: 10px; border: 1px solid var(--line); background: #b9cfa5; }
+.vbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+.vnote { font-size: 14px; color: var(--muted); flex: 1 1 200px; }
+.vidbox { display: grid; gap: 8px; margin-top: 12px; justify-items: start; }
+.vidbox canvas { max-width: 380px; }
+
+/* inicio: opción y panel informativo */
+.optline { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); margin: -14px 0 24px; }
+.optline input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--blue); flex: 0 0 auto; }
+details.info { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 28px; }
+details.info > summary { cursor: pointer; padding: 14px 16px; font-weight: 700; font-family: var(--font-display); font-size: 17px; }
+details.info .in { padding: 0 16px 16px; display: grid; gap: 14px; font-size: 15px; }
+details.info h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
+details.info ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+details.info a { color: var(--blue); }
+
 @media (max-width: 520px) { .fig { width: 100%; max-width: 260px; } }
 @media (prefers-reduced-motion: no-preference) { .btn, .opt, .topic { transition: border-color .12s, filter .12s, background .12s; } }
 </style>
@@ -176,6 +193,8 @@ select { font: inherit; padding: 10px; border-radius: 8px; border: 2px solid var
 /* ================= BANCO DE PREGUNTAS =================
    Q(tema, figura, enunciado, [correcta, falsa1, falsa2], explicación, [por qué falla falsa1, falsa2], regla para recordar) */
 const TOPICS = {
+  vulnerables: "Novedades 2026: usuarios vulnerables",
+  riesgo: "Percepción del riesgo (vídeo)",
   senales: "Señales y marcas viales",
   velocidad: "Velocidad",
   prioridad: "Prioridad de paso",
@@ -192,6 +211,7 @@ const TOPICS = {
 };
 const BANK = [];
 function Q(t, f, q, o, e, x, k) { BANK.push({ id: BANK.length, t, f, q, o, e, x, k }); }
+function QV(v, q, o, e, x, k) { BANK.push({ id: BANK.length, t: "riesgo", f: null, v, q, o, e, x, k }); }
 
 /* ---- SEÑALES Y MARCAS ---- */
 Q("senales", "img:r2", "¿Qué obliga a hacer esta señal?",
@@ -318,7 +338,7 @@ Q("velocidad", null, "Circula por una calle urbana con un único carril por sent
   "Urbana: 1 carril por sentido = 30. 2 o más = 50.");
 Q("velocidad", null, "En una calle urbana de plataforma única (calzada y acera al mismo nivel), ¿cuál es el límite genérico?",
   ["20 km/h", "30 km/h", "10 km/h"],
-  "En las vías de plataforma única, donde peatones y vehículos comparten el espacio, el límite es de 20 km/h. Los peatones pueden estar en cualquier punto, por eso la velocidad baja tanto.",
+  "En las vías de plataforma única, donde peatones y vehículos comparten el espacio, el límite es de 20 km/h. Los peatones pueden estar en cualquier punto, por eso la velocidad baja tanto. Además, la reforma de 2026 reconoce expresamente que el peatón tiene prioridad en cualquier punto de la calzada.",
   ["30 km/h es para calles de un carril por sentido con acera diferenciada.",
    "10 km/h no es el límite genérico en estas vías."],
   "Sin escalón entre acera y calzada = 20.");
@@ -421,11 +441,11 @@ Q("maniobras", null, "¿En cuál de estos lugares está prohibido adelantar?",
   "No se puede adelantar en curvas y cambios de rasante de visibilidad reducida, en intersecciones, en pasos a nivel y en lugares con línea continua. Si no se ve bien lo que viene en sentido contrario, no se adelanta.",
   ["En autopista se adelanta con normalidad por el carril de la izquierda.", "Con buena visibilidad y línea discontinua, es un lugar donde se puede adelantar si no hay otros impedimentos."],
   "Si no veo, no adelanto.");
-Q("maniobras", null, "Va a adelantar a un ciclista en una carretera convencional. ¿Qué distancia lateral mínima debe respetar?",
-  ["1,5 metros, pudiendo ocupar el carril contrario si es necesario.", "0,5 metros.", "No hay distancia mínima fijada."],
-  "Para adelantar a ciclistas hay que dejar al menos 1,5 m de separación lateral. Para ello se permite ocupar parte o la totalidad del carril contrario, siempre que sea seguro y no haya peligro de colisión.",
-  ["0,5 m es muy poco: pondría en riesgo al ciclista. La norma exige 1,5 m.", "Sí hay distancia mínima fijada: 1,5 m, y salirse del carril contrario está autorizado para respetarla."],
-  "Ciclista: un metro y medio.");
+Q("maniobras", null, "Va a adelantar a un ciclista en una carretera interurbana. ¿Qué debe hacer?",
+  ["Reducir la velocidad al menos 20 km/h por debajo del límite de la vía y dejar 1,5 metros de separación lateral, ocupando el carril contrario si hace falta y es seguro.", "Pasar sin reducir la velocidad si dejo al menos 1 metro.", "Tocar el claxon y adelantar sin cambiar de posición."],
+  "Desde la reforma de octubre de 2026 (RD 518/2026), al adelantar a un ciclista fuera de poblado hay que reducir la velocidad al menos 20 km/h por debajo del límite de la vía, antes y durante toda la maniobra, y dejar una anchura de seguridad de 1,5 m. Si hay más de un carril por sentido, es obligatorio cambiar completamente de carril. No respetarlo es infracción grave: 200 € y 6 puntos.",
+  ["1 metro no basta, y además hay que reducir la velocidad al menos 20 km/h por debajo del límite.", "El claxon no sustituye a la distancia lateral ni a la reducción de velocidad."],
+  "Ciclista: 1,5 m al lado y 20 km/h menos que el límite.");
 Q("maniobras", null, "Un vehículo le está adelantando. ¿Qué debe hacer?",
   ["Mantenerme a la derecha y no aumentar mi velocidad para facilitarle la maniobra.", "Acelerar para que no me adelante.", "Moverme hacia el centro de la calzada."],
   "Quien es adelantado no debe aumentar su velocidad ni dificultar la maniobra. Conviene arrimarse a su derecha y, si hace falta, reducir ligeramente para que el adelantamiento sea más corto y seguro.",
@@ -618,7 +638,7 @@ Q("luces", null, "¿Cuándo debe señalizar con el intermitente un cambio de dir
 /* ---- SEGURIDAD ---- */
 Q("seguridad", null, "¿Quiénes deben usar el cinturón de seguridad en un turismo?",
   ["Todos los ocupantes, en cualquier plaza, tanto en vías urbanas como interurbanas.", "Solo el conductor.", "Solo los ocupantes de las plazas delanteras fuera de poblado."],
-  "El cinturón es obligatorio en todas las plazas, en ciudad y fuera de ella. Es el elemento de seguridad pasiva más eficaz y también debe usarse por embarazadas.",
+  "El cinturón es obligatorio en todas las plazas, en ciudad y fuera de ella. Es el elemento de seguridad pasiva más eficaz y también debe usarse por embarazadas. Desde la reforma de octubre de 2026 se eliminan las exenciones de taxistas, conductores de mercancías y profesores de autoescuela; solo se mantiene la de los pasajeros de ambulancias asistenciales que atienden al paciente en ruta.",
   ["Es obligatorio para todos los ocupantes.", "Las plazas traseras también están obligadas, y en vías urbanas también."],
   "Todos, siempre, en todas las plazas.");
 Q("seguridad", null, "Un niño mide 120 cm. ¿Cómo debe viajar en un turismo?",
@@ -1036,6 +1056,318 @@ Q("senales", "img:p20", "Esta señal triangular con un peatón avisa de:",
   ["El paso de peatones se señala con el cuadrado azul.", "Una calle peatonal tiene su propia señal informativa."],
   "Triángulo con peatón: aviso, no paso.");
 
+/* ---- NOVEDADES 2026: USUARIOS VULNERABLES (Real Decreto 518/2026, en vigor desde el 1 de octubre de 2026) ---- */
+Q("vulnerables", null, "¿Quiénes se consideran «usuarios vulnerables de la vía» en el Reglamento General de Circulación reformado?",
+  ["Peatones, ciclistas, usuarios de vehículos de movilidad personal (VMP) y conductores y pasajeros de motocicletas y ciclomotores.",
+   "Solo los peatones y las personas con movilidad reducida.",
+   "Los conductores mayores de 65 años y los noveles."],
+  "La reforma define por primera vez al usuario vulnerable: quien, por su medio de desplazamiento o por su edad, tiene mayor riesgo de sufrir lesiones graves. Incluye peatones (en especial menores, mayores y personas con discapacidad), ciclistas, conductores de VMP y conductores y pasajeros de motos y ciclomotores.",
+  ["Es un concepto más amplio: también incluye ciclistas, VMP, motos y ciclomotores.",
+   "No depende de la edad del conductor, sino de lo expuesto que está por su forma de desplazarse."],
+  "Vulnerable = sin carrocería: peatón, bici, patinete y moto.");
+Q("vulnerables", null, "Va a adelantar a un ciclista que circula por el carril derecho de una vía con dos carriles por sentido. ¿Cómo debe hacerlo?",
+  ["Cambiando completamente al carril de la izquierda, con 1,5 m de separación lateral y reduciendo la velocidad.",
+   "Pasando por el mismo carril, pegado a la línea, para no invadir el otro.",
+   "Pasando sin cambiar de carril si dejo al menos 1 metro."],
+  "Si la calzada tiene más de un carril por sentido, el cambio de carril completo es obligatorio al adelantar a un ciclista. Además, hay que dejar al menos 1,5 m de separación lateral y reducir la velocidad (fuera de poblado, al menos 20 km/h por debajo del límite de la vía).",
+  ["Es lo que se prohíbe: con más de un carril por sentido hay que cambiar completamente de carril.",
+   "1 metro no basta: la separación mínima es de 1,5 m, y además hay que cambiar de carril."],
+  "Dos carriles por sentido: me paso entero al otro carril.");
+Q("vulnerables", null, "Se encuentra con un grupo de ciclistas que circulan juntos. ¿Cómo debe tratarlos al adelantar?",
+  ["Como una única unidad móvil: adelanto a todo el grupo de una vez, respetando 1,5 m.",
+   "Adelanto de uno en uno, volviendo al carril entre ciclista y ciclista.",
+   "Aviso con el claxon y adelanto pegado al grupo."],
+  "La reforma indica que un grupo de ciclistas se considera una única unidad móvil. No se debe ir volviendo al carril entre unos y otros: hay que completar el adelantamiento respetando la distancia lateral de 1,5 m y la reducción de velocidad.",
+  ["Meterse entre ciclistas del mismo grupo es peligroso; el grupo cuenta como una sola unidad.",
+   "El claxon no sustituye a la distancia lateral, que sigue siendo de 1,5 m."],
+  "Grupo de ciclistas = un solo bloque.");
+Q("vulnerables", null, "¿Qué consecuencia tiene adelantar a un ciclista sin dejar 1,5 metros de separación lateral?",
+  ["Es infracción grave: multa de 200 € y pérdida de 6 puntos.",
+   "Solo una advertencia, sin multa ni puntos.",
+   "Una multa de 100 € sin pérdida de puntos."],
+  "El reglamento fija la obligación; la sanción la marca la Ley de Tráfico. No respetar la separación lateral de 1,5 m al adelantar a ciclistas es una infracción grave, con multa de 200 € y pérdida de 6 puntos según su cuadro de puntos.",
+  ["Sí hay sanción: se trata de un riesgo grave para el ciclista.",
+   "La multa es de 200 € (100 € si se paga en el plazo de pronto pago) y además detrae puntos."],
+  "Sin 1,5 m al ciclista: 200 € y 6 puntos.");
+Q("vulnerables", null, "Circula detrás de un ciclista en el mismo carril. ¿Qué separación mínima debe mantener con él?",
+  ["5 metros.", "1,5 metros.", "No hay distancia mínima."],
+  "El nuevo artículo 153.4 obliga a los vehículos a motor a mantener 5 metros de separación con el ciclista que les precede en el mismo carril. Los 1,5 m son la separación lateral al adelantar, no la distancia con el ciclista de delante.",
+  ["1,5 m es la distancia lateral para adelantar, no la distancia por detrás.",
+   "Sí existe: 5 metros con el ciclista que va delante."],
+  "Detrás del ciclista, 5 m. Al lado, 1,5 m.");
+Q("vulnerables", null, "Un ciclista circula por el centro de su carril. ¿Es correcto según el reglamento reformado?",
+  ["Sí: la norma establece que circulen preferentemente por el centro del carril.",
+   "No: debe ir siempre pegado al bordillo.",
+   "No: debe circular por la acera."],
+  "Los ciclistas circulan preferentemente por el centro del carril, lo que les hace más visibles y evita adelantamientos arriesgados. En vías con al menos dos carriles por sentido, lo hacen por el carril derecho.",
+  ["Pegarse al bordillo les deja menos margen y facilita adelantamientos peligrosos.",
+   "Las aceras son para peatones; los ciclistas no pueden circular por ellas."],
+  "El ciclista ocupa el centro de su carril.");
+Q("vulnerables", null, "¿Cuándo es obligatorio el casco para un ciclista adulto que no es profesional?",
+  ["En vías interurbanas, sin excepciones.",
+   "Siempre, también en ciudad.",
+   "Solo de noche."],
+  "El casco es obligatorio para todos los ciclistas en vías interurbanas (se suprimen las exenciones). En cualquier vía lo es para menores de 16 años, y para quienes usan la bicicleta como profesión también en vías urbanas y travesías.",
+  ["En ciudad, para un adulto no profesional, no es obligatorio (sí para menores de 16 y para profesionales).",
+   "La obligación no depende de la hora, sino del tipo de vía, de la edad y de si es uso profesional."],
+  "Interurbana: todos con casco. Ciudad: menores de 16 y profesionales.");
+Q("vulnerables", null, "En una calle urbana de un solo carril con límite de 30 km/h, ¿puede un ciclista circular en ambos sentidos?",
+  ["Sí, siempre que lo permita la señalización.",
+   "No, nunca: siempre debe ir en el sentido de los coches.",
+   "Sí, en cualquier calle sin necesidad de señal."],
+  "El reglamento permite a las bicicletas circular en ambos sentidos en vías urbanas de un solo carril con límite de 30 km/h o inferior, previa señalización. Sin esa señal, deben respetar el sentido general de circulación.",
+  ["La reforma lo permite en esas calles concretas, si están señalizadas.",
+   "Sin señalización no está permitido; la excepción solo vale donde se indica."],
+  "Un carril, 30 o menos y señal: bici en doble sentido.");
+Q("vulnerables", null, "¿Puede un ciclista adulto circular por la acera?",
+  ["No. Solo los menores de 12 años, si lo permite el ayuntamiento y acompañados de un adulto a pie.",
+   "Sí, si va despacio.",
+   "Sí, si no hay peatones."],
+  "Las aceras son solo para peatones. Los ciclistas no pueden circular por ellas, salvo los menores de 12 años cuando lo permita la autoridad municipal y vayan con un adulto a pie.",
+  ["Ir despacio no cambia la prohibición: la acera es del peatón.",
+   "Que no haya peatones en ese momento no autoriza la circulación por la acera."],
+  "Acera = peatones. Excepción: menor de 12 con adulto a pie y permiso municipal.");
+Q("vulnerables", null, "¿Cuál es la edad mínima para conducir un patinete eléctrico (VMP) según el reglamento reformado?",
+  ["15 años.", "12 años.", "18 años."],
+  "La reforma fija en 15 años la edad mínima para conducir un VMP. Antes no había un límite claro en el reglamento estatal.",
+  ["12 años es la edad límite para otros supuestos (por ejemplo, la excepción de ciclistas en acera), no la del VMP.",
+   "18 años es la edad del permiso B, no la exigida para un VMP."],
+  "Patinete: 15 años.");
+Q("vulnerables", null, "¿Qué exige el reglamento reformado a quien conduce un patinete eléctrico?",
+  ["Tener 15 años, llevar casco (homologado o certificado) y, de noche o con poca visibilidad, un elemento luminoso o reflectante visible a 150 metros.",
+   "Tener 12 años y llevar casco solo en vías interurbanas.",
+   "Tener 18 años; el casco es opcional en ciudad."],
+  "El casco es obligatorio para los VMP en todos los casos. Además, entre el ocaso y el amanecer o con baja visibilidad hay que llevar un elemento luminoso o reflectante visible a 150 metros, y se deben indicar las maniobras con el brazo.",
+  ["La edad mínima es 15 y el casco no se limita a vías interurbanas.",
+   "El casco ya no es opcional en ciudad para los VMP."],
+  "Patinete: 15 años, casco siempre y luz o reflectante a 150 m de noche.");
+Q("vulnerables", null, "¿Por qué vías no puede circular un patinete eléctrico?",
+  ["Autopistas, autovías, travesías, túneles urbanos y vías interurbanas (salvo vías ciclistas o sin tráfico motorizado), y por las aceras.",
+   "Solo por autopistas.",
+   "Por ninguna vía urbana."],
+  "Los VMP no pueden circular por las vías de mayor velocidad (autopistas, autovías), ni por travesías, túneles urbanos y vías interurbanas, salvo vías ciclistas o vías sin tráfico motorizado si la señalización no lo prohíbe. Tampoco por las aceras.",
+  ["La lista es más amplia: incluye también travesías, túneles urbanos, vías interurbanas y aceras.",
+   "Sí pueden circular por vías urbanas habilitadas (por ejemplo, carriles bici), con las condiciones del reglamento."],
+  "Patinete: ni autovías, ni aceras, ni carreteras (salvo vía ciclista).");
+Q("vulnerables", null, "¿Desde cuándo es obligatorio que un VMP lleve el alumbrado encendido también de día?",
+  ["Desde el 1 de octubre de 2027: hay un año de periodo transitorio.",
+   "Desde el 1 de octubre de 2026, con la entrada en vigor del real decreto.",
+   "Nunca: solo es obligatorio de noche."],
+  "La reforma establece que el alumbrado esté siempre encendido, pero concede un año de transición: será exigible el 1 de octubre de 2027. Mientras tanto, de noche o con poca visibilidad hay que llevar luz o reflectante visible a 150 m.",
+  ["Esa medida entró con moratoria: el alumbrado diurno se aplaza un año.",
+   "Con el periodo transitorio, el alumbrado permanente sí será obligatorio en 2027."],
+  "Alumbrado diurno en VMP: 1 de octubre de 2027.");
+Q("vulnerables", null, "¿Qué debe hacer el propietario de un patinete eléctrico para circular legalmente en 2026?",
+  ["Inscribirlo en el Registro de Vehículos Personales Ligeros de la DGT y contratar el seguro obligatorio.",
+   "Solo llevar casco.",
+   "Matricularlo en la jefatura de tráfico y sacar el permiso AM."],
+  "Desde 2026 los VMP deben registrarse en el Registro de Vehículos Personales Ligeros (RD 52/2026) y tener seguro obligatorio de responsabilidad civil (Ley 5/2025). Los modelos anteriores sin certificado pueden circular hasta el 22 de enero de 2027, pero también deben estar registrados y asegurados.",
+  ["El casco es obligatorio, pero no es lo único: también hace falta registro y seguro.",
+   "No se exige permiso AM ni matrícula tradicional: se inscribe en el registro específico de VMP."],
+  "Patinete 2026: registro DGT + seguro + casco.");
+Q("vulnerables", null, "¿Qué equipamiento debe llevar un motorista en una vía interurbana según la reforma?",
+  ["Casco homologado, guantes de protección y calzado cerrado que cubra todo el pie.",
+   "Solo casco homologado.",
+   "Casco y chaleco reflectante en todo momento."],
+  "Se añade la obligación de usar guantes de protección en vías interurbanas, y calzado cerrado que cubra todo el pie en cualquier vía, además del casco homologado.",
+  ["La reforma añade guantes y calzado cerrado.",
+   "El chaleco es obligatorio en usos profesionales y en situaciones concretas, no en todo momento para cualquier motorista."],
+  "Moto: casco, guantes (interurbana) y calzado cerrado (siempre).");
+Q("vulnerables", null, "Para los ciclomotores, ¿hasta cuándo se admiten cascos solo certificados antes de exigir uno homologado?",
+  ["Durante un año de transición: hasta el 1 de octubre de 2027.",
+   "Hasta el 1 de octubre de 2026, no hay transición.",
+   "Se admiten certificados indefinidamente."],
+  "La reforma exige casco homologado en ciclomotores, pero la disposición transitoria permite seguir usando cascos certificados durante un año desde la entrada en vigor, es decir, hasta el 1 de octubre de 2027.",
+  ["Sí hay periodo transitorio de un año.",
+   "No es indefinido: a partir de octubre de 2027 se exige homologado."],
+  "Ciclomotor: casco homologado desde octubre de 2027.");
+Q("vulnerables", null, "En una retención, ¿en qué condiciones pueden las motos usar el arcén derecho?",
+  ["En tramos acordados y señalizados, con el tráfico detenido por congestión, en fila de a uno y a un máximo de 30 km/h.",
+   "En cualquier atasco, a la velocidad que quieran.",
+   "Nunca, bajo ninguna circunstancia."],
+  "La reforma habilita el uso extraordinario del arcén derecho para las motos solo en tramos acordados y señalizados, con el tráfico detenido por congestión, en columna de a uno y a un máximo de 30 km/h.",
+  ["Esta habilitación es limitada: solo en tramos señalizados y con condiciones.",
+   "Hay una excepción concreta en la que pueden usarlo."],
+  "Moto en atasco: arcén solo si está señalizado, a 30 y en fila.");
+Q("vulnerables", null, "¿Desde qué edad puede viajar un niño de pasajero en una moto?",
+  ["Desde los 12 años (con casco homologado y si consta en el permiso de circulación); desde los 7 años si va con su padre, madre, tutor o persona autorizada.",
+   "Desde los 16 años en todos los casos.",
+   "A cualquier edad, con casco."],
+  "Los pasajeros de motos deben tener más de 12 años, usar casco homologado y viajar solo si consta en el permiso de circulación. Excepcionalmente, los mayores de 7 años pueden ir con su padre, madre, tutor o persona autorizada.",
+  ["Existen edades concretas más bajas: 12 años, y 7 con acompañante autorizado.",
+   "No se permite a cualquier edad: hay mínimo de edad y condiciones."],
+  "Pasajero de moto: 12 años, o 7 con padre, madre o tutor.");
+Q("vulnerables", null, "Circula por una autovía de dos carriles por sentido y se forma una retención. ¿Qué debe hacer para facilitar el paso a los vehículos de emergencia?",
+  ["Apartarme hacia mi lado para dejar libre un pasillo en el centro, entre los dos carriles.",
+   "Quedarme en mi carril sin moverme.",
+   "Pasarme todos al carril derecho."],
+  "Con el tráfico detenido o a paso de peatón, los conductores deben formar un carril libre para vehículos prioritarios. Con dos carriles por sentido, el pasillo se abre en el centro: el carril izquierdo se aparta a la izquierda y el derecho a la derecha.",
+  ["Si nadie se aparta, la ambulancia no puede pasar.",
+   "Si todos van a la derecha el pasillo no se crea en el centro; cada carril se aparta hacia su lado."],
+  "Dos carriles: pasillo en el centro, cada uno a su lado.");
+Q("vulnerables", null, "En una autovía con tres o más carriles por sentido hay una retención. ¿Cómo se forma el carril de emergencia?",
+  ["Los vehículos del carril izquierdo se apartan a la izquierda y los demás a la derecha.",
+   "Todos se apartan a la izquierda.",
+   "Todos se apartan a la derecha."],
+  "El pasillo se abre entre el carril más a la izquierda y el contiguo: el vehículo del carril izquierdo se aparta hacia la izquierda y todos los demás hacia la derecha. Así los servicios de emergencia circulan por el espacio libre que queda.",
+  ["Si todos van a la izquierda, no queda un pasillo despejado en el sitio previsto.",
+   "Si todos van a la derecha, el carril izquierdo no deja pasillo."],
+  "Tres o más: el izquierdo a la izquierda, los demás a la derecha.");
+Q("vulnerables", null, "La nieve dificulta la circulación en una autovía. ¿Qué establece la reforma?",
+  ["Se prohíbe adelantar y es obligatorio circular por el carril derecho (con tres o más carriles se puede usar también el contiguo).",
+   "Se puede adelantar con cadenas.",
+   "Hay que circular por el carril izquierdo para evitar el hielo."],
+  "Con nieve en autopistas y autovías, el adelantamiento queda prohibido y hay que circular por el carril derecho, dejando libres los de la izquierda para vehículos de emergencia y quitanieves. Con tres o más carriles se puede usar el contiguo.",
+  ["La prohibición de adelantar con nieve no depende de las cadenas.",
+   "El carril izquierdo debe quedar libre para emergencias y quitanieves."],
+  "Nieve: no adelanto y voy por la derecha.");
+Q("vulnerables", null, "Tras la reforma, ¿quién deja de tener exención para usar el cinturón?",
+  ["Taxistas, conductores de vehículos de mercancías y profesores de autoescuela: deben usarlo siempre.",
+   "Nadie: las exenciones se mantienen igual.",
+   "Solo los pasajeros de ambulancias."],
+  "Se eliminan exenciones que existían para algunos colectivos profesionales. Se mantiene una excepción estricta: los pasajeros de ambulancias asistenciales que atienden al paciente en ruta, en servicio de urgencia.",
+  ["La reforma elimina varias exenciones; el cinturón pasa a ser obligatorio para esos colectivos.",
+   "Es al revés: la ambulancia asistencial es la excepción que se mantiene."],
+  "Cinturón: sin exenciones, salvo ambulancia asistencial.");
+Q("vulnerables", null, "Va de taxi en ciudad con un niño que mide menos de 135 cm y no hay sistema de retención infantil. ¿Qué dice la norma?",
+  ["En tráfico urbano, el taxi puede llevarlo sin SRI si va en un asiento trasero.",
+   "No puede viajar en ningún caso.",
+   "Puede ir en el asiento delantero sin retención."],
+  "La reforma mantiene una excepción limitada para los taxis en tráfico urbano o áreas urbanas de grandes ciudades: pueden transportar a menores de 135 cm sin dispositivo de retención si ocupan un asiento trasero. En turismos particulares la regla general es el SRI.",
+  ["Existe esa excepción concreta para taxis en ciudad, en asiento trasero.",
+   "En el asiento delantero no se aplica la excepción."],
+  "Taxi urbano, niño de menos de 135 cm: solo atrás sin SRI.");
+Q("vulnerables", null, "Va a rebasar un vehículo inmovilizado en la calzada (avería o accidente). ¿Qué distancia y velocidad exige la reforma?",
+  ["1,5 m de separación lateral y reducir al menos 20 km/h por debajo del límite de la vía.",
+   "0,5 m de separación y mantener la velocidad.",
+   "Pasar lo más rápido posible, sin cambios."],
+  "Al rebasar vehículos inmovilizados (accidente, avería, auxilio, mantenimiento o regulación) hay que dejar 1,5 m laterales y reducir la velocidad al menos 20 km/h respecto al límite, igual que al adelantar a un ciclista.",
+  ["0,5 m es insuficiente y no puede mantenerse la velocidad.",
+   "Pasar rápido aumenta el riesgo para las personas que estén junto al vehículo parado."],
+  "Vehículo parado: 1,5 m y 20 km/h menos.");
+Q("vulnerables", null, "En una calle de plataforma única (acera y calzada al mismo nivel), ¿quién tiene prioridad?",
+  ["El peatón, en cualquier punto de la calzada.",
+   "El vehículo, porque circula por la calzada.",
+   "El ciclista, que siempre pasa antes que el peatón."],
+  "La reforma reconoce expresamente que, en las calles de plataforma única, el peatón tiene prioridad de paso en cualquier punto de la calzada. Por eso el límite es de 20 km/h y hay que conducir preparado para detenerse.",
+  ["En plataforma única el espacio es compartido y la prioridad es del peatón.",
+   "El ciclista no tiene preferencia sobre el peatón en estas calles."],
+  "Plataforma única: manda el peatón.");
+Q("vulnerables", null, "Va a cruzar un arcén por el que caminan peatones y no hay zona peatonal. ¿Qué debe hacer?",
+  ["Cederles el paso.",
+   "Pasar rápido para no entorpecer.",
+   "Tocar el claxon y continuar."],
+  "Si no hay zona peatonal, los peatones pueden usar el arcén o la calzada. Los vehículos que crucen un arcén por el que circulen peatones deben cederles el paso.",
+  ["Pasar rápido pone en riesgo al peatón.",
+   "El claxon no sustituye a la obligación de ceder el paso."],
+  "Peatón en el arcén: cedo el paso.");
+Q("vulnerables", null, "¿Puede un peatón cruzar una glorieta por la calzada?",
+  ["No, salvo por los pasos habilitados.",
+   "Sí, por cualquier punto.",
+   "Sí, si no viene ningún vehículo."],
+  "Los peatones no pueden cruzar plazas ni glorietas atravesando la calzada, salvo en los pasos habilitados para ello. Es una medida para evitar atropellos en puntos donde los conductores no esperan peatones.",
+  ["Solo se puede cruzar por pasos habilitados.",
+   "Aunque no venga nadie, la prohibición sigue en vigor."],
+  "Glorieta: el peatón solo por los pasos.");
+Q("vulnerables", null, "En un paso con semáforo, ¿qué combinación evita la reforma?",
+  ["Que coincida el ámbar intermitente para vehículos con el verde no intermitente para peatones.",
+   "Que coincida el rojo de vehículos con el verde de peatones.",
+   "Que los semáforos estén apagados de noche."],
+  "Cuando el ámbar intermitente deja avanzar a los vehículos que giran, pueden coincidir con peatones que cruzan. La reforma busca evitar esa coincidencia: no puede darse ámbar intermitente para vehículos con verde no intermitente para peatones.",
+  ["Esa combinación es la normal y segura: los vehículos están parados.",
+   "No tiene relación con apagar los semáforos."],
+  "Ámbar intermitente y peatones en verde: no deben coincidir.");
+Q("vulnerables", null, "¿Qué son los «caminos escolares seguros»?",
+  ["Itinerarios que los ayuntamientos pueden crear con reducción de velocidad, calmado del tráfico o restricciones a vehículos de motor.",
+   "Una norma que prohíbe aparcar cerca de cualquier colegio.",
+   "Autobuses escolares sin limitación de velocidad."],
+  "La reforma les da entidad jurídica: los ayuntamientos o titulares de las vías pueden crearlos, con medidas como reducir la velocidad, calmar el tráfico o restringir el acceso de vehículos motorizados. Se refuerzan también las medidas cerca de centros escolares, hospitalarios y de mayores.",
+  ["No es una prohibición general de aparcar.",
+   "El transporte escolar, por el contrario, tiene una reducción de 10 km/h sobre el límite general."],
+  "Camino escolar seguro: menos coches y más calma junto al cole.");
+Q("vulnerables", null, "¿Qué dice la normativa sobre usar auriculares mientras se conduce un turismo?",
+  ["Están prohibidos (infracción que detrae 3 puntos); se permite solo el dispositivo inalámbrico integrado en el casco de moto para intercomunicación o navegación.",
+   "Están permitidos si el volumen es bajo.",
+   "Están permitidos en un solo oído."],
+  "El uso de auriculares o cascos conectados a aparatos de sonido está prohibido y detrae 3 puntos. La reforma deja claro que en moto se permite el dispositivo inalámbrico integrado en el casco, solo para intercomunicación o navegación y sin afectar a la conducción.",
+  ["El volumen no cambia la prohibición.",
+   "Tampoco se permite con un solo oído."],
+  "Auriculares al volante: 3 puntos. En moto, solo integrados y para comunicar o navegar.");
+Q("vulnerables", null, "¿Qué ocurre si lleva un inhibidor de radares en el vehículo?",
+  ["Está prohibido: infracción que detrae 6 puntos.",
+   "Es legal si no se usa.",
+   "Solo se multa si interfiere con un radar en ese momento."],
+  "La reforma mantiene la prohibición de instalar o llevar inhibidores de radares o cinemómetros (y detectores). Llevar un inhibidor supone la pérdida de 6 puntos según el cuadro de la Ley de Tráfico.",
+  ["Llevarlo ya es infracción, aunque esté apagado.",
+   "No hace falta que funcione en ese momento: la sola posesión está sancionada."],
+  "Inhibidor de radar: ni instalado ni en el coche. 6 puntos.");
+Q("vulnerables", null, "¿Qué pueden regular los ayuntamientos según el nuevo título sobre circulación urbana?",
+  ["Zonas de bajas emisiones y de prioridad residencial, con restricciones por clasificación ambiental, además del aparcamiento y los caminos escolares.",
+   "Cualquier norma, incluso contraria al Reglamento General de Circulación.",
+   "Nada: toda la circulación urbana depende de la DGT."],
+  "El reglamento incorpora un título VI con normas básicas de circulación urbana y deja que las ordenanzas municipales las desarrollen sin oponerse a él. Pueden crear zonas de bajas emisiones y de prioridad residencial, regular el aparcamiento (incluso por clasificación ambiental) y los caminos escolares.",
+  ["Las ordenanzas desarrollan, pero no pueden contradecir el reglamento.",
+   "Los ayuntamientos tienen competencias propias de ordenación del tráfico urbano."],
+  "Ciudad: ordenanza municipal dentro del marco del reglamento.");
+Q("vulnerables", null, "¿Qué debe cumplir una autocaravana al estacionar?",
+  ["No extender elementos fuera de su perímetro, apoyarse solo en los neumáticos y no verter fluidos.",
+   "Puede extender toldo y calzos si el sitio está libre.",
+   "Puede vaciar los depósitos en la calzada."],
+  "Estacionar no es acampar: no se pueden sacar elementos que sobresalgan del perímetro del vehículo (toldos, escalones, mesas), debe apoyarse únicamente sobre sus neumáticos y no puede verter fluidos del habitáculo.",
+  ["Extender toldo o calzos equivale a acampar, que no está permitido al estacionar.",
+   "Verter fluidos está prohibido."],
+  "Autocaravana aparcada: como un coche, sin acampar.");
+
+/* ---- PERCEPCIÓN DEL RIESGO (pregunta con vídeo anunciada por la DGT) ---- */
+QV("peaton", "Después de ver la escena, ¿qué situación de riesgo debe identificar?",
+  ["Un peatón que baja de la acera por delante del autobús detenido y cruza hacia mi carril.",
+   "El autobús va a arrancar y cerrarme el paso.",
+   "Un ciclista que viene por detrás y me va a adelantar."],
+  "Un autobús parado en una parada tapa parte de la visión y puede ocultar a peatones que cruzan por delante o por detrás. Hay que reducir la velocidad al acercarse, separarse lateralmente si se puede y estar preparado para frenar: el peatón tiene prioridad.",
+  ["El autobús permanece detenido en toda la escena; el peligro es otro.",
+   "No aparece ningún ciclista por detrás en la escena."],
+  "Autobús parado: pueden salir peatones por cualquier lado.");
+QV("adel", "Después de ver la escena, ¿qué situación de riesgo debe identificar?",
+  ["Un vehículo que viene de frente por el carril contrario mientras empiezo a adelantar al camión.",
+   "El camión va a frenar bruscamente.",
+   "Un peatón en el arcén."],
+  "Antes de adelantar hay que comprobar que el carril contrario está libre durante toda la maniobra, no solo en el momento de iniciarla. Aquí aparece un vehículo de frente: si no hay distancia suficiente, se desiste y se vuelve al carril.",
+  ["El camión mantiene su marcha; el peligro viene del carril contrario.",
+   "En la escena no hay peatones; el riesgo es una colisión frontal."],
+  "Adelanto solo si veo libre todo el recorrido.");
+QV("incorp", "Después de ver la escena, ¿qué situación de riesgo debe identificar?",
+  ["Un vehículo que se incorpora desde el carril de aceleración y puede entrar en mi carril.",
+   "Un vehículo que me adelanta por la derecha en el carril de aceleración.",
+   "El carril izquierdo está cortado."],
+  "En las incorporaciones, quien entra debe ceder el paso, pero conviene anticiparse: si se puede, cambiar al carril contiguo o ajustar la velocidad para dejar hueco. Mantener la atención en el vehículo que se incorpora evita colisiones laterales.",
+  ["En la escena el vehículo del carril de aceleración intenta entrar, no adelantar.",
+   "El carril izquierdo no está cortado; el riesgo está a la derecha."],
+  "Veo una incorporación: dejo hueco o cambio de carril.");
+QV("cruce", "Después de ver la escena, ¿qué situación de riesgo debe identificar?",
+  ["Un vehículo de la vía lateral que puede no respetar su señal de STOP y entrar en la intersección aunque yo tenga prioridad.",
+   "Un peatón en el paso de peatones.",
+   "Un vehículo que me adelanta por la derecha."],
+  "Tener prioridad no significa que los demás vayan a respetarla. Al acercarse a una intersección hay que vigilar a los vehículos que esperan en las vías laterales y estar preparado para frenar si invaden la calzada.",
+  ["No hay peatones en la escena.",
+   "Nadie me adelanta; el vehículo conflictivo viene de una vía lateral."],
+  "Mi prioridad no frena al que no la respeta: anticipo.");
+QV("distrac", "Después de ver la escena, ¿qué situación de riesgo debe identificar?",
+  ["El vehículo de delante hace movimientos laterales: puede ir distraído (por ejemplo, con el móvil) y conviene aumentar la distancia.",
+   "El vehículo de delante frena por un semáforo.",
+   "La carretera se estrecha."],
+  "Los desplazamientos laterales dentro del carril y las velocidades irregulares son señales de un conductor distraído. Hay que aumentar la distancia de seguridad, evitar ir pegado y no adelantar sin estar seguro de su reacción.",
+  ["No hay semáforo en la escena; el coche de delante zigzaguea.",
+   "La anchura de la calzada no cambia."],
+  "Coche que zigzaguea: conductor distraído. Distancia.");
+QV("ciclista", "Después de ver la escena, ¿qué situación de riesgo debe identificar?",
+  ["Un ciclista que circula por el carril bici que voy a cruzar al girar a la derecha.",
+   "Un peatón que sale de un portal.",
+   "Un vehículo que me adelanta por la izquierda."],
+  "Al girar a la derecha hay que mirar el retrovisor y el ángulo muerto por si llega un ciclista por el carril bici que vamos a cruzar. El ciclista que sigue recto tiene prioridad sobre el vehículo que gira.",
+  ["En la escena no aparece ningún peatón saliendo de un portal.",
+   "El riesgo viene por la derecha, no por la izquierda."],
+  "Giro a la derecha: miro el carril bici antes de cruzarlo.");
+
 /* ================= FIGURAS (SVG) ================= */
 /* Señales oficiales: img/senales/<código>.svg (Wikimedia Commons, ver README). */
 const SIGN_FILE = { stop: 'r2', ceda: 'r1' };
@@ -1163,9 +1495,143 @@ function diagram(d) {
   return '';
 }
 
+/* ================= ESCENAS DE VÍDEO (percepción del riesgo) =================
+   La DGT anunció una pregunta del examen basada en un vídeo de situaciones de riesgo: se puede ver hasta 3 veces
+   antes de ver la pregunta. Aquí las escenas son esquemas animados (vista cenital), no grabaciones reales. */
+const VW = 360, VH = 240;
+function pathAt(p, t) {
+  if (t <= p[0][0]) return [p[0][1], p[0][2]];
+  for (let i = 1; i < p.length; i++) {
+    if (t <= p[i][0]) { const a = p[i - 1], b = p[i], u = (t - a[0]) / ((b[0] - a[0]) || 1); return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u]; }
+  }
+  const l = p[p.length - 1]; return [l[1], l[2]];
+}
+function rrect(c, x, y, w, h, r) {
+  c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r); c.lineTo(x + w, y + h - r);
+  c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r);
+  c.quadraticCurveTo(x, y, x + r, y); c.closePath();
+}
+function dashed(c, x1, y1, x2, y2) { c.save(); c.setLineDash([12, 9]); c.strokeStyle = '#e5e7eb'; c.lineWidth = 2; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); c.restore(); }
+function poly(c, pts, fill, stroke) { c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.closePath(); c.fillStyle = fill; c.fill(); if (stroke) { c.strokeStyle = stroke; c.lineWidth = 2; c.stroke(); } }
+const BG = {
+  road(c) {
+    c.fillStyle = '#b9cfa5'; c.fillRect(0, 0, VW, VH); c.fillStyle = '#4b5563'; c.fillRect(100, 0, 160, VH);
+    c.fillStyle = '#f3f4f6'; c.fillRect(103, 0, 2, VH); c.fillRect(255, 0, 2, VH); dashed(c, 180, 0, 180, VH);
+  },
+  parada(c) {
+    BG.road(c); c.fillStyle = '#d1d5db'; c.fillRect(262, 0, 70, VH); c.fillStyle = '#9ca3af'; c.fillRect(260, 0, 3, VH);
+    c.fillStyle = '#1f5fd6'; c.fillRect(300, 60, 18, 26); c.fillStyle = '#fff'; c.font = '700 14px Arial'; c.textAlign = 'center'; c.fillText('P', 309, 79);
+  },
+  hwy(c) {
+    c.fillStyle = '#b9cfa5'; c.fillRect(0, 0, VW, VH); c.fillStyle = '#4b5563'; c.fillRect(70, 0, 180, VH);
+    poly(c, [[250, VH], [292, VH], [292, 150], [250, 40]], '#4b5563');
+    c.fillStyle = '#f3f4f6'; c.fillRect(68, 0, 2, VH); dashed(c, 130, 0, 130, VH); dashed(c, 190, 0, 190, VH);
+    c.fillStyle = '#f3f4f6'; c.fillRect(249, 120, 2, 120); c.fillRect(291, 150, 2, 90); dashed(c, 250, 40, 250, 120);
+  },
+  cruce(c) {
+    c.fillStyle = '#b9cfa5'; c.fillRect(0, 0, VW, VH); c.fillStyle = '#4b5563'; c.fillRect(160, 0, 80, VH); c.fillRect(0, 90, VW, 60);
+    dashed(c, 200, 0, 200, 86); dashed(c, 200, 154, 200, VH); dashed(c, 0, 120, 156, 120); dashed(c, 244, 120, VW, 120);
+    c.fillStyle = '#f3f4f6'; c.fillRect(200, 152, 40, 3); c.fillRect(246, 100, 3, 20);
+    // STOP en la vía lateral derecha
+    poly(c, [[262, 150], [272, 150], [279, 157], [279, 167], [272, 174], [262, 174], [255, 167], [255, 157]], '#c1121f', '#fff');
+    // prioridad (rombo) en la vía de A
+    poly(c, [[250, 196], [262, 208], [250, 220], [238, 208]], '#f6c21c', '#111');
+  },
+  carrilbici(c) {
+    c.fillStyle = '#d1d5db'; c.fillRect(0, 0, VW, VH); c.fillStyle = '#4b5563'; c.fillRect(100, 0, 135, VH); c.fillRect(100, 55, VW - 100, 65);
+    c.fillStyle = '#6aa84f'; c.fillRect(236, 0, 24, 55); c.fillRect(236, 120, 24, 120); c.fillStyle = '#f3f4f6'; c.fillRect(234, 0, 2, 55); c.fillRect(234, 120, 2, 120);
+    dashed(c, 167, 0, 167, 52); dashed(c, 167, 124, 167, VH); dashed(c, 262, 88, VW, 88);
+  }
+};
+function drawActor(c, a, x, y, ang) {
+  c.save(); c.translate(x, y); c.rotate(ang);
+  if (a.k === 'car' || a.k === 'bus') {
+    const w = a.k === 'bus' ? 26 : 18, h = a.k === 'bus' ? 66 : 32;
+    c.fillStyle = 'rgba(0,0,0,.25)'; rrect(c, -w / 2 + 2, -h / 2 + 2, w, h, 4); c.fill();
+    c.fillStyle = a.c; rrect(c, -w / 2, -h / 2, w, h, 4); c.fill();
+    c.fillStyle = '#cfe8ff'; c.fillRect(-w / 2 + 3, -h / 2 + 4, w - 6, a.k === 'bus' ? 8 : 7);
+  } else if (a.k === 'bike') {
+    c.fillStyle = '#111'; c.fillRect(-2, -10, 4, 20); c.fillStyle = a.c; c.beginPath(); c.arc(0, -1, 5, 0, 6.3); c.fill();
+  } else {
+    c.fillStyle = a.c; c.beginPath(); c.ellipse(0, 0, 7, 4, 0, 0, 6.3); c.fill(); c.fillStyle = '#f2c9a0'; c.beginPath(); c.arc(0, 0, 3.5, 0, 6.3); c.fill();
+  }
+  c.restore();
+  if (a.lab) { c.fillStyle = '#fff'; c.font = '700 11px Arial'; c.textAlign = 'center'; c.fillText(a.lab, x, y + 4); }
+  if (a.ico === 'phone') { c.fillStyle = '#111'; c.fillRect(x + 14, y - 8, 7, 12); c.fillStyle = '#7dd3fc'; c.fillRect(x + 15, y - 6, 5, 8); }
+}
+function drawScene(c, sc, t) {
+  BG[sc.bg](c);
+  sc.actors.forEach(a => {
+    const [x, y] = pathAt(a.p, t), [x2, y2] = pathAt(a.p, t + 0.12), [x0, y0] = pathAt(a.p, Math.max(0, t - 0.12));
+    let ang = a.a || 0;
+    if (Math.hypot(x2 - x, y2 - y) > 0.15) ang = Math.atan2(x2 - x, -(y2 - y));
+    else if (Math.hypot(x - x0, y - y0) > 0.15) ang = Math.atan2(x - x0, -(y - y0));
+    drawActor(c, a, x, y, ang);
+  });
+  c.fillStyle = 'rgba(0,0,0,.28)'; c.fillRect(0, VH - 5, VW, 5); c.fillStyle = '#f6c21c'; c.fillRect(0, VH - 5, VW * Math.min(1, t / sc.dur), 5);
+}
+const SCENES = {
+  peaton: { dur: 9, bg: 'parada', still: 6, actors: [
+    { k: 'ped', c: '#7c3aed', p: [[0, 292, 78], [4.8, 292, 78], [5.2, 268, 82], [6, 236, 86], [7, 204, 88], [8.2, 150, 90]] },
+    { k: 'bus', c: '#f0b429', p: [[0, 246, 124]] },
+    { k: 'car', c: '#1f5fd6', lab: 'A', p: [[0, 205, 270], [3, 205, 205], [5, 205, 172], [6.5, 205, 162], [9, 205, 156]] }
+  ] },
+  adel: { dur: 9, bg: 'road', still: 5.4, actors: [
+    { k: 'bus', c: '#9ca3af', p: [[0, 220, 130], [9, 220, 70]] },
+    { k: 'car', c: '#d33a2f', p: [[0, 140, -70], [2.5, 140, -30], [9, 140, 262]] },
+    { k: 'car', c: '#1f5fd6', lab: 'A', p: [[0, 220, 262], [3, 220, 215], [4.2, 216, 205], [5, 160, 195], [5.8, 148, 190], [7, 185, 210], [8, 220, 222], [9, 220, 224]] }
+  ] },
+  incorp: { dur: 9, bg: 'hwy', still: 5.4, actors: [
+    { k: 'car', c: '#6b7280', p: [[0, 160, 210], [9, 160, -110]] },
+    { k: 'car', c: '#d99a00', p: [[0, 270, 290], [3, 270, 170], [4.5, 266, 120], [5.5, 240, 80], [6.5, 222, 55], [9, 220, -20]] },
+    { k: 'car', c: '#1f5fd6', lab: 'A', p: [[0, 220, 270], [4.5, 220, 120], [6, 220, 108], [7.5, 220, 100], [9, 220, 62]] }
+  ] },
+  cruce: { dur: 9, bg: 'cruce', still: 5.5, actors: [
+    { k: 'car', c: '#d33a2f', lab: 'B', p: [[0, 360, 110], [2, 236, 110], [4.2, 236, 110], [5.2, 206, 110], [6.5, 160, 110], [8, 60, 110]] },
+    { k: 'car', c: '#1f5fd6', lab: 'A', p: [[0, 200, 262], [4.5, 200, 176], [6, 200, 164], [9, 200, 160]] }
+  ] },
+  distrac: { dur: 9, bg: 'road', still: 4.5, actors: [
+    { k: 'car', c: '#d33a2f', ico: 'phone', p: [[0, 220, 150], [1.5, 205, 125], [3, 236, 100], [4.5, 206, 75], [6, 238, 50], [7.5, 208, 25], [9, 236, 0]] },
+    { k: 'car', c: '#1f5fd6', lab: 'A', p: [[0, 220, 262], [9, 220, 160]] }
+  ] },
+  ciclista: { dur: 9, bg: 'carrilbici', still: 5.6, actors: [
+    { k: 'bike', c: '#d33a2f', p: [[0, 248, 300], [9, 248, -30]] },
+    { k: 'car', c: '#1f5fd6', lab: 'A', p: [[0, 170, 262], [3, 170, 165], [5, 170, 146], [6, 177, 122], [7, 215, 100], [8, 270, 90], [9, 340, 90]] }
+  ] }
+};
+let vidRaf = 0;
+function stopVideo() { if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(vidRaf); }
+function playScene(cv, id, done) {
+  stopVideo();
+  const sc = SCENES[id], c = cv.getContext('2d'), t0 = performance.now();
+  (function step(now) {
+    const t = (now - t0) / 1000;
+    drawScene(c, sc, Math.min(t, sc.dur));
+    if (t < sc.dur) vidRaf = requestAnimationFrame(step); else if (done) done();
+  })(t0);
+}
+function hydrateVideos() {
+  document.querySelectorAll('canvas[data-scene]').forEach(cv => { const sc = SCENES[cv.dataset.scene]; if (sc) drawScene(cv.getContext('2d'), sc, sc.still); });
+  updateVBar();
+}
+function updateVBar() {
+  const p = document.getElementById('vplay'); if (!p || !ses) return;
+  const id = ses.ids[ses.cur], v = ses.vv[id]; if (!v) return;
+  document.getElementById('vleft').textContent = v.left > 0 ? `Le ${v.left === 1 ? 'queda 1 visualización' : 'quedan ' + v.left + ' visualizaciones'} antes de ver la pregunta` : 'Ya no le quedan visualizaciones';
+  p.disabled = v.left <= 0 || v.playing;
+  p.textContent = v.viewed ? 'Ver de nuevo' : 'Ver vídeo';
+  document.getElementById('vgo').disabled = !v.viewed || v.playing;
+}
+
 /* ================= ESTADO Y ALMACENAMIENTO ================= */
 const KEY = 'dgt-clase-b-v1';
-function loadDB() { try { const j = localStorage.getItem(KEY); if (j) { const o = JSON.parse(j); if (o && o.stats) return o; } } catch (e) {} return { stats: {}, exams: [] }; }
+function loadDB() {
+  let o = null;
+  try { const j = localStorage.getItem(KEY); if (j) { const x = JSON.parse(j); if (x && x.stats) o = x; } } catch (e) {}
+  if (!o) o = { stats: {}, exams: [] };
+  o.prefs = Object.assign({ video: true }, o.prefs);
+  return o;
+}
 let DB = loadDB();
 function saveDB() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
 function record(id, ok) {
@@ -1191,8 +1657,9 @@ function pickStudy(topic, n) {
 function start(mode, ids) {
   clearInterval(timerId);
   if (!ids.length) return;
-  ses = { mode, ids, perm: {}, ans: {}, done: {}, cur: 0, t0: Date.now(), left: EXAM_SECS, filter: 'all' };
-  ids.forEach(id => ses.perm[id] = shuf([0, 1, 2]));
+  const vsec = ids.reduce((a, id) => a + (BANK[id].v ? SCENES[BANK[id].v].dur * 3 : 0), 0);
+  ses = { mode, ids, perm: {}, ans: {}, done: {}, vv: {}, cur: 0, t0: Date.now(), limit: EXAM_SECS + vsec, left: EXAM_SECS + vsec, filter: 'all' };
+  ids.forEach(id => { ses.perm[id] = shuf([0, 1, 2]); if (BANK[id].v) ses.vv[id] = { left: 3, went: false, playing: false, viewed: false }; });
   view = 'q';
   if (mode === 'exam') timerId = setInterval(tick, 1000);
   render(); window.scrollTo(0, 0);
@@ -1216,7 +1683,7 @@ function finish() {
   ses.secs = Math.round((Date.now() - ses.t0) / 1000);
   if (ses.mode === 'exam') {
     const err = ses.ids.filter(id => ses.ans[id] !== 0).length;
-    DB.exams.push({ d: Date.now(), err, secs: Math.min(ses.secs, EXAM_SECS) });
+    DB.exams.push({ d: Date.now(), err, secs: Math.min(ses.secs, ses.limit) });
     DB.exams = DB.exams.slice(-12);
     saveDB();
   }
@@ -1234,7 +1701,32 @@ function barHtml() {
 }
 function render() {
   $bar.innerHTML = barHtml();
+  stopVideo();
   $app.innerHTML = view === 'home' ? homeHtml() : view === 'cfg' ? cfgHtml() : view === 'q' ? qHtml() : resultHtml();
+  hydrateVideos();
+}
+
+function infoHtml() {
+  const L = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+  return `<details class="info"><summary>Novedades y datos oficiales del examen (octubre de 2026)</summary><div class="in">
+    <div><h3>El examen teórico del permiso B</h3><ul>
+      <li>30 preguntas con tres opciones y una sola correcta. Se aprueba con un máximo de 3 fallos.</li>
+      <li>La DGT anunció una pregunta basada en un vídeo de situaciones de riesgo (glorietas, intersecciones, incorporaciones, velocidad inadecuada, distracciones, desplazamientos laterales y adelantamientos). Se ve hasta 3 veces antes de ver la pregunta y el tiempo del examen se amplía según la duración del vídeo. Esa pregunta no se puede hacer en papel.</li>
+      <li>La DGT presentó esta novedad como una previsión de implantación. Pregunta a tu autoescuela si tu convocatoria ya la incluye. En este simulador es opcional.</li>
+      <li>La tasa da derecho a dos convocatorias. El informe del centro de reconocimiento vale 90 días. El teórico aprobado se conserva 2 años para obtener el permiso.</li>
+      <li>Puedes presentarte a la primera convocatoria hasta 3 meses antes de cumplir la edad mínima (18 años para el permiso B).</li></ul></div>
+    <div><h3>Reforma del Reglamento General de Circulación (RD 518/2026, en vigor desde el 1 de octubre de 2026)</h3><ul>
+      <li>Nuevo concepto de usuario vulnerable: peatones, ciclistas, VMP y motoristas.</li>
+      <li>Adelantar a ciclistas: 1,5 m laterales, reducir al menos 20 km/h respecto al límite fuera de poblado y cambiar completamente de carril si hay más de uno por sentido. Detrás de un ciclista, 5 m de separación.</li>
+      <li>Ciclistas: casco en vías interurbanas, y en cualquier vía para menores de 16 años y profesionales (en ciudad).</li>
+      <li>Patinetes (VMP): 15 años, casco, luz o reflectante visible a 150 m. Alumbrado diurno obligatorio desde el 1 de octubre de 2027.</li>
+      <li>Motos: guantes en vías interurbanas y calzado cerrado en todas; casco homologado en ciclomotores desde el 1 de octubre de 2027; arcén a 30 km/h solo en retenciones y tramos señalizados.</li>
+      <li>Atascos en autopista y autovía: carril de emergencia para vehículos prioritarios. Con nieve, prohibido adelantar.</li>
+      <li>Cinturón sin exenciones para taxistas, mercancías y autoescuela. Peatón con prioridad en plataforma única.</li></ul></div>
+    <div><h3>Patinetes: registro y seguro</h3><ul>
+      <li>Registro en el Registro de Vehículos Personales Ligeros de la DGT (RD 52/2026) y seguro obligatorio (Ley 5/2025). Los modelos no certificados pueden circular hasta el 22 de enero de 2027 si están registrados y asegurados.</li></ul></div>
+    <p class="note">Fuentes: ${L('https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-13889','BOE, RD 518/2026')}, ${L('https://www.dgt.es/comunicacion/notas-de-prensa/20260930-reforma-del-reglamento-de-circulacion-usuarios-vulnerables/','DGT, reforma del Reglamento')}, ${L('https://www.dgt.es/comunicacion/noticias/20251020-examen-teorico-la-importancia-de-conocer-el-riesgo/','DGT, examen teórico')}, ${L('https://www.dgt.es/nuestros-servicios/permisos-de-conducir/obtener-un-nuevo-permiso-de-conducir/requisitos-preparacion-y-presentacion-a-examen/','DGT, requisitos')}, ${L('https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-2140','BOE, RD 52/2026')}. Los puntos de cada infracción vienen del cuadro de la Ley de Tráfico, no del reglamento.</p>
+  </div></details>`;
 }
 
 function homeHtml() {
@@ -1247,15 +1739,17 @@ function homeHtml() {
   const fails = cnt('fail');
   let h = `<section class="hero"><h1>Examen teórico, permiso B</h1>
     <p>Simulacro con el formato del examen de la DGT y explicación de cada respuesta, tanto si acierta como si falla.</p>
-    <div class="rule"><span><b>${EXAM_N}</b> preguntas</span><span><b>30</b> minutos</span><span>3 opciones, 1 correcta</span><span>Máximo <b>${EXAM_MAX_ERR}</b> fallos</span></div></section>`;
+    <div class="rule"><span><b>${EXAM_N}</b> preguntas</span><span><b>30</b> minutos${DB.prefs.video ? ' + duración del vídeo' : ''}</span><span>3 opciones, 1 correcta</span><span>Máximo <b>${EXAM_MAX_ERR}</b> fallos</span></div></section>`;
   h += `<div class="stats num">
     <div class="stat"><b>${tot ? Math.round(ok / tot * 100) + '%' : '–'}</b><span>aciertos totales</span></div>
     <div class="stat"><b>${cnt('mastered')}/${BANK.length}</b><span>preguntas dominadas</span></div>
     <div class="stat"><b>${DB.exams.length ? passed + '/' + DB.exams.length : '–'}</b><span>exámenes aprobados</span></div></div>`;
   h += `<div class="modes">
-    <button class="btn big" data-act="exam"><span>Examen simulado<small>30 preguntas · 30 min · sin volver atrás, como el real</small></span><span>→</span></button>
+    <button class="btn big" data-act="exam"><span>Examen simulado<small>30 preguntas · 30 min${DB.prefs.video ? ' + vídeo' : ''} · sin volver atrás, como el real</small></span><span>→</span></button>
     <button class="btn big alt" data-act="cfg"><span>Modo estudio<small>Verás la explicación al contestar cada pregunta</small></span><span>→</span></button>
-    <button class="btn big alt" data-act="repaso" ${fails ? '' : 'disabled'}><span>Repasar mis fallos<small>${fails ? fails + ' preguntas pendientes de aprender' : 'Aún no tienes fallos pendientes'}</small></span><span>→</span></button></div>`;
+    <button class="btn big alt" data-act="repaso" ${fails ? '' : 'disabled'}><span>Repasar mis fallos<small>${fails ? fails + ' preguntas pendientes de aprender' : 'Aún no tienes fallos pendientes'}</small></span><span>→</span></button></div>
+    <label class="optline" for="optvideo"><input type="checkbox" id="optvideo" ${DB.prefs.video ? 'checked' : ''}><span>Incluir en el examen una pregunta con vídeo de percepción del riesgo, como anunció la DGT. Se ve hasta 3 veces antes de ver la pregunta y el tiempo se amplía según la duración del vídeo.</span></label>
+    ${infoHtml()}`;
   h += '<h2 class="sec">Temas</h2><div class="topics">';
   Object.keys(TOPICS).forEach(t => {
     const qs = BANK.filter(q => q.t === t), n = qs.length;
@@ -1269,7 +1763,7 @@ function homeHtml() {
     DB.exams.slice(-12).forEach(e => { h += `<div class="${e.err <= EXAM_MAX_ERR ? 'p' : 'x'}" style="height:${Math.max(8, Math.min(e.err, 12) / 12 * 100)}%" title="${e.err} fallos"><span>${e.err}</span></div>`; });
     h += '</div><p class="note">Verde: apto (3 fallos o menos). Rojo: no apto.</p>';
   }
-  h += `<p class="note" style="margin-top:24px">Las preguntas son originales y siguen el temario y el estilo del examen oficial; el banco oficial de la DGT no es público. Las cifras corresponden a la normativa vigente en 2026. Antes de examinarte, repasa el manual de tu autoescuela por si hubiera cambios.</p>`;
+  h += `<p class="note" style="margin-top:24px">Las preguntas son originales y siguen el temario y el estilo del examen oficial; el banco oficial de la DGT no es público. La normativa está actualizada a octubre de 2026 (Real Decreto 518/2026, en vigor desde el 1 de octubre). Antes de examinarte, repasa el manual de tu autoescuela por si hubiera cambios.</p>`;
   h += resetAsk
     ? '<p class="note">¿Borrar todo tu progreso? <button class="linkbtn" data-act="reset-yes">Sí, borrar</button> <button class="linkbtn" data-act="reset-no">Cancelar</button></p>'
     : '<p class="note"><button class="linkbtn" data-act="reset">Borrar mi progreso</button></p>';
@@ -1296,8 +1790,14 @@ function qHtml() {
     ticks += `<span class="${c}"></span>`;
   });
   const okSoFar = s.ids.filter(i => s.done[i] && s.ans[i] === 0).length;
-  let h = `<div class="ticks" aria-hidden="true">${ticks}</div>
-    <div class="qhead"><b>Pregunta ${s.cur + 1} de ${s.ids.length}</b><span>${study ? 'Aciertos: ' + okSoFar + ' · ' : ''}${TOPICS[q.t]}</span></div>
+  const head = `<div class="ticks" aria-hidden="true">${ticks}</div>
+    <div class="qhead"><b>Pregunta ${s.cur + 1} de ${s.ids.length}</b><span>${study ? 'Aciertos: ' + okSoFar + ' · ' : ''}${TOPICS[q.t]}</span></div>`;
+  if (q.v && !s.vv[id].went) {
+    return head + `<div class="vid"><p class="qtext" style="margin:0 0 12px">Observa la escena, vista desde arriba. Tú conduces el vehículo azul (A). Fíjate en las situaciones de riesgo: después responderás una pregunta.</p>
+      <canvas width="${VW}" height="${VH}" data-scene="${q.v}" role="img" aria-label="Escena de tráfico animada"></canvas>
+      <div class="vbar"><button class="btn" data-act="vplay" id="vplay">Ver vídeo</button><span class="vnote" id="vleft"></span><button class="btn ghost" data-act="vgo" id="vgo" disabled>Ir a la pregunta</button></div></div>`;
+  }
+  let h = head + `
     <div class="qcard">${q.f ? `<figure class="fig${isSign(q.f) ? ' sign' : ''}">${figure(q.f)}</figure>` : ''}<div class="qtext">${q.q}</div></div><div class="opts">`;
   perm.forEach((o, p) => {
     let c = 'opt';
@@ -1318,7 +1818,7 @@ function explain(q, perm, ch) {
   const head = ch === undefined ? 'Sin contestar' : ch === 0 ? 'Correcto' : 'Incorrecto';
   const correctPos = perm.indexOf(0);
   let h = `<div class="fb ${kind}"><div class="fb-h">${head}${kind !== 'ok' ? ` · la correcta es la ${'ABC'[correctPos]}` : ''}</div><div class="fb-b">
-    <div><h4>Por qué</h4><p>${q.e}</p>${q.d ? `<figure class="fig wide">${diagram(q.d)}</figure>` : ''}</div><div><h4>Qué pasa con cada opción</h4><ul class="why">`;
+    <div><h4>Por qué</h4><p>${q.e}</p>${q.d ? `<figure class="fig wide">${diagram(q.d)}</figure>` : ''}${q.v ? `<div class="vidbox"><canvas width="${VW}" height="${VH}" data-scene="${q.v}" role="img" aria-label="Escena de tráfico"></canvas><button class="chip" data-act="playvid" data-s="${q.v}">Ver la escena otra vez</button></div>` : ''}</div><div><h4>Qué pasa con cada opción</h4><ul class="why">`;
   perm.forEach((o, p) => {
     const c = o === 0;
     h += `<li class="${c ? 'c' : 'w'}"><span class="lt">${'ABC'[p]}</span><span>${c ? '<b>Correcta.</b> ' + q.o[o] : '<b>No.</b> ' + q.x[o - 1]}${ch === o ? '<span class="tag">tu respuesta</span>' : ''}</span></li>`;
@@ -1333,7 +1833,7 @@ function resultHtml() {
   let h;
   if (s.mode === 'exam') {
     const apt = nBad <= EXAM_MAX_ERR;
-    h = `<div class="verdict ${apt ? 'ok' : 'no'}"><h1>${apt ? 'APTO' : 'NO APTO'}</h1><p class="num"><b>${nBad}</b> ${nBad === 1 ? 'fallo' : 'fallos'} de ${total} (máximo permitido: ${EXAM_MAX_ERR}) · tiempo ${fmt(Math.min(s.secs, EXAM_SECS))} de 30:00</p></div>`;
+    h = `<div class="verdict ${apt ? 'ok' : 'no'}"><h1>${apt ? 'APTO' : 'NO APTO'}</h1><p class="num"><b>${nBad}</b> ${nBad === 1 ? 'fallo' : 'fallos'} de ${total} (máximo permitido: ${EXAM_MAX_ERR}) · tiempo ${fmt(Math.min(s.secs, s.limit))} de ${fmt(s.limit)}</p></div>`;
   } else {
     h = `<div class="verdict neutral"><h1 class="num">${nOk} / ${total}</h1><p>aciertos (${Math.round(nOk / total * 100)}%). Las falladas quedan guardadas en «Repasar mis fallos».</p></div>`;
   }
@@ -1356,6 +1856,7 @@ function choose(p) {
   if (view !== 'q') return;
   const id = ses.ids[ses.cur];
   if (ses.done[id]) return;
+  if (BANK[id].v && !ses.vv[id].went) return;
   const o = ses.perm[id][p];
   if (o === undefined) return;
   ses.ans[id] = o;
@@ -1369,7 +1870,13 @@ function next() {
   if (ses.cur === ses.ids.length - 1) return finish();
   ses.cur++; render(); window.scrollTo(0, 0);
 }
-function examIds() { return shuf(BANK.map(q => q.id)).slice(0, EXAM_N); }
+function examIds() {
+  const reg = BANK.filter(q => !q.v).map(q => q.id), vid = BANK.filter(q => q.v).map(q => q.id);
+  if (!DB.prefs.video || !vid.length) return shuf(reg).slice(0, EXAM_N);
+  const ids = shuf(reg).slice(0, EXAM_N - 1);
+  ids.splice(Math.floor(Math.random() * (ids.length + 1)), 0, shuf(vid)[0]);
+  return ids;
+}
 
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
@@ -1383,14 +1890,24 @@ document.addEventListener('click', (e) => {
   else if (a === 'again') start('study', pickStudy(cfg.topic, cfg.n));
   else if (a === 'opt') choose(+b.dataset.p);
   else if (a === 'next') next();
+  else if (a === 'vplay') {
+    const id = ses.ids[ses.cur], v = ses.vv[id]; if (!v || v.left <= 0 || v.playing) return;
+    v.left--; v.playing = true; updateVBar();
+    playScene(document.querySelector('canvas[data-scene]'), BANK[id].v, () => { v.playing = false; v.viewed = true; updateVBar(); });
+  }
+  else if (a === 'vgo') { ses.vv[ses.ids[ses.cur]].went = true; render(); }
+  else if (a === 'playvid') playScene(b.parentElement.querySelector('canvas'), b.dataset.s);
   else if (a === 'quit') { clearInterval(timerId); view = 'home'; ses = null; render(); }
   else if (a === 'home') { clearInterval(timerId); view = 'home'; render(); window.scrollTo(0, 0); }
   else if (a === 'filter') { ses.filter = b.dataset.f; render(); }
   else if (a === 'reset') { resetAsk = true; render(); }
   else if (a === 'reset-no') { resetAsk = false; render(); }
-  else if (a === 'reset-yes') { DB = { stats: {}, exams: [] }; saveDB(); resetAsk = false; render(); }
+  else if (a === 'reset-yes') { DB = { stats: {}, exams: [], prefs: DB.prefs }; saveDB(); resetAsk = false; render(); }
 });
-document.addEventListener('change', (e) => { if (e.target.id === 'topic') cfg.topic = e.target.value; });
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'topic') cfg.topic = e.target.value;
+  else if (e.target.id === 'optvideo') { DB.prefs.video = e.target.checked; saveDB(); render(); }
+});
 document.addEventListener('keydown', (e) => {
   if (view !== 'q' || e.target.tagName === 'SELECT') return;
   const k = e.key.toLowerCase();
