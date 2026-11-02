@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Test DGT Clase B</title>
@@ -202,6 +203,8 @@ const TOPICS = {
   alcohol: "Alcohol, drogas y fatiga",
   distancias: "Distancias y frenado",
   docs: "Documentación y permiso por puntos",
+  motos: "Motos 125, ciclomotores y permiso B",
+  vehiculo: "Remolques, carga y vehículo",
   luces: "Luces y avisos",
   seguridad: "Seguridad activa y pasiva",
   auxilio: "Accidentes y primeros auxilios",
@@ -351,13 +354,13 @@ Q("velocidad", null, "¿A partir de qué exceso sobre el límite de velocidad, e
    "Con 40 km/h de exceso es una infracción grave o muy grave (multa y puntos), pero no un delito."],
   "Delito: +60 en ciudad, +80 en carretera.");
 Q("velocidad", null, "En carretera convencional, ¿puede rebasar el límite de velocidad para adelantar?",
-  ["Sí, hasta 20 km/h por encima del límite, solo durante la maniobra de adelantamiento.",
-   "No, nunca se puede superar el límite.",
+  ["No, nunca se puede superar el límite, tampoco para adelantar.",
+   "Sí, hasta 20 km/h por encima del límite, solo durante la maniobra.",
    "Sí, sin ningún límite, mientras dure el adelantamiento."],
-  "Los turismos pueden superar en 20 km/h la velocidad máxima de la vía únicamente mientras adelantan a otro vehículo más lento. Terminado el adelantamiento hay que volver al límite. La maniobra debe ser breve y segura.",
-  ["Existe esa tolerancia concreta de 20 km/h para adelantar en carretera convencional.",
-   "La tolerancia es limitada (20 km/h), no ilimitada."],
-  "Adelantando en convencional: +20, solo mientras adelanto.");
+  "Desde marzo de 2022 ya no existe el margen de 20 km/h para adelantar. El límite de la vía se respeta también durante el adelantamiento. Si no puede adelantar sin superarlo, no adelante.",
+  ["Esa tolerancia se eliminó en 2022. Muchos conductores todavía la recuerdan, pero ya no está vigente.",
+   "Nunca ha existido un adelantamiento sin límite de velocidad."],
+  "Adelantando: el límite es el límite. Los +20 ya no existen.");
 Q("velocidad", null, "Un límite de velocidad señalizado de 90 km/h, ¿garantiza que es seguro circular a esa velocidad?",
   ["No: debo adaptar la velocidad a las circunstancias (lluvia, niebla, tráfico, estado de la vía).",
    "Sí, siempre que no lo supere es seguro.",
@@ -579,13 +582,13 @@ Q("docs", null, "Tiene un permiso B. ¿Cuántos años de vigencia tiene normalme
   "B: 10 años. Desde los 65: 5 años.");
 Q("docs", null, "¿Qué vehículos permite conducir el permiso de clase B?",
   ["Turismos y furgonetas con masa máxima autorizada hasta 3.500 kg y hasta 8 plazas más el conductor.", "Cualquier vehículo de hasta 7.500 kg.", "Motocicletas de más de 125 cc."],
-  "El permiso B autoriza vehículos de hasta 3.500 kg de MMA y hasta 8 plazas además del conductor, con remolque de hasta 750 kg (o mayor si el conjunto no supera 4.250 kg).",
+  "El permiso B autoriza vehículos de hasta 3.500 kg de MMA y hasta 8 plazas además del conductor, con remolque de hasta 750 kg, o mayor si el conjunto no supera 3.500 kg (hasta 4.250 kg con el código 96).",
   ["Hasta 7.500 kg se requiere otro permiso (C1).", "Las motos tienen permisos distintos (A1, A2 o A)."],
   "B: 3.500 kg y 8 plazas + conductor.");
 Q("docs", null, "¿A qué edad puede obtener el permiso de conducir clase B?",
   ["A los 18 años.", "A los 16 años.", "A los 21 años."],
-  "La edad mínima para obtener el permiso B es 18 años cumplidos. Con 16 se puede conducir ciclomotores (AM) y con 21 se accede a determinados permisos profesionales.",
-  ["16 años da acceso a ciclomotores, no a turismos.", "21 años es un requisito de otros permisos, no del B."],
+  "La edad mínima para obtener el permiso B es 18 años cumplidos. Con 15 se puede obtener el AM (ciclomotores), con 16 el A1 y con 21 se accede a determinados permisos profesionales.",
+  ["16 años da acceso al A1 (motos de 125 cc), no a turismos.", "21 años es un requisito de otros permisos, no del B."],
   "Turismo: 18 años.");
 Q("docs", null, "Un turismo nuevo, ¿cuándo debe pasar la primera ITV?",
   ["A los 4 años de la matriculación.", "Al año.", "A los 10 años."],
@@ -1368,6 +1371,651 @@ QV("ciclista", "Después de ver la escena, ¿qué situación de riesgo debe iden
    "El riesgo viene por la derecha, no por la izquierda."],
   "Giro a la derecha: miro el carril bici antes de cruzarlo.");
 
+/* ================= REFUERZO (noviembre de 2026): huecos detectados tras el examen real =================
+   Van al final del banco para que los identificadores antiguos, y con ellos el progreso guardado, no cambien. */
+const REFUERZO_DESDE = BANK.length;
+
+/* ---- LUCES: REFUERZO ---- */
+Q("luces", null, "Circula de noche a 80 km/h por una carretera interurbana sin iluminación y no hay nadie cerca. ¿Qué luz debe llevar?",
+  ["La luz de carretera (larga), además de la de posición.", "La luz de cruce, porque es la más segura en cualquier caso.", "Solo la de posición, si la carretera está despejada."],
+  "A más de 40 km/h, de noche, fuera de poblado y en vía insuficientemente iluminada, es obligatoria la luz de largo alcance, salvo que haya que cambiarla por la de cruce para no deslumbrar.",
+  ["La de cruce se usa aquí solo para no deslumbrar o si va a 40 km/h o menos.", "La posición sola no basta para ver ni para que le vean en esa vía."],
+  "Noche, sin farolas y más de 40: largas.");
+Q("luces", null, "De noche, por una vía interurbana insuficientemente iluminada, circula a 35 km/h. ¿Qué luz puede llevar?",
+  ["La luz de cruce, sin necesidad de llevar la de carretera.", "Obligatoriamente la de carretera.", "Solo la de posición."],
+  "La luz de carretera es obligatoria a más de 40 km/h. A 40 km/h o menos en vía interurbana mal iluminada, basta con la luz de cruce.",
+  ["La de carretera es obligatoria solo a más de 40 km/h.", "La posición es insuficiente: hace falta, como mínimo, la de cruce."],
+  "La frontera es 40 km/h: hasta 40, cruce; más de 40, largas.");
+Q("luces", null, "¿Cuándo se considera que una vía está insuficientemente iluminada?",
+  ["Cuando en algún punto no se puede leer una matrícula a 10 m o distinguir un vehículo oscuro a 50 m.", "Cuando no se ve nada a 100 m.", "Solo cuando no tiene farolas."],
+  "El Reglamento fija una prueba concreta: leer una matrícula a 10 metros y distinguir un vehículo de color oscuro a 50 metros. Si eso falla en algún punto, la vía está insuficientemente iluminada, aunque tenga farolas.",
+  ["La cifra de 100 m no aparece en esta definición.", "Una vía con farolas puede estar mal iluminada si no se cumple la prueba."],
+  "Matrícula a 10 m, coche oscuro a 50 m.");
+Q("luces", null, "¿Puede usar la luz de carretera con el vehículo parado o estacionado?",
+  ["No, está prohibido.", "Sí, para ver mejor el entorno.", "Sí, si la vía no tiene iluminación."],
+  "El Reglamento prohíbe usar la luz de carretera con el vehículo parado o estacionado. Tampoco se pueden hacer destellos con fines distintos de los previstos.",
+  ["Deslumbraría a otros usuarios y está prohibido.", "La falta de iluminación no levanta la prohibición."],
+  "Parado: nunca largas.");
+Q("luces", null, "De noche, en una calle de ciudad suficientemente iluminada, ¿qué luz debe llevar?",
+  ["La de cruce, además de la de posición.", "Solo la de posición, porque ya hay farolas.", "La de carretera."],
+  "Los vehículos de motor y los ciclomotores deben llevar la luz de cruce de noche en vías suficientemente iluminadas. La posición sola no es suficiente en marcha, aunque la calle tenga farolas.",
+  ["Circular solo con posición por ciudad es un error frecuente e incorrecto.", "La de carretera deslumbraría y es para vías mal iluminadas fuera de poblado."],
+  "En ciudad de noche: cruce, no posición.");
+Q("luces", null, "Circula con luz larga y se cruza con otro vehículo. ¿Cuándo puede volver a poner la larga?",
+  ["Cuando haya rebasado completamente el cruce con ese vehículo.", "Cuando esté a la altura de sus faros.", "Unos segundos antes del cruce."],
+  "La luz de carretera se cambia a cruce en cuanto hay riesgo de deslumbrar, y no se recupera hasta haber rebasado el cruce.",
+  ["A esa altura aún no ha terminado el cruce.", "Antes del cruce deslumbraría al otro conductor."],
+  "Largas otra vez, solo después del cruce.");
+Q("luces", null, "Va con luz larga detrás de otro vehículo, en el mismo sentido. ¿Debe cambiarla por la de cruce?",
+  ["Sí, si puede deslumbrar a su conductor a través del retrovisor.", "No, solo se cambia con el tráfico de frente.", "No, si la carretera no está iluminada."],
+  "Hay que evitar el deslumbramiento también a quien circula en el mismo sentido, que puede sufrirlo por el retrovisor.",
+  ["La obligación también protege a quien circula delante en el mismo sentido.", "La vía sin luz no le autoriza a deslumbrar."],
+  "Delante también se deslumbra: retrovisor.");
+Q("luces", null, "¿En cuál de estos casos un turismo debe llevar de día la luz de cruce encendida?",
+  ["Al circular por un carril reversible.", "Al circular por autovía con sol.", "Al circular por un carril bien señalizado de la ciudad."],
+  "Durante el día deben llevar luz de cruce quienes circulen por un carril reversible, por un carril adicional circunstancial o por un carril habilitado en sentido contrario al habitual. Las motocicletas la llevan siempre.",
+  ["No hay obligación general en autovía para un turismo.", "Solo es obligatoria en los carriles especiales citados."],
+  "Carril reversible o contrario: cruce, aunque sea de día.");
+Q("luces", "img:s5", "Al mediodía entra en el tramo señalizado con esta señal. ¿Qué debe hacer con el alumbrado?",
+  ["Encenderlo, aunque sea de día.", "No hace falta, porque es de día.", "Encenderlo solo si el tramo supera 1 km."],
+  "En túneles, pasos inferiores y tramos con la señal de túnel (S-5) el alumbrado es obligatorio a cualquier hora.",
+  ["La hora no importa en túneles y pasos inferiores.", "No existe un mínimo de longitud."],
+  "Túnel: luz siempre.");
+Q("luces", null, "Queda inmovilizado de noche en el arcén. ¿Qué luces debe llevar encendidas?",
+  ["Las de posición y, si procede, las de gálibo.", "Las de carretera, para que le vean mejor.", "Ninguna, para no gastar batería."],
+  "Un vehículo inmovilizado en calzada o arcén entre el ocaso y la salida del sol debe mantener encendidas las luces de posición y, si las tiene, las de gálibo.",
+  ["La de carretera está prohibida con el vehículo parado.", "Inmovilizarse sin luces es una infracción grave."],
+  "Inmovilizado de noche: posición.");
+Q("luces", null, "Estaciona de noche en una travesía insuficientemente iluminada. ¿Qué debe hacer con las luces?",
+  ["Dejar encendidas las de posición, o las de estacionamiento en algunos casos.", "Apagarlas todas.", "Dejar puesta la de cruce."],
+  "En una travesía mal iluminada, el vehículo parado o estacionado debe llevar la luz de posición, que en ciertos casos puede sustituirse por la de estacionamiento.",
+  ["Sin luces sería una infracción.", "La de cruce no es la exigida para un vehículo estacionado."],
+  "Travesía oscura: posición puesta.");
+Q("luces", null, "¿En qué caso puede usar la luz antiniebla delantera sin que haya niebla?",
+  ["En vías estrechas con muchas curvas, de calzada de 6,50 m o menos y señalizadas como sucesión de curvas.", "Siempre que sea de noche.", "En cualquier carretera sin iluminación."],
+  "Además de con niebla, lluvia intensa, nieve, humo o polvo, la antiniebla delantera se admite en vías estrechas con muchas curvas: calzada de 6,50 m o menos y señalizada como sucesión de curvas próximas.",
+  ["La noche, por sí sola, no justifica usarla.", "La falta de iluminación se resuelve con la luz de carretera."],
+  "Antiniebla delantera: 6,50 m y muchas curvas.");
+Q("luces", null, "Cae una lluvia ligera y hay visibilidad aceptable. ¿Puede encender la antiniebla trasera?",
+  ["No, solo en condiciones especialmente desfavorables.", "Sí, cuando llueve siempre se puede.", "Sí, si circula por autopista."],
+  "La antiniebla trasera se reserva para condiciones especialmente desfavorables, como niebla espesa o lluvia muy intensa. Con lluvia ligera deslumbra al de detrás y se confunde con el freno.",
+  ["La lluvia debe ser muy intensa.", "El tipo de vía no cambia la regla."],
+  "Antiniebla trasera: solo si casi no se ve.");
+Q("luces", null, "Se le avería el alumbrado y no lo puede reparar en ruta, por lo que ve menos. ¿Qué debe hacer?",
+  ["Reducir la velocidad hasta poder detenerse dentro de la zona iluminada.", "Mantener la velocidad para llegar antes.", "Seguir con los intermitentes de emergencia a la velocidad normal."],
+  "Si una avería irreparable obliga a circular con menos luz, la velocidad debe permitir detener el vehículo dentro de la zona que alumbran los faros.",
+  ["Llegar antes no compensa no poder frenar a tiempo.", "La emergencia no le permite ver más."],
+  "Tan lento como para parar dentro de mi luz.");
+Q("luces", null, "Quiere avisar de que va a adelantar. ¿Dónde puede usar ráfagas de luz?",
+  ["Tanto dentro como fuera de poblado.", "Solo fuera de poblado.", "Solo dentro de poblado."],
+  "Las ráfagas sirven como aviso de adelantamiento en cualquier vía. La regla distinta es la del claxon: para avisar de un adelantamiento, solo fuera de poblado.",
+  ["Esa limitación es la del claxon, no la de las ráfagas.", "No está limitado a poblado."],
+  "Ráfagas: en todas partes. Claxon: solo fuera.");
+Q("luces", null, "No le funcionan los intermitentes y debe avisar de un giro a la izquierda. ¿Cómo lo indica con el brazo?",
+  ["Con el brazo izquierdo extendido horizontalmente.", "Moviendo el brazo arriba y abajo.", "Con el brazo izquierdo doblado hacia arriba."],
+  "Brazo izquierdo extendido en horizontal: giro a la izquierda. Brazo izquierdo doblado hacia arriba: giro a la derecha. Moverlo arriba y abajo: voy a reducir la velocidad.",
+  ["Eso avisa de que va a reducir la velocidad.", "Eso avisa de un giro a la derecha."],
+  "Horizontal, izquierda. Arriba, derecha. Oscilando, frenar.");
+Q("luces", null, "¿Cuándo debe llevar luces de gálibo un vehículo?",
+  ["Cuando tiene más de 2,10 m de anchura.", "Cuando mide más de 4 m de largo.", "Todos los turismos, de noche."],
+  "Las luces de gálibo marcan el contorno de los vehículos anchos. Son obligatorias cuando superan los 2,10 m de anchura.",
+  ["El criterio es la anchura, no la longitud.", "Un turismo normal no las lleva."],
+  "Gálibo: más de 2,10 m de ancho.");
+Q("luces", null, "De noche, un ciclista circula por una vía interurbana. ¿Qué debe llevar además de las luces?",
+  ["Una prenda reflectante visible a 150 m.", "Un chaleco solo si circula por autovía.", "Nada más: basta con las luces."],
+  "Cuando es obligatorio el alumbrado, en vía interurbana el ciclista debe llevar una prenda reflectante que permita a los conductores distinguirlo a 150 metros.",
+  ["La obligación es para cualquier vía interurbana.", "La prenda reflectante también es obligatoria."],
+  "Ciclista de noche en carretera: reflectante a 150 m.");
+Q("luces", null, "¿Cuándo debe ir iluminada la placa de matrícula trasera?",
+  ["Siempre que sea obligatorio llevar alumbrado.", "Solo en poblado.", "Solo en autopista."],
+  "La placa trasera debe estar iluminada cuando se exija llevar alumbrado, para poder leerla.",
+  ["No depende de que sea poblado.", "No depende del tipo de vía."],
+  "Con luces puestas, matrícula iluminada.");
+
+/* ---- ESTACIONAR EN PENDIENTE ---- */
+Q("parada", null, "Estaciona un coche manual en una pendiente ascendente (cuesta arriba). Además del freno de estacionamiento, ¿qué marcha debe dejar?",
+  ["La primera velocidad.", "La marcha atrás.", "Punto muerto."],
+  "En un coche manual: primera en pendiente ascendente y marcha atrás en descendente. Así el motor retiene el coche en el sentido en que tendería a caer.",
+  ["La marcha atrás corresponde a la pendiente descendente.", "En punto muerto, nada retiene el coche si falla el freno."],
+  "Cuesta arriba, primera. Cuesta abajo, atrás.");
+Q("parada", null, "Estaciona un coche manual en una pendiente descendente (cuesta abajo). ¿Qué marcha debe dejar?",
+  ["La marcha atrás.", "La primera velocidad.", "La marcha más larga."],
+  "En pendiente descendente se deja la marcha atrás. Si el coche tiende a caer hacia delante, esa marcha es la que se opone al giro de las ruedas.",
+  ["La primera corresponde a la pendiente ascendente.", "Una marcha larga retiene peor y no es la indicada."],
+  "Mirando hacia abajo: marcha atrás.");
+Q("parada", null, "Deja un coche automático estacionado en pendiente. ¿Qué debe hacer con el selector?",
+  ["Ponerlo en la posición de estacionamiento (P) y accionar el freno.", "Dejarlo en D.", "Dejarlo en N."],
+  "Los vehículos sin cambio manual usan la posición de estacionamiento, además del freno de estacionamiento.",
+  ["En D el coche sigue en posición de marcha.", "N es punto muerto y no bloquea la transmisión."],
+  "Automático: P y freno.");
+Q("parada", null, "Estaciona cuesta arriba junto a un bordillo. ¿Hacia dónde debe orientar las ruedas delanteras?",
+  ["Hacia el centro de la calzada.", "Hacia el bordillo.", "Completamente rectas."],
+  "Cuesta arriba, con el volante hacia la calzada, si el coche retrocede una rueda delantera se apoya en el bordillo y lo detiene.",
+  ["Esa orientación corresponde a la bajada.", "Rectas, el coche podría rodar sin ningún tope."],
+  "Subo: ruedas hacia la calzada. Bajo: hacia el bordillo.");
+Q("parada", null, "Estaciona cuesta abajo junto a un bordillo. ¿Hacia dónde debe orientar las ruedas delanteras?",
+  ["Hacia el bordillo.", "Hacia el centro de la calzada.", "Da igual si deja una marcha puesta."],
+  "Cuesta abajo se giran las ruedas hacia el bordillo: si el coche avanza, la rueda delantera topa con él.",
+  ["Cuesta abajo, esa orientación llevaría el coche hacia el tráfico.", "La marcha no sustituye esta precaución."],
+  "Bajo: ruedas al bordillo.");
+Q("parada", null, "¿Qué vehículos deben usar calzos cuando paran o estacionan en una pendiente sensible?",
+  ["Los de más de 3.500 kg de MMA, los autobuses y los conjuntos de vehículos.", "Todos los turismos.", "Solo los camiones de más de 12 m."],
+  "La obligación de calzar afecta a los vehículos de más de 3.500 kg, los autobuses y los conjuntos, en pendiente sensible.",
+  ["Un turismo solo no está obligado a calzarse.", "No depende de la longitud del camión."],
+  "Calzos: más de 3.500 kg, autobuses y conjuntos.");
+Q("parada", null, "No tiene calzos a mano y debe inmovilizar un conjunto en pendiente. ¿Puede usar piedras?",
+  ["No, solo elementos destinados expresamente a esa función.", "Sí, si son grandes.", "Sí, si las retira después."],
+  "El Reglamento prohíbe usar piedras u otros objetos no destinados expresamente a esa función.",
+  ["El tamaño no cambia la prohibición.", "Retirarlas es obligatorio con los calzos, pero las piedras no están permitidas."],
+  "Calzos sí, piedras nunca.");
+Q("parada", null, "Ha usado calzos para inmovilizar el vehículo. ¿Qué debe hacer al reanudar la marcha?",
+  ["Retirarlos de la vía.", "Dejarlos en el arcén.", "Dejarlos donde estaban, por si otro los necesita."],
+  "Los calzos deben retirarse de la vía al reanudar la marcha para que no sean un obstáculo.",
+  ["El arcén sigue siendo parte de la vía.", "Abandonarlos en la vía crea un peligro."],
+  "Sigo la marcha: calzos fuera.");
+Q("parada", null, "Estaciona un turismo con remolque ligero en una pendiente sensible. ¿Qué debe hacer?",
+  ["Colocar calzos o apoyar una rueda directriz en el bordillo.", "Accionar únicamente el freno de mano.", "Calzar con cualquier objeto que tenga a mano."],
+  "El conjunto debe quedar inmovilizado con calzos adecuados o, en su caso, apoyando una de las ruedas directrices en el bordillo. El freno de mano solo no basta.",
+  ["Con un conjunto en pendiente sensible no basta.", "No sirven objetos no destinados a esa función."],
+  "Con remolque: calzo o rueda al bordillo.");
+Q("parada", null, "Baja un puerto largo con un coche manual. ¿Qué marcha debe llevar y qué debe evitar?",
+  ["Una marcha corta, similar a la que usaría para subir, sin bajar en punto muerto.", "Punto muerto, para ahorrar combustible.", "La marcha más larga, frenando continuamente."],
+  "Con una marcha corta se aprovecha la retención del motor y se evita recalentar los frenos. En punto muerto se pierde esa retención y se carga todo en los frenos.",
+  ["No ahorra lo que se pierde en seguridad.", "Frenar continuamente recalienta los frenos."],
+  "Bajo con la marcha con la que subiría.");
+Q("parada", null, "En una vía interurbana, ¿dónde debe parar o estacionar?",
+  ["Fuera de la calzada, a la derecha, dejando libre la parte transitable del arcén.", "En la calzada, pegado al borde derecho.", "A la izquierda, si hay más sitio."],
+  "En interurbana, la parada y el estacionamiento se hacen fuera de la calzada, en el lado derecho, sin ocupar la parte transitable del arcén.",
+  ["Eso es propio de las vías urbanas.", "Fuera de poblado la regla es el lado derecho."],
+  "Fuera de poblado: fuera de la calzada, a la derecha.");
+Q("parada", null, "En una calle urbana de sentido único, ¿puede estacionar en el lado izquierdo?",
+  ["Sí, salvo señal en contra.", "No, siempre a la derecha.", "Solo si para menos de dos minutos."],
+  "En vías urbanas se estaciona lo más cerca posible del borde derecho, salvo en las de sentido único, donde también se puede hacer en el izquierdo.",
+  ["Las de sentido único son la excepción.", "No hay un límite de dos minutos en esta regla."],
+  "Sentido único: también por la izquierda.");
+Q("parada", null, "Salvo señal o circunstancia que lo justifique, ¿cómo se debe colocar el vehículo al estacionar?",
+  ["Paralelamente al borde de la calzada.", "En batería siempre.", "En diagonal para ocupar menos."],
+  "La norma general es estacionar en paralelo al borde, aprovechando bien el espacio disponible.",
+  ["La batería solo se usa si la vía o la señalización lo indica.", "La diagonal tampoco es la regla general."],
+  "Por defecto: en paralelo.");
+Q("parada", "img:r308a", "¿Qué indica esta señal de estacionamiento con una barra vertical blanca?",
+  ["Estacionamiento prohibido los días impares.", "Estacionamiento prohibido los días pares.", "Estacionamiento permitido a una sola fila."],
+  "Con un trazo blanco se prohíbe estacionar los días impares. Con dos trazos, los pares. El truco es que un trazo equivale al 1, número impar.",
+  ["Los días pares se señalan con dos trazos.", "No tiene relación con el número de filas."],
+  "Una raya: días impares. Dos rayas: pares.");
+
+/* ---- MOTOS, CICLOMOTORES Y PERMISO B ---- */
+Q("motos", null, "Acaba de sacarse el permiso B. ¿Puede conducir una moto de 125 cc en España?",
+  ["No, el permiso B necesita más de 3 años de antigüedad para eso.", "Sí, desde el primer día.", "Sí, pero solo con pasajero mayor de edad."],
+  "El permiso B en vigor con más de 3 años de antigüedad autoriza a conducir en España las motocicletas que permite el A1.",
+  ["Falta la antigüedad de más de 3 años.", "El pasajero no tiene relación con este requisito."],
+  "B + más de 3 años = moto de 125 en España.");
+Q("motos", null, "Lleva 4 años con el permiso B. ¿Con esta autorización puede conducir su moto de 125 cc en Portugal?",
+  ["No, esta autorización solo vale en territorio nacional.", "Sí, en toda la Unión Europea.", "Sí, si la moto tiene menos de 11 kW."],
+  "La posibilidad de conducir motos del A1 con el permiso B es una regla española y vale solo dentro de España. Fuera hay que tener el A1 o superior.",
+  ["No es una regla europea.", "La potencia no amplía el territorio."],
+  "125 con B: solo en España.");
+Q("motos", null, "Con más de 3 años de permiso B, ¿qué motocicleta puede conducir?",
+  ["Una de hasta 125 cc, 11 kW y 0,1 kW/kg.", "Una de hasta 250 cc.", "Una de hasta 35 kW."],
+  "Solo las que autoriza el permiso A1: cilindrada máxima de 125 cc, potencia máxima de 11 kW y relación potencia/peso máxima de 0,1 kW/kg.",
+  ["250 cc excede la cilindrada autorizada.", "35 kW es el límite del A2."],
+  "A1: 125 cc, 11 kW, 0,1 kW/kg.");
+Q("motos", null, "Con el permiso B, ¿puede conducir una motocicleta de más de 125 cc?",
+  ["No, aunque tenga muchos años de permiso.", "Sí, con más de 5 años de antigüedad.", "Sí, si es automática."],
+  "El permiso B nunca autoriza motos de más de 125 cc, sea cual sea su antigüedad. Hace falta A2 o A, según la potencia.",
+  ["La antigüedad no aumenta la cilindrada.", "El tipo de cambio no influye."],
+  "Más de 125 cc: otro permiso.");
+Q("motos", null, "¿Autoriza el permiso B a conducir una motocicleta con sidecar?",
+  ["No.", "Sí, si tiene más de 3 años de antigüedad.", "Sí, en cualquier caso."],
+  "La respuesta de examen es no: lo que cubre el permiso B son las motos del A1, y una motocicleta con sidecar no entra en este supuesto.",
+  ["La antigüedad no cubre este caso.", "No es un vehículo incluido en el permiso B."],
+  "Sidecar: no con el B.");
+Q("motos", null, "Con el permiso B, ¿puede conducir un ciclomotor?",
+  ["Sí, no necesita el AM.", "No, necesita además el AM.", "Solo con más de 3 años de antigüedad."],
+  "Quien tiene el permiso B puede conducir ciclomotores sin sacarse el AM y sin esperar 3 años. Los 3 años son para las motos de 125 cc.",
+  ["El AM no hace falta si ya tiene el B.", "Los 3 años se aplican a las motos del A1, no a los ciclomotores."],
+  "Ciclomotor: sí, desde el primer día de B.");
+Q("motos", null, "¿Cuál es la edad mínima para el permiso AM de ciclomotores?",
+  ["15 años.", "16 años.", "18 años."],
+  "AM: 15 años. A1: 16 años. A2 y B: 18 años. A: 20 años, con 2 años de A2.",
+  ["16 años es la edad del A1.", "18 años es la edad del A2 y del B."],
+  "AM 15, A1 16, A2 y B 18, A 20.");
+Q("motos", null, "¿Qué es un ciclomotor de dos ruedas?",
+  ["Un vehículo limitado a 45 km/h, de hasta 50 cc si es de combustión.", "Una moto de hasta 125 cc.", "Un vehículo limitado a 25 km/h."],
+  "El ciclomotor no supera los 45 km/h por construcción y, si es de combustión, tiene un máximo de 50 cc.",
+  ["Eso es una motocicleta del A1.", "25 km/h es propio de un VMP."],
+  "Ciclomotor: 45 km/h y 50 cc.");
+Q("motos", null, "Según las definiciones de tráfico, ¿un ciclomotor es un vehículo de motor?",
+  ["No, tiene categoría propia.", "Sí, como cualquier vehículo con motor.", "Solo si tiene más de 50 cc."],
+  "Es una pregunta trampa: aunque lleve motor, la norma trata al ciclomotor como categoría aparte de los vehículos de motor.",
+  ["La definición legal lo separa de los vehículos de motor.", "Con más de 50 cc de combustión ya no sería ciclomotor."],
+  "Ciclomotor: no cuenta como vehículo de motor.");
+Q("motos", null, "¿Por dónde tienen prohibido circular los ciclomotores?",
+  ["Por autopistas y autovías.", "Por carreteras convencionales.", "Por vías urbanas."],
+  "Los ciclomotores no pueden circular por autopistas ni autovías. Sí pueden hacerlo por carreteras convencionales y por vías urbanas.",
+  ["Por carretera convencional sí pueden circular.", "Por ciudad sí pueden circular."],
+  "Ciclomotor: nunca autopista ni autovía.");
+Q("motos", null, "¿Puede circular por autopista una motocicleta de 125 cc, y a qué velocidad máxima genérica?",
+  ["Sí, a 120 km/h como máximo.", "No, las motos de 125 cc tienen prohibida la autopista.", "Sí, a 90 km/h como máximo."],
+  "Una motocicleta no es un ciclomotor. Puede ir por autopista y su límite genérico es 120 km/h, siempre que pueda mantener una velocidad adecuada y superar el mínimo de 60 km/h.",
+  ["La prohibición es para ciclomotores.", "90 km/h es el límite genérico en convencional."],
+  "Moto 125 sí a autopista; ciclomotor no.");
+Q("motos", null, "¿Qué luz debe llevar una motocicleta durante el día?",
+  ["La de cruce, en cualquier vía.", "Ninguna, si hay buena visibilidad.", "La de cruce, solo en vías interurbanas."],
+  "Las motocicletas deben llevar la luz de cruce encendida de día, en vía urbana e interurbana, con cualquier tiempo.",
+  ["No depende de la visibilidad.", "También en ciudad."],
+  "Moto: cruce puesta siempre, también de día.");
+Q("motos", null, "¿Quién puede viajar como pasajero en una motocicleta, con carácter general?",
+  ["Un mayor de 12 años con casco.", "Cualquier persona, si lleva casco.", "Solo un mayor de 18 años."],
+  "La norma general exige más de 12 años y casco, y que la moto tenga esa plaza autorizada.",
+  ["Hay una edad mínima.", "No hace falta ser mayor de edad."],
+  "Pasajero de moto: más de 12 años y casco.");
+Q("motos", null, "Excepcionalmente, ¿puede un niño de 9 años ir de pasajero en moto?",
+  ["Sí, con casco, si conduce su padre, madre, tutor o un mayor de edad autorizado.", "No, nunca antes de los 12 años.", "Sí, conduzca quien conduzca."],
+  "Excepción: los mayores de 7 años pueden viajar si conduce su padre, madre, tutor o un mayor de edad autorizado, y con casco homologado.",
+  ["Existe esa excepción desde los 7 años.", "Solo con esos conductores."],
+  "Entre 7 y 12: solo con padres o autorizado.");
+Q("motos", null, "¿Cómo debe ir sentado el pasajero de una motocicleta?",
+  ["Detrás del conductor, a horcajadas, con los pies en los reposapiés.", "Entre el conductor y el manillar, si es un niño.", "De lado, si lleva falda."],
+  "El pasajero debe ocupar el asiento situado detrás del conductor, ir a horcajadas y apoyar los pies en los reposapiés laterales. Nunca puede situarse entre el conductor y el manillar.",
+  ["Está prohibido en cualquier caso.", "Debe ir a horcajadas."],
+  "Detrás, a horcajadas y con pies apoyados.");
+Q("motos", null, "¿Con qué condiciones puede una motocicleta arrastrar un remolque?",
+  ["Masa de hasta el 50 % de la de la moto en vacío, de día y a un 10 % menos de velocidad.", "Sin limitación, si lleva intermitentes.", "Con pasajeros en el remolque."],
+  "El remolque no puede superar el 50 % de la masa en vacío, solo se circula de día y sin baja visibilidad, y las velocidades genéricas se reducen un 10 %. Nunca se llevan personas en el remolque.",
+  ["Sí tiene limitaciones concretas.", "Está prohibido llevar personas en el remolque."],
+  "Moto con remolque: 50 %, de día y −10 %.");
+Q("motos", null, "Una motocicleta particular, ¿cuándo debe pasar la ITV?",
+  ["Con 4 años desde la matriculación y luego cada 2 años.", "Cada año desde que es nueva.", "Nunca, por ser un vehículo ligero."],
+  "Las motocicletas particulares están exentas hasta los 4 años y después pasan la ITV cada 2 años.",
+  ["No es anual desde nueva.", "Sí tienen ITV."],
+  "Moto: 4 años y después cada 2.");
+Q("motos", null, "Un ciclomotor, ¿cuándo debe pasar la ITV?",
+  ["Con 3 años y luego cada 2 años.", "Con 4 años y luego cada 2 años.", "No debe pasarla."],
+  "Los ciclomotores están exentos hasta los 3 años y después pasan la ITV cada 2 años. Las motos, en cambio, a los 4.",
+  ["Esa es la pauta de la motocicleta.", "También tienen ITV."],
+  "Ciclomotor: 3 y cada 2.");
+Q("motos", null, "¿Cuál es la edad mínima para el permiso A1?",
+  ["16 años.", "15 años.", "18 años."],
+  "El A1 se puede obtener a los 16 años. Permite conducir motos de hasta 125 cc y 11 kW.",
+  ["15 años corresponde al AM.", "18 años corresponde al A2 y al B."],
+  "A1: 16 años.");
+
+/* ---- REMOLQUES, CARGA Y VEHÍCULO ---- */
+Q("vehiculo", null, "Con el permiso B, ¿qué remolque puede llevar sin ningún requisito adicional?",
+  ["Uno de hasta 750 kg de MMA.", "Uno de hasta 1.500 kg de MMA, sea cual sea el conjunto.", "Cualquier remolque, si el coche lo admite."],
+  "Con el permiso B se puede llevar un remolque de hasta 750 kg de MMA. También uno mayor si el conjunto no supera 3.500 kg, y siempre dentro de lo que permita la tarjeta ITV del coche.",
+  ["Por encima de 750 kg hay que mirar la MMA del conjunto.", "Hay límites de permiso y límites técnicos."],
+  "Remolque de 750 kg: basta el B.");
+Q("vehiculo", null, "Quiere llevar con el permiso B un remolque de más de 750 kg. ¿Cuándo puede?",
+  ["Cuando la MMA del conjunto no supera 3.500 kg.", "Nunca.", "Cuando la carga real sea pequeña."],
+  "Con remolque de más de 750 kg, el permiso B sirve si la suma de MMA no pasa de 3.500 kg. Se mira la MMA, no el peso real.",
+  ["Sí se puede con esa condición.", "No se mira el peso real, sino la MMA."],
+  "Más de 750 kg: conjunto hasta 3.500 kg.");
+Q("vehiculo", null, "Un conjunto de coche y remolque de más de 750 kg tiene una MMA de 4.000 kg. ¿Qué necesita?",
+  ["El permiso B con el código 96.", "El permiso C.", "Solo el permiso B."],
+  "Si el remolque supera los 750 kg y el conjunto pasa de 3.500 kg sin superar 4.250 kg, hace falta el código 96 en el permiso B.",
+  ["No hace falta un permiso de camión.", "Supera lo autorizado por el B sin código 96."],
+  "Hasta 4.250 kg: B96.");
+Q("vehiculo", null, "¿Quién debe tener seguro obligatorio?",
+  ["Los vehículos de motor y los ciclomotores.", "Solo los turismos.", "Solo los vehículos con más de 5 años."],
+  "El seguro de responsabilidad civil es obligatorio para vehículos de motor y ciclomotores, y también para remolques y semirremolques de más de 750 kg de MMA.",
+  ["También para motos, camiones y otros.", "Es obligatorio desde el primer día."],
+  "Si tiene motor y circula, lleva seguro.");
+Q("vehiculo", null, "De noche, una carga sobresale por la parte delantera de su vehículo. ¿Cómo debe señalizarla?",
+  ["Con una luz blanca.", "Con una luz roja.", "Con una luz amarilla intermitente."],
+  "De noche o con poca visibilidad, la carga que sobresale por delante se señaliza con luz blanca, y la que sobresale por detrás con luz roja.",
+  ["La roja es para detrás.", "No es la señalización prevista."],
+  "Por delante, blanca. Por detrás, roja.");
+Q("vehiculo", null, "Un turismo particular de 12 años, ¿con qué frecuencia debe pasar la ITV?",
+  ["Cada año.", "Cada 2 años.", "Cada 4 años."],
+  "Turismo particular: exento hasta 4 años, cada 2 años hasta los 10 y anual a partir de entonces.",
+  ["Cada 2 años es hasta los 10.", "4 años es solo el plazo inicial."],
+  "Más de 10 años: ITV anual.");
+Q("vehiculo", null, "¿Qué hace el sistema de ayuda de salida en pendiente?",
+  ["Detecta la inclinación e impide que el coche retroceda al soltar el freno.", "Frena el coche al bajar sin tocar el pedal.", "Aumenta la potencia del motor en subidas."],
+  "Un sensor detecta la inclinación y mantiene el coche frenado un instante para que no retroceda mientras pasa del freno al acelerador.",
+  ["Eso sería otro sistema, de control de descenso.", "No tiene que ver con la potencia."],
+  "Ayuda en pendiente: no me voy hacia atrás.");
+Q("vehiculo", null, "¿Qué vehículos no están obligados a llevar la baliza V16?",
+  ["Las motos y los ciclomotores.", "Los turismos.", "Las furgonetas."],
+  "Están obligados turismos, furgonetas, autobuses, vehículos de mercancías y conjuntos. Las motos y los ciclomotores están exentos, aunque se recomienda.",
+  ["Los turismos sí deben llevarla.", "Las furgonetas sí deben llevarla."],
+  "V16: coche sí, moto no obligada.");
+
+/* ---- PRIORIDAD EN PENDIENTE ---- */
+Q("prioridad", null, "En un tramo estrecho de gran pendiente (7 % o más), dos vehículos del mismo tipo se encuentran de frente. ¿Quién tiene preferencia?",
+  ["El que sube, salvo que pueda llegar a un apartadero antes.", "El que baja, porque le cuesta más frenar.", "El que tenga más carga."],
+  "En gran pendiente tiene preferencia el vehículo que circula en sentido ascendente, salvo que pueda alcanzar un apartadero establecido para eso.",
+  ["Es al revés: reanudar la marcha subiendo cuesta más.", "La carga no decide esta preferencia."],
+  "En cuesta estrecha: pasa el que sube.");
+
+/* ---- SEÑALES DE PENDIENTE Y OTRAS QUE FALTABAN ---- */
+Q("senales", "img:p16a", "¿Qué advierte esta señal?",
+  ["Bajada con fuerte pendiente: un 10 % significa 10 m de descenso por cada 100 m.", "Subida con fuerte pendiente: un 10 % significa 10 m de ascenso por cada 100 m.", "Velocidad reducida en un 10 %."],
+  "Es una señal de peligro por bajada pronunciada. La cifra indica el porcentaje de inclinación.",
+  ["La rampa sube en la señal contraria.", "La cifra no es de velocidad."],
+  "Rampa que cae hacia delante: bajada.");
+Q("senales", "img:p16b", "¿Qué advierte esta señal?",
+  ["Subida con fuerte pendiente.", "Bajada con fuerte pendiente.", "Fin de la pendiente."],
+  "Advierte de una subida con una inclinación elevada, expresada en porcentaje.",
+  ["La bajada se dibuja al revés.", "No hay señal de ese tipo con esta forma."],
+  "Rampa que sube: subida.");
+Q("senales", "img:p14a", "¿Qué advierte esta señal?",
+  ["Curvas peligrosas, la primera hacia la derecha.", "Una sola curva a la derecha.", "Estrechamiento de calzada."],
+  "Avisa de una sucesión de curvas y la línea dibujada comienza en el sentido de la primera. Una sola curva se señala con una flecha doblada simple.",
+  ["Una sola curva se señala con otra señal.", "El estrechamiento tiene su propia señal."],
+  "Línea en S: varias curvas, y la primera manda.");
+Q("senales", "img:p13b", "¿Qué advierte esta señal?",
+  ["Curva peligrosa hacia la izquierda.", "Curva peligrosa hacia la derecha.", "Giro prohibido a la izquierda."],
+  "La flecha indica una curva peligrosa en la dirección marcada. Al ser triangular, avisa de un peligro, no de una prohibición.",
+  ["La flecha va en sentido contrario.", "Un triángulo no prohíbe."],
+  "Flecha doblada: curva hacia ese lado.");
+Q("senales", "img:p1", "¿Qué advierte esta señal?",
+  ["Intersección con prioridad sobre la vía transversal.", "Cruz Roja cercana.", "Hospital."],
+  "La línea central gruesa indica que su vía tiene prioridad en la próxima intersección.",
+  ["No es un símbolo sanitario.", "Un hospital se señala con señal de indicación."],
+  "Cruz gruesa en triángulo: yo tengo prioridad.");
+Q("senales", "img:p1a", "¿Qué advierte esta señal?",
+  ["Intersección con prioridad sobre incorporación por la derecha.", "Prohibido girar a la derecha.", "Carril de aceleración."],
+  "Su vía sigue con prioridad y otra vía se incorpora por la derecha.",
+  ["Un triángulo no prohíbe.", "No se refiere a un carril de aceleración."],
+  "La rama pequeña es la que cede.");
+Q("senales", "img:p2", "¿Qué advierte esta señal con un aspa?",
+  ["Intersección con prioridad de la derecha.", "Paso a nivel sin barreras.", "Calle cortada."],
+  "El aspa indica una intersección donde rige la regla general: prioridad de quien viene por la derecha.",
+  ["No avisa de un paso a nivel.", "No es una señal de calle cortada."],
+  "Aspa: cedo a la derecha.");
+Q("senales", "img:p5", "¿Qué advierte esta señal?",
+  ["Puente móvil.", "Badén.", "Túnel."],
+  "Avisa de un puente móvil. Si está en funcionamiento, puede haber una luz roja intermitente que prohíbe pasar.",
+  ["El badén se avisa con la señal de perfil irregular.", "El túnel tiene una señal de indicación."],
+  "Puente que se levanta: puente móvil.");
+Q("senales", "img:p27", "¿Qué advierte esta señal?",
+  ["Muelle: riesgo de caer al agua.", "Zona de pesca.", "Inundación frecuente."],
+  "Advierte de que la vía desemboca en un muelle o ribera y existe riesgo de caer al agua.",
+  ["No avisa de una actividad.", "No se refiere a inundaciones."],
+  "Coche al agua: muelle.");
+Q("senales", "img:r400b", "¿Qué obliga a hacer esta señal azul?",
+  ["Seguir en la dirección de la flecha, hacia la izquierda.", "Girar a la izquierda solo si se quiere.", "Pasar por la izquierda de un obstáculo."],
+  "Una flecha horizontal en un círculo azul indica un sentido obligatorio.",
+  ["Una señal azul circular obliga.", "La de pasar por un lado tiene la flecha oblicua."],
+  "Círculo azul: obligación.");
+Q("senales", "img:s7", "¿Qué indica esta señal azul cuadrada?",
+  ["Velocidad máxima aconsejada, no obligatoria.", "Velocidad máxima obligatoria.", "Velocidad mínima obligatoria."],
+  "Es una señal de indicación. La cifra recomienda una velocidad. Lo que obliga es un círculo rojo (máxima) o azul (mínima).",
+  ["El máximo obligatorio se señala con círculo rojo.", "El mínimo obligatorio se señala con círculo azul."],
+  "Cuadrado azul: consejo. Círculo: obligación.");
+Q("senales", "img:s8", "¿Qué indica esta señal?",
+  ["Fin de la velocidad máxima aconsejada.", "Fin de la prohibición de velocidad.", "Prohibido circular a 70 km/h."],
+  "La raya roja en la señal cuadrada azul indica el final del consejo de velocidad.",
+  ["Las prohibiciones se señalan con círculo.", "No prohíbe ninguna velocidad."],
+  "Cuadrado azul tachado: se acabó el consejo.");
+Q("senales", "img:s9", "¿Qué indica esta señal con 70-90?",
+  ["Intervalo de velocidades aconsejado.", "Límites máximo y mínimo obligatorios.", "Velocidad de los carriles izquierdo y derecho."],
+  "Es una recomendación para circular entre esas dos cifras en condiciones normales.",
+  ["Las señales azules rectangulares informan o aconsejan.", "No distingue carriles."],
+  "Rectángulo con dos cifras: intervalo aconsejado.");
+Q("senales", "img:r411", "¿Qué obliga esta señal de círculo azul con una cifra?",
+  ["A circular al menos a esa velocidad, si las circunstancias lo permiten.", "A no superar esa velocidad.", "A llevar esa distancia de seguridad."],
+  "El círculo azul es una obligación: velocidad mínima. No debe confundirse con el círculo rojo, que es el máximo.",
+  ["Ese es el círculo de borde rojo.", "La distancia no se indica así."],
+  "Cifra en círculo azul: mínima.");
+Q("senales", "img:r205", "Su vehículo con la carga mide 3,80 m de alto. ¿Puede pasar por aquí?",
+  ["No, la señal prohíbe el paso a vehículos de más de 3,5 m de altura.", "Sí, porque es una recomendación.", "Sí, porque prohíbe por anchura."],
+  "Es una restricción de altura total: incluye la carga. Si supera la cifra, no puede pasar.",
+  ["Un círculo de borde rojo es de obligado cumplimiento.", "Las flechas verticales indican altura."],
+  "Flechas verticales: altura.");
+Q("senales", "img:r204", "¿Qué prohíbe esta señal?",
+  ["El paso a vehículos de más de 2,2 m de anchura.", "El paso a vehículos de más de 2,2 m de altura.", "Circular a menos de 2,2 m del de delante."],
+  "Las flechas horizontales enfrentadas indican anchura. Cuenta la anchura total, incluida la carga.",
+  ["La altura se indica con flechas verticales.", "No se refiere a la distancia entre vehículos."],
+  "Flechas horizontales: anchura.");
+Q("senales", "img:r201", "¿Qué prohíbe esta señal con «5,5 t»?",
+  ["El paso a vehículos cuya masa en carga supere esa cifra.", "El paso a vehículos con esa cantidad de plazas.", "Llevar remolque."],
+  "Es una restricción por masa total del vehículo en ese momento, no por la masa máxima autorizada.",
+  ["La letra t indica toneladas.", "Prohibir remolques tiene otra señal."],
+  "«t» en círculo rojo: toneladas.");
+Q("senales", "img:s17", "¿Qué indica esta señal?",
+  ["Lugar habilitado para estacionar.", "Parada de autobús.", "Prohibido estacionar."],
+  "Es una señal azul de indicación. Puede tener paneles con restricciones de clase de vehículo o de tiempo.",
+  ["La parada de autobús tiene otra señal.", "La prohibición se señala con un círculo."],
+  "P azul: se puede estacionar aquí.");
+Q("senales", "img:r301-50", "Debajo de esta señal hay un panel con un camión. ¿A quién afecta?",
+  ["Solo a los camiones.", "A todos los vehículos.", "A todos, salvo a los camiones."],
+  "Los paneles complementarios precisan el alcance de la señal: vehículos, horario o distancia.",
+  ["El panel restringe a quién se aplica.", "Es al contrario."],
+  "Lee siempre el panel de debajo.");
+Q("senales", null, "Ante varias indicaciones contradictorias, ¿cuál es el orden de prioridad?",
+  ["Agentes, señales circunstanciales, semáforos, señales verticales y marcas viales.", "Semáforos, agentes, señales verticales y marcas viales.", "Señales verticales, semáforos, marcas viales y agentes."],
+  "El orden es: agentes, señales circunstanciales o de balizamiento, semáforos, señales verticales y, por último, marcas viales.",
+  ["El agente siempre va primero.", "El agente siempre va primero y las marcas, últimas."],
+  "Agente > obra > semáforo > señal > pintura.");
+Q("senales", null, "Dos señales verticales del mismo grupo se contradicen. ¿Cuál obedece?",
+  ["La más restrictiva.", "La más cercana.", "La más grande."],
+  "Entre señales del mismo grupo que se contradicen, prevalece la más restrictiva.",
+  ["La cercanía no decide.", "El tamaño no decide."],
+  "Mismo grupo: la más estricta.");
+Q("senales", null, "Hay una marca vial continua y una señal vertical que permite adelantar. ¿Qué prevalece?",
+  ["La señal vertical.", "La marca vial.", "Ninguna: decide el conductor."],
+  "En el orden de prioridad, las señales verticales están por encima de las marcas viales.",
+  ["Las marcas son las últimas del orden.", "Sí hay un orden fijo."],
+  "Señal vertical gana a la pintura.");
+Q("senales", null, "Un agente levanta verticalmente un brazo. Usted se aproxima de frente. ¿Qué debe hacer?",
+  ["Detenerse, salvo que no pueda hacerlo con seguridad o ya esté dentro de la intersección.", "Seguir, porque indica vía libre.", "Reducir la velocidad sin detenerse."],
+  "El brazo levantado obliga a parar a quienes se acercan. No afecta a quien no puede frenar con seguridad ni a quien ya ha entrado en la intersección, que debe salir.",
+  ["No indica vía libre.", "La orden es detenerse, no solo reducir."],
+  "Brazo arriba: stop.");
+Q("senales", null, "Un agente mantiene el brazo extendido horizontalmente. ¿A quién detiene?",
+  ["A quienes llegan desde una dirección que corta la del brazo.", "Solo a los que vienen de frente.", "A nadie, porque indica precaución."],
+  "Detiene a los que se acercan desde direcciones que cortan la del brazo extendido, y sigue vigente aunque lo baje, mientras no cambie de posición ni haga otra señal.",
+  ["Afecta a quien viene de frente y por detrás respecto del agente.", "Es una orden de detención."],
+  "Veo su pecho o espalda: paro.");
+Q("senales", null, "El agente mueve de arriba abajo el brazo extendido. ¿Qué indica?",
+  ["Que reduzca la velocidad quien se aproxima por ese lado.", "Que se detenga.", "Que acelere."],
+  "El movimiento alternativo del brazo extendido hacia arriba y abajo obliga a reducir la velocidad a quienes se aproximan por el lado del brazo que señala.",
+  ["No es la señal de parada.", "Es justo lo contrario."],
+  "Brazo que sube y baja: reduzca.");
+Q("senales", null, "Un agente balancea una luz roja o amarilla dirigida a usted. ¿Qué significa?",
+  ["Debe detenerse.", "Debe aumentar la distancia de seguridad.", "Hay una obra lejana."],
+  "El balanceo de una luz roja o amarilla obliga a detenerse a quien la recibe en su dirección.",
+  ["Es una orden de parada.", "No es un aviso genérico."],
+  "Luz que se balancea: paro.");
+Q("senales", null, "¿Qué indican varios toques cortos y seguidos del silbato de un agente?",
+  ["Orden de detenerse.", "Paso libre.", "Peligro lejano."],
+  "Varios toques cortos ordenan detenerse. Un toque largo indica que se puede reanudar la marcha.",
+  ["El paso libre es un toque largo.", "No indica eso."],
+  "Cortos, paro. Largo, sigo.");
+Q("senales", null, "Un agente muestra una bandera roja en la vía. ¿Qué significa?",
+  ["La vía está cerrada temporalmente.", "Precaución ante un peligro.", "La vía se abre al tráfico."],
+  "Bandera roja: vía cerrada. Amarilla: extreme la atención por un peligro. Verde: vía abierta.",
+  ["Eso es la bandera amarilla.", "Eso es la bandera verde."],
+  "Banderas como el semáforo.");
+Q("senales", null, "Un agente, desde su vehículo, le muestra un brazo extendido hacia abajo, inclinado y fijo. ¿Qué debe hacer?",
+  ["Detenerse en el lado derecho.", "Adelantar por la izquierda.", "Seguir por el carril central."],
+  "Esa señal obliga a detenerse en el lado derecho a los usuarios a quienes va dirigida.",
+  ["No es una señal de adelantamiento.", "Es una orden de parar."],
+  "Coche patrulla, brazo abajo: a la derecha y paro.");
+Q("senales", "light:red", "Ve una luz roja intermitente antes de un paso a nivel. ¿Qué debe hacer?",
+  ["No pasar: prohíbe temporalmente el paso.", "Pasar con precaución.", "Parar y pasar enseguida si no se ve el tren."],
+  "Una luz roja intermitente, o dos alternas, prohíbe el paso ante un paso a nivel, un puente móvil, una salida de bomberos o un aterrizaje a baja altura.",
+  ["Esa es la ámbar intermitente.", "No basta con mirar: el paso está prohibido."],
+  "Roja intermitente: no paso.");
+Q("senales", null, "Hay una flecha verde en el semáforo para girar a la derecha. ¿Tiene prioridad sobre todos?",
+  ["No: debe avanzar con precaución, ceder el paso y no poner en peligro a los peatones.", "Sí, como con cualquier verde.", "Sí, solo si el círculo verde está apagado."],
+  "La flecha verde permite el giro, pero no da prioridad. Hay que ceder el paso a quien circule por el carril de incorporación y respetar a los peatones.",
+  ["Una flecha verde no equivale a prioridad total.", "La luz del círculo no le da prioridad."],
+  "Flecha verde: paso, pero sin prioridad.");
+Q("senales", null, "Un semáforo sobre su carril muestra una flecha verde hacia abajo. ¿Qué indica?",
+  ["Que puede circular por ese carril.", "Que el carril se cerrará enseguida.", "Que debe parar."],
+  "Los semáforos de carril afectan solo al carril sobre el que están. La flecha verde hacia abajo autoriza a usarlo.",
+  ["Eso lo indicaría una flecha oblicua.", "La flecha verde no ordena parar."],
+  "Flecha verde abajo: carril abierto.");
+Q("senales", null, "Un semáforo de carril muestra una flecha oblicua blanca o amarilla hacia abajo. ¿Qué debe hacer?",
+  ["Pasar con seguridad al carril hacia el que apunta, porque el suyo se cerrará pronto.", "Detenerse.", "Seguir por su carril."],
+  "La flecha oblicua avisa de que ese carril se cerrará en poco espacio y hay que incorporarse al indicado.",
+  ["No obliga a parar en el carril.", "Debe abandonar el carril."],
+  "Flecha oblicua: cambio de carril.");
+Q("senales", null, "¿Qué indica una cuadrícula de marcas amarillas en el suelo en un cruce?",
+  ["Que no debe entrar en ella si puede quedar detenido dentro.", "Que puede estacionar para carga y descarga.", "Que los peatones tienen zona propia."],
+  "Recuerda que no se puede entrar en una intersección si, por la situación del tráfico, va a quedar detenido obstruyendo la circulación.",
+  ["No es zona de estacionamiento.", "No es un paso de peatones."],
+  "Cuadrícula amarilla: no entro si no puedo salir.");
+Q("senales", null, "Hay una zona de franjas blancas oblicuas enmarcada por una línea continua (cebreado). ¿Puede circular por ella?",
+  ["No, prohíbe entrar en esa zona.", "Sí, para adelantar.", "Sí, a baja velocidad."],
+  "El cebreado prohíbe entrar en esa zona, salvo a quienes deban circular por el arcén.",
+  ["No es una zona para adelantar.", "La velocidad no cambia la prohibición."],
+  "Cebreado: no se pisa.");
+Q("senales", null, "¿Qué indica una marca de bordillo amarilla discontinua?",
+  ["Prohibido estacionar, pero la parada está permitida.", "Prohibido parar y estacionar.", "Estacionamiento reservado para motos."],
+  "La amarilla discontinua afecta solo al estacionamiento. La amarilla continua prohíbe también la parada.",
+  ["Eso corresponde a la continua.", "No reserva para ningún vehículo."],
+  "Discontinua, puedo parar. Continua, tampoco.");
+Q("senales", null, "¿Qué indica una marca azul que delimita plazas de estacionamiento?",
+  ["Estacionamiento permitido con duración limitada en ciertos periodos.", "Estacionamiento solo para motos.", "Parada de autobuses."],
+  "Las marcas azules delimitan plazas donde se puede estacionar con tiempo limitado en ciertos periodos, como en la zona azul.",
+  ["No es de uso exclusivo para motos.", "No marca una parada."],
+  "Azul: aparco con tiempo limitado.");
+Q("senales", null, "Hay una flecha oblicua en la calzada, en una vía de doble sentido, apuntando a la derecha. ¿Qué indica?",
+  ["Que se acerca una línea continua y debe volver a la derecha cuanto antes.", "Que hay una salida a la derecha.", "Que se aproxima un cambio de sentido."],
+  "La flecha de retorno anuncia una línea continua próxima: quien esté adelantando debe volver al carril derecho cuanto antes.",
+  ["No es una flecha de salida.", "No indica un cambio de sentido."],
+  "Flecha de retorno: vuelve ya.");
+Q("senales", null, "¿Qué indica el damero blanco y rojo en la calzada?",
+  ["El inicio de una zona de frenado de emergencia.", "Un paso de ciclistas.", "Una zona para aparcar motos."],
+  "Marca el inicio de una zona de frenado de emergencia. Está prohibido parar, estacionar o usarla para otros fines.",
+  ["El paso de ciclistas se marca con líneas discontinuas.", "No es una zona de aparcamiento."],
+  "Damero: frenado de emergencia.");
+Q("senales", null, "¿Qué significa una señal de zona residencial?",
+  ["Máximo 20 km/h y prioridad de los peatones.", "Máximo 30 km/h y prioridad de los vehículos.", "Prohibida la entrada de vehículos."],
+  "En una zona residencial, el límite es 20 km/h y los peatones tienen prioridad.",
+  ["El límite es 20 km/h, y la prioridad es peatonal.", "Sí pueden entrar vehículos."],
+  "Residencial: 20 y peatón primero.");
+
+/* ================= LO QUE SALIÓ EN EL EXAMEN REAL (2 de noviembre de 2026) =================
+   Preguntas que recordó de su examen. Se añaden al final para no mover los identificadores. */
+const EXAMEN_DESDE = BANK.length;
+
+/* ---- FLECHA AZUL OBLICUA Y STOP ---- */
+Q("senales", "img:r401a", "¿Qué indica esta señal situada sobre una isleta o refugio?",
+  ["Que debo pasar obligatoriamente por el lado derecho de la isleta, el que marca la flecha.", "Que debo girar a la derecha en la próxima intersección.", "Que se recomienda pasar por la derecha, aunque también puedo hacerlo por la izquierda."],
+  "Es la señal R-401a, paso obligatorio. La flecha oblicua hacia abajo señala el lado del refugio, de la isleta o del obstáculo por el que hay que pasar.",
+  ["Eso sería una señal de sentido obligatorio. Esta flecha solo dice por dónde rodear el obstáculo.", "Las señales azules redondas obligan, no recomiendan."],
+  "Flecha azul inclinada hacia abajo: rodeo la isleta por ese lado.");
+Q("senales", "img:r401b", "¿Qué obliga a hacer esta señal colocada sobre un refugio?",
+  ["Pasar por el lado izquierdo del refugio, el que indica la flecha.", "Circular por el carril izquierdo de la calzada.", "Girar a la izquierda en la próxima intersección."],
+  "Es la señal R-401b, paso obligatorio por la izquierda. Se refiere solo al lado por el que se rodea el refugio o el obstáculo.",
+  ["No reserva ningún carril.", "No indica ningún giro en la intersección."],
+  "La flecha apunta al lado del obstáculo por el que paso.");
+Q("senales", "isleta", "Llega a esta intersección con la isleta, la flecha azul y el STOP. ¿Podrá girar después a la izquierda?",
+  ["Sí: paso la isleta por la derecha, me detengo en el STOP, cedo el paso y giro, si ninguna señal lo prohíbe.", "No: la flecha azul me obliga a girar a la derecha.", "Sí, y sin detenerme si no viene nadie."],
+  "La flecha R-401a solo indica por qué lado se rodea la isleta. No prohíbe girar después a la izquierda. El STOP sigue obligando a detenerse y a ceder el paso a los vehículos de la vía a la que se accede.",
+  ["La flecha habla del lado de la isleta, no de la dirección que tomará en el cruce.", "El STOP exige detenerse siempre, aunque la vía esté vacía."],
+  "Flecha: por dónde rodeo. STOP: me paro. El giro sigue permitido.");
+Q("senales", "isleta", "En esta intersección hay un STOP y una flecha azul sobre la isleta. ¿Qué indica cada señal?",
+  ["La flecha, el lado por el que rodeo la isleta. El STOP, que debo detenerme y ceder el paso.", "La flecha anula el STOP, porque es una señal de obligación.", "El STOP solo se aplica a quien vaya a girar a la izquierda."],
+  "Las dos señales se cumplen a la vez porque regulan cosas distintas: una el paso por la isleta y la otra la entrada en la intersección.",
+  ["Una no anula a la otra.", "El STOP afecta a todos los vehículos que llegan por esa vía."],
+  "Las dos valen a la vez.");
+Q("senales", null, "¿Qué diferencia hay entre una flecha azul oblicua hacia abajo (paso obligatorio) y una flecha azul de sentido obligatorio?",
+  ["La primera indica por qué lado rodear un obstáculo. La segunda, la dirección y el sentido que debo seguir.", "Ninguna: las dos obligan a girar hacia donde apunta la flecha.", "La primera es una recomendación y la segunda una obligación."],
+  "Paso obligatorio (R-401): me dice por qué lado de la isleta o del obstáculo paso. Sentido obligatorio (R-400): me dice hacia dónde debo seguir.",
+  ["No significan lo mismo: la de paso obligatorio no impone ningún giro.", "Las dos son azules y redondas, así que las dos obligan."],
+  "Oblicua hacia abajo: lado del obstáculo. Las demás: dirección.");
+
+/* ---- PICK-UP ---- */
+Q("velocidad", null, "¿Cuál es la velocidad máxima genérica de una pick-up en autopista o autovía?",
+  ["120 km/h", "100 km/h", "90 km/h"],
+  "Para la circulación, la pick-up tiene los mismos límites genéricos que un turismo: 120 km/h en autopista y autovía.",
+  ["100 km/h es el límite de autobuses, derivados de turismo y vehículos mixtos adaptables.", "90 km/h es el límite de camiones y furgones en autopista y autovía."],
+  "Pick-up = turismo: 120 y 90.");
+Q("velocidad", null, "¿Cuál es la velocidad máxima genérica de una pick-up en una carretera convencional?",
+  ["90 km/h", "80 km/h", "100 km/h"],
+  "En carretera convencional, la pick-up tiene el mismo límite genérico que un turismo: 90 km/h.",
+  ["80 km/h es el límite de camiones y furgones en carretera convencional.", "En carretera convencional, el límite genérico no llega a 100 km/h."],
+  "Pick-up = turismo: 120 y 90.");
+Q("velocidad", null, "¿Cuál de estos vehículos puede circular a mayor velocidad genérica por una autovía?",
+  ["Una pick-up.", "Un vehículo mixto adaptable.", "Un vehículo derivado de turismo."],
+  "La pick-up puede ir a 120 km/h en autovía. Los mixtos adaptables y los derivados de turismo se quedan en 100 km/h. En carretera convencional, los tres tienen 90 km/h.",
+  ["El mixto adaptable tiene 100 km/h en autovía.", "El derivado de turismo tiene 100 km/h en autovía."],
+  "Pick-up 120. Mixto y derivado 100.");
+Q("velocidad", null, "Una pick-up circula por una calle urbana con dos carriles por sentido y sin señal de velocidad. ¿Cuál es su límite?",
+  ["50 km/h", "30 km/h", "40 km/h"],
+  "En ciudad se aplican los límites genéricos de la vía, igual que a un turismo: 20 km/h en plataforma única, 30 km/h con un carril por sentido y 50 km/h con dos o más.",
+  ["30 km/h corresponde a un solo carril por sentido.", "40 km/h no es un límite genérico para una pick-up."],
+  "Urbana: 20, 30 o 50 según la vía, también para la pick-up.");
+Q("velocidad", null, "Una señal limita la velocidad de la vía a 100 km/h. ¿A qué velocidad máxima puede circular una pick-up?",
+  ["A 100 km/h, igual que un turismo.", "A 90 km/h, porque las pick-up tienen un límite inferior.", "A 120 km/h, porque la señal no se aplica a las pick-up."],
+  "La pick-up tiene los mismos límites que un turismo y debe respetar la señal de la vía.",
+  ["No tiene una limitación inferior a la del turismo.", "La señal se aplica también a las pick-up."],
+  "Señal de 100: la pick-up, a 100.");
+
+/* ---- APARCAR EN PENDIENTE ---- */
+Q("parada", null, "Deja aparcado un turismo manual en una pendiente. ¿Debe usar el freno de mano o dejar una marcha puesta?",
+  ["Las dos cosas: freno de estacionamiento y marcha engranada.", "Basta con dejar la marcha puesta.", "Basta con el freno de mano."],
+  "El Reglamento pide dejar accionado el freno de estacionamiento y, además, la marcha que corresponda: primera en pendiente ascendente y marcha atrás en descendente.",
+  ["Falta el freno de estacionamiento.", "Falta la marcha engranada."],
+  "Pendiente: freno Y marcha, nunca solo uno.");
+Q("parada", null, "¿Cuál es la forma correcta de dejar aparcado un turismo manual en una pendiente ascendente?",
+  ["Con el freno de estacionamiento accionado y la primera marcha puesta.", "Con el freno de estacionamiento accionado y la marcha atrás puesta.", "Con la primera marcha puesta y sin el freno de estacionamiento."],
+  "Cuesta arriba se deja la primera, y siempre con el freno de estacionamiento accionado.",
+  ["La marcha atrás corresponde a la pendiente descendente.", "La marcha no sustituye al freno de estacionamiento."],
+  "Subo: freno + primera.");
+Q("parada", null, "¿Cuál es la forma correcta de dejar aparcado un turismo manual en una pendiente descendente?",
+  ["Con el freno de estacionamiento accionado y la marcha atrás puesta.", "Con el freno de estacionamiento accionado y la primera marcha puesta.", "Con el freno de estacionamiento accionado y en punto muerto."],
+  "Cuesta abajo se deja la marcha atrás, y siempre con el freno de estacionamiento accionado.",
+  ["La primera corresponde a la pendiente ascendente.", "En punto muerto no queda ninguna marcha que retenga el coche."],
+  "Bajo: freno + marcha atrás.");
+
+/* ---- LUCES DE LA MOTO ---- */
+Q("motos", null, "Una motocicleta circula de día por una vía urbana. ¿Debe llevar encendida la luz de cruce?",
+  ["Sí, también en ciudad.", "No, solo en vías interurbanas.", "Solo si la vía está mal iluminada."],
+  "La motocicleta debe llevar encendida la luz de cruce durante el día en cualquier vía, también en ciudad. La finalidad es que la vean.",
+  ["La obligación no se limita a las vías interurbanas.", "De día no depende de la iluminación de la vía."],
+  "Moto en marcha: cruce encendida, en cualquier vía.");
+Q("motos", null, "Una motocicleta circula de día por una autovía, con sol. ¿Qué luz debe llevar?",
+  ["La de cruce.", "Ninguna, porque hay buena visibilidad.", "La de carretera."],
+  "La motocicleta lleva la luz de cruce encendida durante el día aunque haga sol.",
+  ["La buena visibilidad no la exime.", "La de carretera no es la luz exigida de día."],
+  "Con sol también: cruce.");
+Q("motos", null, "¿De qué depende que una motocicleta deba llevar la luz de cruce encendida durante el día?",
+  ["De nada: es obligatoria en cualquier vía y con cualquier tiempo.", "Del tipo de vía: solo en vías interurbanas.", "Del tiempo: solo con lluvia o niebla."],
+  "Para la motocicleta da igual que sea vía urbana o interurbana, autopista o carretera convencional, y da igual el tiempo que haga.",
+  ["También en vía urbana.", "También con buen tiempo."],
+  "Moto: no hay excepción por vía ni por tiempo.");
+Q("motos", null, "De noche, por una vía urbana bien iluminada, ¿qué luces debe llevar una motocicleta?",
+  ["La de posición y la de cruce.", "Solo la de posición.", "La de posición y la de carretera."],
+  "De noche, en una vía suficientemente iluminada, se lleva la luz de cruce además de la de posición.",
+  ["Las farolas no permiten circular solo con la de posición.", "La de carretera no se usa en una vía bien iluminada y puede deslumbrar."],
+  "Noche con farolas: posición + cruce.");
+Q("motos", null, "De noche, una motocicleta circula a más de 40 km/h, fuera de poblado, por una vía mal iluminada y sin nadie delante. ¿Qué luz debe usar?",
+  ["La de carretera.", "Solo la de posición.", "La de cruce, porque es de uso obligatorio en cualquier caso."],
+  "A más de 40 km/h, de noche, fuera de poblado y en vía insuficientemente iluminada se usa la luz de carretera. Se cambia a la de cruce si puede deslumbrar a alguien.",
+  ["La posición no alumbra la vía.", "La de cruce se usa aquí cuando hay riesgo de deslumbrar, y en este caso no lo hay."],
+  "Noche, fuera de poblado, sin farolas y a más de 40: larga.");
+
+/* ---- CIRCULACIÓN PROHIBIDA CON PANEL ---- */
+Q("senales", "img:r100", "¿Qué significa esta señal?",
+  ["Prohíbe la circulación de toda clase de vehículos, en ambos sentidos.", "Prohíbe los automóviles, pero pueden pasar motos y bicicletas.", "Prohíbe los vehículos de motor, pero pueden pasar bicicletas."],
+  "Es la señal R-100, circulación prohibida. No distingue tipos de vehículo: alcanza a coches, motos, ciclomotores y bicicletas, en los dos sentidos.",
+  ["Las motos y las bicicletas también son vehículos.", "Esa prohibición se parece a la de la señal con un coche y una moto dibujados. Esta señal va vacía y prohíbe toda clase de vehículos."],
+  "Círculo vacío: ningún vehículo, ni siquiera la bici.");
+Q("senales", "img:r100", "¿Puede pasar en bicicleta por una vía con esta señal, sin ningún cartel debajo?",
+  ["No, porque la bicicleta también es un vehículo.", "Sí, porque la señal solo afecta a los vehículos de motor.", "Sí, si circula por el lado derecho."],
+  "La señal prohíbe la circulación de toda clase de vehículos, y la bicicleta es uno de ellos.",
+  ["Para limitarla a los vehículos de motor habría otra señal.", "El lado por el que circule no cambia la prohibición."],
+  "Toda clase de vehículos: también la bici.");
+Q("senales", "img:r100", "Esta señal lleva un cartel que dice «Excepto residentes y autorizados». ¿Quién puede entrar con su vehículo?",
+  ["Solo los residentes y los vehículos autorizados.", "Cualquier vehículo, si es para parar poco tiempo.", "Nadie: el cartel no cambia lo que indica la señal."],
+  "La señal prohíbe la circulación de toda clase de vehículos en ambos sentidos. El cartel fija la excepción: pueden entrar solo los residentes y quienes tengan autorización.",
+  ["Parar poco tiempo no es una excepción de este cartel.", "El cartel sí modifica la señal: es lo que permite entrar a esos vehículos."],
+  "Círculo blanco vacío + «excepto»: solo entra quien diga el cartel.");
+Q("senales", "img:r100", "No es residente ni tiene autorización y llega en ciclomotor a esta señal, que lleva el cartel «Excepto residentes y autorizados». ¿Puede pasar?",
+  ["No, porque el ciclomotor también es un vehículo.", "Sí, porque la señal solo afecta a los automóviles.", "Sí, si circula despacio y no hay tráfico."],
+  "La prohibición alcanza a toda clase de vehículos, también a ciclomotores y motocicletas.",
+  ["No se limita a los automóviles.", "La velocidad y el tráfico no cambian la prohibición."],
+  "Toda clase de vehículos: también ciclomotores.");
+
 /* ================= FIGURAS (SVG) ================= */
 /* Señales oficiales: img/senales/<código>.svg (Wikimedia Commons, ver README). */
 const SIGN_FILE = { stop: 'r2', ceda: 'r1' };
@@ -1420,6 +2068,18 @@ function cruce(spec) {
   return svgWrap(s, '0 0 240 240', 'Intersección');
 }
 
+function isleta() {
+  let s = '<rect width="240" height="240" fill="#c9d6b5"/>';
+  s += '<rect x="0" y="34" width="240" height="66" fill="#59626f"/><rect x="72" y="100" width="116" height="140" fill="#59626f"/>';
+  s += '<line x1="0" y1="67" x2="240" y2="67" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="10 8"/>';
+  s += '<path d="M130 176 L108 102 Q130 94 152 102 Z" fill="#e7e2d6" stroke="#fff" stroke-width="2"/>';
+  s += '<rect x="146" y="101" width="42" height="5" fill="#fff"/>';
+  s += '<image href="img/senales/r401a.svg" x="110" y="142" width="40" height="40"/>';
+  s += '<image href="img/senales/r2.svg" x="192" y="104" width="40" height="40"/>';
+  s += '<g transform="translate(164 200)"><rect x="-10" y="-17" width="20" height="34" rx="5" fill="#1f5fd6" stroke="#fff" stroke-width="1.5"/><rect x="-7" y="-12" width="14" height="9" rx="2" fill="#cfe8ff"/></g>';
+  return svgWrap(s, '0 0 240 240', 'Coche que llega a una intersección con una isleta con la señal de paso obligatorio por la derecha y una señal de STOP');
+}
+
 const isSign = (f) => f.startsWith('img:');
 function figure(f) {
   if (!f) return '';
@@ -1427,6 +2087,7 @@ function figure(f) {
   if (k === 'light') return light(v);
   if (k === 'road') return road(v);
   if (k === 'cruce') return cruce(f.slice(6));
+  if (k === 'isleta') return isleta();
   if (k === 'img') return `<img src="img/senales/${v}.svg" alt="Señal de tráfico ${v.toUpperCase()}">`;
   return '';
 }
@@ -1435,6 +2096,13 @@ function figure(f) {
 /* ================= ESQUEMAS PROPIOS (se muestran en la explicación) ================= */
 function attachDiag(prefix, d) { const q = BANK.find(x => x.q.startsWith(prefix)); if (q) q.d = d; }
 attachDiag("Si duplica la velocidad", "detencion");
+attachDiag("Estaciona un coche manual en una pendiente ascendente", "pendiente");
+attachDiag("Estaciona un coche manual en una pendiente descendente", "pendiente");
+attachDiag("Estaciona cuesta arriba junto a un bordillo", "pendiente");
+attachDiag("Estaciona cuesta abajo junto a un bordillo", "pendiente");
+attachDiag("Deja aparcado un turismo manual en una pendiente", "pendiente");
+attachDiag("¿Cuál es la forma correcta de dejar aparcado un turismo manual en una pendiente ascendente", "pendiente");
+attachDiag("¿Cuál es la forma correcta de dejar aparcado un turismo manual en una pendiente descendente", "pendiente");
 attachDiag("¿Qué distancia de seguridad", "dosseg");
 attachDiag("Sobre una carretera encharcada", "aqua");
 attachDiag("Un herido está inconsciente", "pls");
@@ -1443,6 +2111,17 @@ attachDiag("¿Cómo debe ajustarse el reposacabezas", "cabeza");
 function diagram(d) {
   const T = (x, y, t, o = '') => `<text x="${x}" y="${y}" font-family="Arial,Helvetica,sans-serif" font-size="11" ${o.includes('fill=') ? '' : 'fill="#1c2733"'} ${o}>${t}</text>`;
   const car = (x, y, c) => `<g transform="translate(${x} ${y})"><rect width="54" height="22" rx="6" fill="${c}"/><rect x="30" y="3" width="18" height="9" rx="2" fill="#cfe8ff"/><circle cx="13" cy="23" r="5" fill="#222"/><circle cx="41" cy="23" r="5" fill="#222"/></g>`;
+  if (d === 'pendiente') {
+    const auto = (x, up) => { const r = up ? -28 : 28, fw = (y) => `<rect x="-8" y="-3.5" width="16" height="7" rx="2" fill="#111" transform="translate(${x + 116} ${y}) rotate(${r})"/>`;
+      return `<rect x="${x}" y="28" width="160" height="66" fill="#4b5563"/><rect x="${x}" y="94" width="160" height="20" fill="#9ca3af"/>` +
+        `<rect x="${x + 44}" y="44" width="84" height="36" rx="8" fill="#1f5fd6"/><rect x="${x + 106}" y="48" width="14" height="28" rx="3" fill="#cfe8ff"/>` +
+        fw(43) + fw(81) + `<rect x="${x + 50}" y="40" width="16" height="6" rx="2" fill="#111"/><rect x="${x + 50}" y="78" width="16" height="6" rx="2" fill="#111"/>` + T(x + 8, 108, 'bordillo', 'font-size="10"'); };
+    return svgWrap(T(10, 18, 'Cuesta ARRIBA', 'font-weight="700"') + T(186, 18, 'Cuesta ABAJO', 'font-weight="700"') +
+      auto(10, true) + auto(186, false) +
+      T(10, 134, 'Primera marcha', 'font-weight="700"') + T(186, 134, 'Marcha atrás', 'font-weight="700"') +
+      T(10, 150, 'Ruedas hacia la calzada') + T(186, 150, 'Ruedas hacia el bordillo') +
+      T(10, 166, 'Freno de estacionamiento') + T(186, 166, 'Freno de estacionamiento'), '0 0 356 176', 'Marcha y orientación de las ruedas al estacionar en pendiente');
+  }
   if (d === 'detencion') {
     const k = 2.6, x0 = 64, bar = (y, r, f, lab, tot) => {
       const a = r * k, b = f * k;
@@ -1633,6 +2312,8 @@ function loadDB() {
   return o;
 }
 let DB = loadDB();
+/* Esta pregunta cambió de respuesta: se borra su progreso una sola vez para que no conste como dominada. */
+if (!DB.fix202611) { const f = BANK.find(q => q.q.startsWith('En carretera convencional, ¿puede rebasar')); if (f) delete DB.stats[f.id]; DB.fix202611 = true; }
 function saveDB() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
 function record(id, ok) {
   const s = DB.stats[id] || (DB.stats[id] = { c: 0, w: 0, l: 0 });
@@ -1708,7 +2389,7 @@ function render() {
 
 function infoHtml() {
   const L = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
-  return `<details class="info"><summary>Novedades y datos oficiales del examen (octubre de 2026)</summary><div class="in">
+  return `<details class="info"><summary>Novedades y datos oficiales del examen (noviembre de 2026)</summary><div class="in">
     <div><h3>El examen teórico del permiso B</h3><ul>
       <li>30 preguntas con tres opciones y una sola correcta. Se aprueba con un máximo de 3 fallos.</li>
       <li>La DGT anunció una pregunta basada en un vídeo de situaciones de riesgo (glorietas, intersecciones, incorporaciones, velocidad inadecuada, distracciones, desplazamientos laterales y adelantamientos). Se ve hasta 3 veces antes de ver la pregunta y el tiempo del examen se amplía según la duración del vídeo. Esa pregunta no se puede hacer en papel.</li>
@@ -1723,6 +2404,9 @@ function infoHtml() {
       <li>Motos: guantes en vías interurbanas y calzado cerrado en todas; casco homologado en ciclomotores desde el 1 de octubre de 2027; arcén a 30 km/h solo en retenciones y tramos señalizados.</li>
       <li>Atascos en autopista y autovía: carril de emergencia para vehículos prioritarios. Con nieve, prohibido adelantar.</li>
       <li>Cinturón sin exenciones para taxistas, mercancías y autoescuela. Peatón con prioridad en plataforma única.</li></ul></div>
+    <div><h3>Motos de 125 con el permiso B</h3><ul>
+      <li>Hace falta el permiso B en vigor con más de 3 años de antigüedad. Solo vale en España y solo para motos que autoriza el A1: 125 cc, 11 kW y 0,1 kW/kg.</li>
+      <li>La DGT ha anunciado un curso obligatorio, pero no se ha podido confirmar que esté en vigor. Compruébalo en la DGT antes de conducir una.</li></ul></div>
     <div><h3>Patinetes: registro y seguro</h3><ul>
       <li>Registro en el Registro de Vehículos Personales Ligeros de la DGT (RD 52/2026) y seguro obligatorio (Ley 5/2025). Los modelos no certificados pueden circular hasta el 22 de enero de 2027 si están registrados y asegurados.</li></ul></div>
     <p class="note">Fuentes: ${L('https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-13889','BOE, RD 518/2026')}, ${L('https://www.dgt.es/comunicacion/notas-de-prensa/20260930-reforma-del-reglamento-de-circulacion-usuarios-vulnerables/','DGT, reforma del Reglamento')}, ${L('https://www.dgt.es/comunicacion/noticias/20251020-examen-teorico-la-importancia-de-conocer-el-riesgo/','DGT, examen teórico')}, ${L('https://www.dgt.es/nuestros-servicios/permisos-de-conducir/obtener-un-nuevo-permiso-de-conducir/requisitos-preparacion-y-presentacion-a-examen/','DGT, requisitos')}, ${L('https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-2140','BOE, RD 52/2026')}. Los puntos de cada infracción vienen del cuadro de la Ley de Tráfico, no del reglamento.</p>
@@ -1747,6 +2431,8 @@ function homeHtml() {
   h += `<div class="modes">
     <button class="btn big" data-act="exam"><span>Examen simulado<small>30 preguntas · 30 min${DB.prefs.video ? ' + vídeo' : ''} · sin volver atrás, como el real</small></span><span>→</span></button>
     <button class="btn big alt" data-act="cfg"><span>Modo estudio<small>Verás la explicación al contestar cada pregunta</small></span><span>→</span></button>
+    <button class="btn big alt" data-act="miexamen"><span>Lo que me salió en el examen<small>${BANK.length - EXAMEN_DESDE} preguntas sobre lo que recuerdas de tu examen real</small></span><span>→</span></button>
+    <button class="btn big alt" data-act="refuerzo"><span>Refuerzo: lo que faltaba<small>${BANK.length - REFUERZO_DESDE} preguntas nuevas de luces, motos 125, pendientes, señales, agentes y marcas viales</small></span><span>→</span></button>
     <button class="btn big alt" data-act="repaso" ${fails ? '' : 'disabled'}><span>Repasar mis fallos<small>${fails ? fails + ' preguntas pendientes de aprender' : 'Aún no tienes fallos pendientes'}</small></span><span>→</span></button></div>
     <label class="optline" for="optvideo"><input type="checkbox" id="optvideo" ${DB.prefs.video ? 'checked' : ''}><span>Incluir en el examen una pregunta con vídeo de percepción del riesgo, como anunció la DGT. Se ve hasta 3 veces antes de ver la pregunta y el tiempo se amplía según la duración del vídeo.</span></label>
     ${infoHtml()}`;
@@ -1763,7 +2449,7 @@ function homeHtml() {
     DB.exams.slice(-12).forEach(e => { h += `<div class="${e.err <= EXAM_MAX_ERR ? 'p' : 'x'}" style="height:${Math.max(8, Math.min(e.err, 12) / 12 * 100)}%" title="${e.err} fallos"><span>${e.err}</span></div>`; });
     h += '</div><p class="note">Verde: apto (3 fallos o menos). Rojo: no apto.</p>';
   }
-  h += `<p class="note" style="margin-top:24px">Las preguntas son originales y siguen el temario y el estilo del examen oficial; el banco oficial de la DGT no es público. La normativa está actualizada a octubre de 2026 (Real Decreto 518/2026, en vigor desde el 1 de octubre). Antes de examinarte, repasa el manual de tu autoescuela por si hubiera cambios.</p>`;
+  h += `<p class="note" style="margin-top:24px">Las preguntas son originales y siguen el temario y el estilo del examen oficial; el banco oficial de la DGT no es público. La normativa está actualizada a noviembre de 2026 (Real Decreto 518/2026, en vigor desde el 1 de octubre). Antes de examinarte, repasa el manual de tu autoescuela por si hubiera cambios.</p>`;
   h += resetAsk
     ? '<p class="note">¿Borrar todo tu progreso? <button class="linkbtn" data-act="reset-yes">Sí, borrar</button> <button class="linkbtn" data-act="reset-no">Cancelar</button></p>'
     : '<p class="note"><button class="linkbtn" data-act="reset">Borrar mi progreso</button></p>';
@@ -1870,10 +2556,18 @@ function next() {
   if (ses.cur === ses.ids.length - 1) return finish();
   ses.cur++; render(); window.scrollTo(0, 0);
 }
+/* Reparto por temas para que ninguno se quede fuera. Es un criterio propio de este simulador: la DGT no publica un reparto. */
+const EXAM_MIX = { senales: 6, luces: 3, maniobras: 3, velocidad: 2, prioridad: 2, parada: 2, motos: 2, docs: 2, vulnerables: 2, alcohol: 1, distancias: 1, seguridad: 1, auxilio: 1, especial: 1 };
+function mixedIds(n) {
+  const reg = BANK.filter(q => !q.v), picked = [];
+  Object.keys(EXAM_MIX).forEach(t => { picked.push(...shuf(reg.filter(q => q.t === t).map(q => q.id)).slice(0, EXAM_MIX[t])); });
+  const rest = shuf(reg.map(q => q.id).filter(id => !picked.includes(id)));
+  return shuf(picked.concat(rest).slice(0, Math.max(n, picked.length))).slice(0, n);
+}
 function examIds() {
-  const reg = BANK.filter(q => !q.v).map(q => q.id), vid = BANK.filter(q => q.v).map(q => q.id);
-  if (!DB.prefs.video || !vid.length) return shuf(reg).slice(0, EXAM_N);
-  const ids = shuf(reg).slice(0, EXAM_N - 1);
+  const vid = BANK.filter(q => q.v).map(q => q.id);
+  if (!DB.prefs.video || !vid.length) return mixedIds(EXAM_N);
+  const ids = mixedIds(EXAM_N - 1);
   ids.splice(Math.floor(Math.random() * (ids.length + 1)), 0, shuf(vid)[0]);
   return ids;
 }
@@ -1886,6 +2580,8 @@ document.addEventListener('click', (e) => {
   else if (a === 'n') { cfg.n = +b.dataset.n; render(); }
   else if (a === 'go-study') start('study', pickStudy(cfg.topic, cfg.n));
   else if (a === 'topic') start('study', pickStudy(b.dataset.t, 0));
+  else if (a === 'miexamen') start('study', shuf(BANK.filter(q => q.id >= EXAMEN_DESDE).map(q => q.id)));
+  else if (a === 'refuerzo') start('study', shuf(BANK.filter(q => q.id >= REFUERZO_DESDE).map(q => q.id)));
   else if (a === 'repaso') start('study', shuf(BANK.filter(q => status(q.id) === 'fail').map(q => q.id)));
   else if (a === 'again') start('study', pickStudy(cfg.topic, cfg.n));
   else if (a === 'opt') choose(+b.dataset.p);
@@ -1918,3 +2614,5 @@ document.addEventListener('keydown', (e) => {
 
 render();
 </script>
+
+</body></html>

@@ -1,16 +1,17 @@
-# Test DGT · Permiso B
+# Proyecto cuestionario de estudio Test DGT
 
 Simulador del examen teórico de la DGT para el permiso de conducir clase B (España), pensado para estudiar: cada respuesta, acertada o fallada, viene explicada.
 
 ## Cómo usarlo
-Abre `index.html` en el navegador (doble clic) o usa el acceso directo **Test DGT** del escritorio. No necesita instalar nada ni conexión a internet (solo las tipografías cargan de Google Fonts si hay red).
+Descarga el repositorio y abre `index.html` en el navegador (doble clic). No necesita instalar nada ni conexión a internet (solo las tipografías cargan de Google Fonts si hay red).
 
 ## Qué incluye
 - **Examen simulado:** 30 preguntas, 30 minutos, 3 opciones, máximo 3 fallos, sin volver atrás. Opcionalmente incluye **una pregunta con vídeo de percepción del riesgo**, como anunció la DGT: se ve hasta 3 veces antes de ver la pregunta y el tiempo se amplía según la duración del vídeo.
 - **Modo estudio:** explicación inmediata al contestar, por tema o mezclado.
+- **Lo que me salió en el examen:** preguntas creadas a partir de temas que el autor recuerda de su examen real.
 - **Repasar mis fallos:** solo las preguntas falladas y aún no dominadas.
 - **Progreso** guardado en el navegador (`localStorage`): aciertos, preguntas dominadas por tema, historial de exámenes y preferencias.
-- **Banco:** 182 preguntas originales en 15 temas: 48 de señales, 33 de novedades 2026 (usuarios vulnerables) y 6 de percepción del riesgo con escena animada.
+- **Banco:** 305 preguntas originales. Las 182 primeras, en 15 temas: 48 de señales, 33 de novedades 2026 (usuarios vulnerables) y 6 de percepción del riesgo con escena animada.
 - **Gráficos:** señales oficiales españolas (`img/senales/`), semáforos, líneas, cruces con vehículos, esquemas propios (distancia de detención, regla de los 2 segundos, aquaplaning, posición lateral de seguridad, reposacabezas) y escenas animadas de tráfico. Salen en la explicación tras contestar.
 - **Panel «Novedades y datos oficiales del examen»** en la pantalla de inicio, con enlaces al BOE y a la DGT.
 
@@ -26,7 +27,7 @@ Abre `index.html` en el navegador (doble clic) o usa el acceso directo **Test DG
 - `contexto.md`: estado y próximos pasos.
 
 ## Aviso
-Las preguntas son originales (el banco oficial de la DGT no es público) y siguen la normativa vigente a 29 de octubre de 2026. Contrasta cualquier duda con el manual de la autoescuela.
+Las preguntas son originales (el banco oficial de la DGT no es público) y siguen la normativa vigente a noviembre de 2026. Contrasta cualquier duda con el manual de la autoescuela.
 
 ## Créditos de las imágenes
 Las señales de `img/senales/` proceden de [Wikimedia Commons](https://commons.wikimedia.org/) (archivos `Spain traffic signal …`). La mayoría son de dominio público. Se han añadido únicamente atributos `viewBox` a los SVG para que escalen bien, sin cambiar el dibujo. Estas señales son CC BY-SA y requieren atribución:
@@ -34,4 +35,5 @@ Las señales de `img/senales/` proceden de [Wikimedia Commons](https://commons.w
 | Archivos | Autor | Licencia |
 |---|---|---|
 | `r400a`, `r400b`, `r400c`, `r500`, `r501`, `r502` | Gigillo83 | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| `r401a`, `r401b` (obra derivada de `r400a`, flecha girada) | Gigillo83 | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
 | `r402` | Majafego | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
