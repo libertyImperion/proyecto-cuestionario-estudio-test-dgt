@@ -10,7 +10,7 @@ Abre `index.html` en el navegador (doble clic) o usa el acceso directo **Test DG
 - **Modo estudio:** explicación inmediata al contestar, por tema o mezclado.
 - **Repasar mis fallos:** solo las preguntas falladas y aún no dominadas.
 - **Progreso** guardado en el navegador (`localStorage`): aciertos, preguntas dominadas por tema, historial de exámenes y preferencias.
-- **Banco:** 182 preguntas originales en 15 temas: 48 de señales, 33 de novedades 2026 (usuarios vulnerables) y 6 de percepción del riesgo con escena animada.
+- **Banco:** 305 preguntas (v4, 02/11/2026). Las 182 primeras, en 15 temas: 48 de señales, 33 de novedades 2026 (usuarios vulnerables) y 6 de percepción del riesgo con escena animada.
 - **Gráficos:** señales oficiales españolas (`img/senales/`), semáforos, líneas, cruces con vehículos, esquemas propios (distancia de detención, regla de los 2 segundos, aquaplaning, posición lateral de seguridad, reposacabezas) y escenas animadas de tráfico. Salen en la explicación tras contestar.
 - **Panel «Novedades y datos oficiales del examen»** en la pantalla de inicio, con enlaces al BOE y a la DGT.
 
