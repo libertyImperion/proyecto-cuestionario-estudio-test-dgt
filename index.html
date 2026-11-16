@@ -2083,6 +2083,162 @@ Q("senales", "img:r100", "No es residente ni tiene autorización y llega en cicl
   ["No se limita a los automóviles.", "La velocidad y el tráfico no cambian la prohibición."],
   "Toda clase de vehículos: también ciclomotores.");
 
+/* ================= EXAMEN COMPLETO DEL 2 DE NOVIEMBRE DE 2026 =================
+   Las 30 preguntas del examen que le salió (las localizó en un vídeo de test).
+   Redactadas de nuevo para este simulador. Van al final para no mover los identificadores. */
+const VIDEO_DESDE = BANK.length;
+
+Q("vulnerables", null, "Conduce una motocicleta por una vía interurbana y va a adelantar a otro usuario. ¿Qué separación lateral debe dejar?",
+  ["Al menos 1,5 metros.", "Basta con 0,50 metros.", "Basta con 1 metro."],
+  "Fuera de poblado el adelantamiento se hace dejando una separación lateral de 1,5 metros como mínimo, y siempre la suficiente según la velocidad y la anchura de la vía.",
+  ["Medio metro no es suficiente en ningún adelantamiento en vía interurbana.", "Un metro tampoco llega: el mínimo es 1,5 metros."],
+  "Separación lateral al adelantar fuera de poblado: 1,5 m o más.");
+Q("especial", null, "Circula con hielo o nieve en la calzada. ¿Qué relación de marchas debe usar?",
+  ["La más alta que sea posible.", "Siempre la segunda.", "Siempre la primera."],
+  "Con hielo o nieve se arranca y se circula con la marcha más larga que permitan las circunstancias, porque llega menos fuerza a las ruedas motrices y patinan menos. La excepción son las bajadas: ahí se usa una marcha corta para retener con el motor.",
+  ["No hay una marcha fija: depende de la situación, y se elige la más alta posible.", "La primera da mucha fuerza a las ruedas y es la que más las hace patinar."],
+  "Nieve o hielo: marcha larga y suavidad. En bajada, marcha corta.");
+Q("docs", null, "¿Cubre el seguro de suscripción obligatoria los daños del conductor que no es responsable del accidente?",
+  ["Sí, tanto los personales como los materiales.", "Sí, pero solo los personales.", "No, ni los personales ni los materiales."],
+  "El seguro obligatorio del vehículo culpable paga los daños causados a terceros. El conductor no responsable es un tercero perjudicado: se le cubren las lesiones y los daños en su vehículo y sus bienes.",
+  ["También se le pagan los daños materiales.", "Es justo al contrario: al no responsable se le cubre todo."],
+  "Al que le dan sin tener culpa, el seguro del otro le paga todo.");
+Q("alcohol", null, "Mientras conduce, ¿cuál de estos síntomas le haría sospechar que está fatigado?",
+  ["Moverse constantemente en el asiento.", "Notar sensación de frío o de calor.", "Tardar menos en reaccionar."],
+  "Cambiar de postura una y otra vez es una señal típica de fatiga, junto con el picor de ojos, los parpadeos, la pesadez de cabeza o los calambres. Cuando aparece hay que parar a descansar.",
+  ["El frío o el calor no son un síntoma de cansancio.", "La fatiga hace lo contrario: alarga el tiempo de reacción."],
+  "Fatiga: no paras de moverte en el asiento y reaccionas más tarde.");
+Q("senales", "img:r100", "¿Qué indica esta señal?",
+  ["Circulación prohibida a toda clase de vehículos, en ambos sentidos.", "El lugar donde es obligatorio detenerse.", "Circulación prohibida solo a los vehículos automóviles."],
+  "Es la R-100. El círculo blanco con borde rojo y sin dibujo prohíbe circular a cualquier vehículo en los dos sentidos: coches, motos, ciclomotores y bicicletas.",
+  ["Es una señal de prohibición, no de obligación ni de detención.", "No distingue tipos de vehículo: afecta a todos."],
+  "Círculo blanco vacío con borde rojo: no pasa ningún vehículo.");
+Q("senales", null, "El semáforo circular está en rojo y a su lado hay una flecha verde sobre fondo negro que apunta a la derecha. Su carril permite seguir de frente o girar a la derecha. ¿Puede continuar de frente?",
+  ["No, porque el semáforo principal está en rojo.", "No, porque es obligatorio girar a la derecha.", "No, tiene que esperar a que se apague la flecha verde."],
+  "La flecha verde solo autoriza el movimiento que señala, en este caso el giro a la derecha, y con precaución. Para seguir de frente manda la luz circular, que está en rojo: hay que esperar a que cambie.",
+  ["El carril permite seguir de frente, así que el giro no es obligatorio; simplemente ahora no puede ir de frente.", "Lo que hay que esperar es a que cambie la luz roja, no a que se apague la flecha."],
+  "Flecha verde: solo vale para donde apunta. De frente manda la luz redonda.");
+Q("luces", null, "Es de día y hay niebla intensa. ¿Qué luces antiniebla está obligado a encender?",
+  ["Solo la trasera.", "Solo las delanteras.", "Las delanteras y la trasera."],
+  "La luz antiniebla trasera es obligatoria con niebla densa, lluvia muy intensa, nevada fuerte o nubes de polvo o humo espesas. Las antiniebla delanteras son opcionales: se pueden encender, pero nadie obliga, porque el vehículo ni siquiera tiene que llevarlas.",
+  ["Las delanteras son voluntarias y la trasera es la que no puede faltar.", "Puede encender todas, pero la pregunta es cuáles son obligatorias: solo la trasera."],
+  "Antiniebla: detrás, obligatoria con niebla densa; delante, opcional.");
+Q("alcohol", null, "Padece una alergia respiratoria y tiene que conducir. ¿Qué es conveniente?",
+  ["Usar gafas de sol.", "Viajar al amanecer.", "Conducir con las ventanillas abiertas."],
+  "La alergia vuelve los ojos muy sensibles a la luz, y las gafas de sol alivian el lagrimeo y el deslumbramiento. Además conviene llevar las ventanillas cerradas y evitar las horas con más polen en el aire, que son el amanecer y el atardecer.",
+  ["Al amanecer es cuando más polen hay en suspensión.", "Con las ventanillas abiertas entra el polen en el coche."],
+  "Alergia: gafas de sol, ventanillas cerradas y no viajar al amanecer.");
+Q("maniobras", null, "Circula fuera de poblado por una calzada con tres carriles para su sentido. ¿Qué vehículos no pueden utilizar el carril izquierdo?",
+  ["Los camiones y furgones de más de 3.500 kg de MMA.", "Los conjuntos de vehículos de más de 5 metros.", "Cualquier vehículo de más de 3.500 kg."],
+  "En calzadas con tres o más carriles por sentido, los camiones y furgones de más de 3.500 kg de masa máxima autorizada, los vehículos especiales y los conjuntos de más de 7 metros circulan por el derecho y solo pueden usar el inmediato cuando lo necesiten.",
+  ["La restricción a los conjuntos empieza en los 7 metros de longitud, no en 5.", "No afecta a todos los de más de 3.500 kg: la norma habla de camiones y furgones (un autobús, por ejemplo, no entra)."],
+  "Tres carriles: camiones y furgones de más de 3.500 kg y conjuntos de más de 7 m, fuera del izquierdo.");
+Q("velocidad", null, "En una carretera convencional, ¿qué velocidad se considera anormalmente reducida para un turismo?",
+  ["La inferior a 45 km/h.", "60 km/h.", "45 km/h."],
+  "La velocidad mínima es la mitad de la genérica de la vía. En carretera convencional el turismo tiene 90 km/h de máxima, así que la mínima es 45. Anormalmente reducida es ir por debajo de esa mínima sin una causa que lo justifique.",
+  ["60 km/h es la mínima en autopistas y autovías, y está por encima de la mínima de una convencional.", "45 km/h es justo la mínima permitida: lo anormal es ir por debajo."],
+  "Mínima = mitad de la genérica. Convencional: 90 → 45. Menos de 45 es anormalmente reducida.");
+Q("prioridad", "img:p2", "Se acerca a una intersección y encuentra esta señal, con una limitación a 40 km/h debajo. ¿Cómo debe actuar?",
+  ["Cediendo el paso a los vehículos que se acerquen por la derecha.", "Pasando, porque tiene prioridad.", "Deteniéndose para ceder el paso a todos los vehículos de la vía transversal."],
+  "Es la P-2, intersección con prioridad de la derecha. Avisa de un cruce en el que rige la norma general: pasa primero el que llega por la derecha.",
+  ["La señal que da prioridad en un cruce es la P-1, la de la flecha gruesa cruzada por un trazo fino.", "No es un STOP. Solo cede a los que vienen por su derecha, y se detiene únicamente si hace falta."],
+  "P-2 (aspa en triángulo): cruce con prioridad de la derecha.");
+Q("maniobras", null, "Fuera de poblado, un turismo circula por el carril derecho más rápido que el que va por el carril izquierdo y lo sobrepasa sin cambiar de carril. ¿Está permitido?",
+  ["No.", "Sí."],
+  "Pasar a otro vehículo que circula más despacio es adelantar, se cambie o no de carril. Fuera de poblado se adelanta por la izquierda, y por la derecha solo en casos concretos: cuando el otro indica claramente que va a girar a la izquierda o a parar en ese lado, o cuando el tráfico es tan denso que ocupa todos los carriles.",
+  ["Aunque no cambie de carril, está adelantando por la derecha en una vía interurbana con tráfico fluido."],
+  "Fuera de poblado se adelanta por la izquierda, aunque no cambies de carril.");
+Q("vehiculo", null, "Los neumáticos de su turismo están más gastados por los bordes que por el centro. ¿Cómo es la presión de inflado?",
+  ["Inferior a la que indica el fabricante.", "La correcta.", "Superior a la que indica el fabricante."],
+  "Con poca presión el neumático se aplasta y apoya sobre todo en los hombros, que son los que se gastan. Con demasiada presión se abomba y se gasta por el centro.",
+  ["Con la presión correcta el desgaste es uniforme en toda la banda de rodadura.", "El exceso de presión gasta el centro, no los bordes."],
+  "Bordes gastados: falta aire. Centro gastado: sobra aire.");
+Q("parada", null, "Ha estacionado en una zona de estacionamiento con limitación horaria sin colocar el tique. ¿Qué pueden hacer los agentes?",
+  ["Retirar el vehículo.", "Solo imponer una sanción económica.", "Nada, porque no crea peligro."],
+  "Estacionar en zona de limitación horaria sin el distintivo que lo autoriza es uno de los casos en los que la ley permite retirar el vehículo al depósito, además de denunciar.",
+  ["La multa es posible, pero no es lo único: también pueden llevarse el vehículo. La palabra «solo» hace falsa la respuesta.", "No hace falta que haya peligro: es una infracción y además permite la retirada."],
+  "Zona azul sin tique: multa y, además, pueden retirar el vehículo.");
+Q("alcohol", null, "¿Qué alteración produce el alcohol en el comportamiento del conductor?",
+  ["Un exceso de confianza en sí mismo.", "Un aumento del campo visual.", "Un aumento del nivel de atención."],
+  "El alcohol crea una falsa sensación de seguridad: el conductor se cree más capaz y asume más riesgos, justo cuando ve peor, atiende menos y reacciona más tarde.",
+  ["El alcohol estrecha el campo visual (efecto túnel).", "El alcohol reduce la atención y la concentración."],
+  "Alcohol: te crees mejor y conduces peor.");
+Q("auxilio", null, "¿Cuál es la actuación correcta para ayudar en un accidente?",
+  ["Proteger la zona para evitar nuevos accidentes.", "Llevar en mi vehículo a los heridos más graves al hospital más cercano.", "No hacer nada hasta que lleguen los agentes."],
+  "Se sigue el orden PAS: Proteger el lugar (señalizar, chaleco, apagar motores), Avisar al 112 y Socorrer a los heridos.",
+  ["A un herido grave no se le mueve ni se le traslada en un coche particular, salvo peligro inminente: se espera a la ambulancia.", "Auxiliar es obligatorio. No hacer nada puede ser omisión del deber de socorro."],
+  "PAS: Proteger, Avisar, Socorrer. En ese orden.");
+Q("prioridad", null, "La circulación está saturada y quiere seguir de frente, pero al otro lado de la intersección no queda sitio para su vehículo. Antes del cruce hay un paso para peatones. ¿Qué hará?",
+  ["Detenerse antes del paso para peatones.", "Avanzar, aunque obstaculice la intersección.", "Girar obligatoriamente a la derecha."],
+  "Aunque tenga prioridad o el semáforo esté en verde, no se debe entrar en una intersección ni en un paso para peatones si es previsible quedar detenido encima, porque se bloquea el paso de los demás.",
+  ["Quedarse parado en medio del cruce impide la circulación transversal y está prohibido.", "Nada le obliga a girar: simplemente espera a tener hueco."],
+  "Atasco: no entres en el cruce ni en el paso de peatones si no vas a poder salir.");
+Q("senales", null, "Circula por una vía señalizada con la señal de autopista (azul, con el dibujo de dos calzadas y un puente). ¿Tienen acceso a esta vía las propiedades colindantes?",
+  ["No, porque es una autopista.", "Sí, porque es una autovía.", "Sí, como en cualquier otra vía."],
+  "La señal S-1 indica el principio de una autopista. Las autopistas no tienen acceso desde las fincas colindantes: solo se entra y se sale por los enlaces previstos.",
+  ["La señal es la de autopista. La autovía tiene otra señal distinta y sus accesos a las propiedades colindantes son limitados.", "Las autopistas están valladas precisamente para que no haya accesos directos."],
+  "Autopista: sin acceso desde las fincas de al lado.");
+Q("parada", null, "¿Puede hacer una parada en un carril bus?",
+  ["No.", "Sí, cuando la línea que lo separa es discontinua.", "Sí, si no estorba a los autobuses ni a los taxis."],
+  "En los carriles reservados al transporte público están prohibidos tanto la parada como el estacionamiento.",
+  ["La línea discontinua solo permite atravesar el carril para girar o entrar en un inmueble o un aparcamiento, no parar en él.", "Está prohibido aunque en ese momento no pase ningún autobús."],
+  "Carril bus: ni parar ni estacionar.");
+Q("maniobras", null, "La circulación está saturada y los vehículos del carril derecho avanzan más rápido que los del carril central. ¿Se considera que están adelantando?",
+  ["No, porque se limitan a adaptar su velocidad a la de los que les preceden.", "Sí, y además está prohibido adelantar por la derecha."],
+  "Cuando el tráfico es tan denso que ocupa todos los carriles y cada uno sigue al de delante, que una fila avance más que otra no se considera adelantamiento.",
+  ["Con circulación saturada no cuenta como adelantamiento, así que no hay infracción."],
+  "En caravana, que tu fila corra más no es adelantar.");
+Q("prioridad", "img:r5", "La calzada se estrecha y dos turismos que circulan en sentidos opuestos no caben a la vez. Uno de ellos encuentra la señal R-6 (cuadrada azul, con la flecha blanca grande en su sentido y la roja pequeña en el contrario) y el otro la R-5, que es la de la figura. ¿Cuál pasa primero?",
+  ["El que tiene la señal R-6.", "El que tiene la señal R-5.", "El más ancho y largo, porque son del mismo tipo."],
+  "Si el estrechamiento está señalizado, se obedece la señalización. La R-6 da prioridad sobre el sentido contrario. La R-5, redonda y con borde rojo, obliga a ceder el paso al que viene de frente.",
+  ["La R-5 es una señal de prohibición: prohíbe entrar si obliga a detenerse al que viene de frente.", "Las reglas por tipo y tamaño de vehículo solo se aplican cuando no hay señalización."],
+  "Estrechamiento: R-6 cuadrada azul, paso yo; R-5 redonda roja, cedo.");
+Q("vehiculo", null, "La profundidad del dibujo de los neumáticos de un turismo no debe ser inferior a…",
+  ["1,6 milímetros.", "2 milímetros.", "3 milímetros."],
+  "El mínimo legal en las ranuras principales de la banda de rodadura es 1,6 mm. Por debajo el neumático agarra mal, sobre todo con agua, y el vehículo no pasa la ITV.",
+  ["2 mm no es el límite legal.", "3 mm es lo que suele recomendarse para cambiarlos antes, pero el mínimo legal es 1,6 mm."],
+  "Dibujo mínimo del neumático: 1,6 mm.");
+Q("eco", null, "¿Para qué sirve la conducción eficiente?",
+  ["Para reducir la contaminación y el consumo.", "Para tener más confort.", "Para conducir más rápido."],
+  "La conducción eficiente busca gastar menos carburante, y por tanto emitir menos, usando marchas largas, velocidad uniforme y anticipación. De paso mejora la seguridad.",
+  ["Suele resultar más cómoda, pero ese no es su objetivo.", "No se trata de ir más deprisa, sino de aprovechar mejor la energía."],
+  "Eficiente = menos consumo y menos contaminación.");
+Q("alcohol", null, "¿Qué circunstancias favorecen la aparición de la fatiga?",
+  ["Las relacionadas con la vía, con el vehículo y con el conductor.", "Ninguna en concreto: la fatiga solo depende del tiempo al volante.", "Solo las relacionadas con el conductor."],
+  "Influyen los tres factores. La vía: tráfico denso, mal firme, mala visibilidad o monotonía. El vehículo: ruido, mala ventilación, asiento incómodo o dirección dura. El conductor: dormir poco, conducir muchas horas, prisa, comidas copiosas o enfermedad.",
+  ["El tiempo influye, pero hay circunstancias concretas que la adelantan o la agravan.", "También cuentan el estado de la vía y el del vehículo."],
+  "Fatiga: vía + vehículo + conductor.");
+Q("alcohol", null, "¿Pueden deberse las distracciones al estado y al comportamiento del conductor?",
+  ["Sí.", "No, el comportamiento del conductor no influye.", "Sí, pero solo cuando la vía es monótona."],
+  "Muchas distracciones nacen del propio conductor: estar enfadado o preocupado, tener sueño, ir pensando en otra cosa, o hacer cosas como usar el móvil, comer o manipular el navegador.",
+  ["El comportamiento del conductor es precisamente una de las causas principales.", "La monotonía de la vía es otra causa, pero no la única."],
+  "Las distracciones salen de fuera y también de uno mismo.");
+Q("prioridad", null, "Circula por una carretera asfaltada y llega a una intersección sin señalizar. Por su derecha se acerca un turismo por un camino de tierra. ¿Debe cederle el paso?",
+  ["No, porque llega por una vía sin pavimentar.", "Sí, porque en un cruce sin señalizar pasa primero el que viene por la derecha.", "No, porque se va a incorporar a la circulación."],
+  "La prioridad de la derecha es la norma general, pero tiene excepciones. Una de ellas: quien circula por una vía pavimentada tiene preferencia sobre quien llega por una sin pavimentar.",
+  ["Esa es la norma general, pero aquí se aplica la excepción de la vía sin pavimentar.", "No se está incorporando desde una finca o un aparcamiento: ya circula por una vía. El motivo es que su vía no está pavimentada."],
+  "Vía pavimentada gana a camino de tierra, aunque venga por la derecha.");
+Q("senales", "img:r301-50", "Esta señal indica la velocidad…",
+  ["Máxima permitida.", "Mínima obligatoria.", "Máxima aconsejada."],
+  "La R-301 es una señal de prohibición (redonda, con borde rojo): prohíbe superar la velocidad que marca. En su examen marcaba 40 km/h; el significado es el mismo con cualquier cifra.",
+  ["La velocidad mínima se indica con una señal de obligación: redonda, azul y con el número en blanco.", "La velocidad aconsejada va en una señal de indicación, cuadrada y azul."],
+  "Redonda con borde rojo y número: velocidad máxima.");
+Q("senales", null, "La calzada tiene tres carriles para su sentido. Sobre el central y el izquierdo hay una señal de velocidad mínima de 70 km/h. Usted circula a 90 km/h. ¿Por qué carril debe ir?",
+  ["Por el derecho, si las circunstancias lo permiten.", "Solo por el central o el izquierdo.", "Por cualquiera de los tres."],
+  "Ir a 90 le permite usar los carriles que exigen un mínimo de 70, pero no le obliga. La norma general sigue siendo circular por el carril derecho y usar los demás para adelantar o cuando el tráfico lo requiera.",
+  ["Cumplir la velocidad mínima de esos carriles le da permiso para usarlos, no la obligación.", "Fuera de poblado no se elige carril libremente: se circula por el derecho."],
+  "Por la derecha siempre que se pueda, vayas a la velocidad que vayas.");
+Q("motos", null, "¿Puede conducir con el permiso B un vehículo especial no agrícola de más de 3.500 kg de MMA?",
+  ["No.", "Sí, si está construido para un máximo de ocho pasajeros además del conductor.", "Sí, si no supera los 45 km/h."],
+  "El permiso B permite conducir vehículos especiales agrícolas sin límite de masa. Los vehículos especiales que no son agrícolas solo se pueden llevar si no pasan de 3.500 kg de MMA ni de nueve plazas contando al conductor.",
+  ["El número de plazas no basta: además tiene que respetar el límite de 3.500 kg.", "No hay excepción por velocidad para los no agrícolas de más de 3.500 kg."],
+  "Permiso B: especiales agrícolas, todos; no agrícolas, hasta 3.500 kg.");
+Q("vulnerables", null, "¿Está relacionada la alta accidentalidad de los peatones con su mayor zona de incertidumbre?",
+  ["Sí.", "No, porque su zona de incertidumbre es menor.", "No, los peatones no tienen zona de incertidumbre."],
+  "La zona de incertidumbre es el espacio alrededor de un usuario en el que no se puede prever qué va a hacer. El peatón puede pararse, retroceder o cambiar de dirección en un instante y hacia cualquier lado, así que la suya es muy amplia. Por eso hay que pasar despacio y lejos.",
+  ["Es al revés: comparado con un vehículo, el peatón es mucho más imprevisible.", "Todos los usuarios de la vía tienen zona de incertidumbre."],
+  "Peatón: puede moverse hacia cualquier lado. Mucho margen y poca velocidad.");
+
 /* ================= FIGURAS (SVG) ================= */
 /* Señales oficiales: img/senales/<código>.svg (Wikimedia Commons, ver README). */
 const SIGN_FILE = { stop: 'r2', ceda: 'r1' };
@@ -2407,7 +2563,7 @@ function start(mode, ids) {
   if (!ids.length) return;
   const vsec = ids.reduce((a, id) => a + (BANK[id].v ? SCENES[BANK[id].v].dur * 3 : 0), 0);
   ses = { mode, ids, perm: {}, ans: {}, done: {}, vv: {}, cur: 0, t0: Date.now(), limit: EXAM_SECS + vsec, left: EXAM_SECS + vsec, filter: 'all' };
-  ids.forEach(id => { ses.perm[id] = shuf([0, 1, 2]); if (BANK[id].v) ses.vv[id] = { left: 3, went: false, playing: false, viewed: false }; });
+  ids.forEach(id => { ses.perm[id] = shuf(BANK[id].o.map((_, i) => i)); if (BANK[id].v) ses.vv[id] = { left: 3, went: false, playing: false, viewed: false }; });
   view = 'q';
   if (mode === 'exam') timerId = setInterval(tick, 1000);
   render(); window.scrollTo(0, 0);
@@ -2500,6 +2656,7 @@ function homeHtml() {
     <button class="btn big alt" data-act="cfg"><span>Modo estudio<small>Verás la explicación al contestar cada pregunta</small></span><span>→</span></button>
     <button class="btn big alt" data-act="aprende"><span>Aprender: velocidades y alcohol<small>Cuadro general de velocidades y tasas máximas de alcohol, con ilustraciones</small></span><span>→</span></button>
     <button class="btn big alt" data-act="miexamen"><span>Lo que me salió en el examen<small>${BANK.length - EXAMEN_DESDE} preguntas sobre lo que recuerdas de tu examen real</small></span><span>→</span></button>
+    <button class="btn big alt" data-act="examen30"><span>Mi examen completo del 2 de noviembre<small>Las ${BANK.length - VIDEO_DESDE} preguntas que te salieron, con su explicación</small></span><span>→</span></button>
     <button class="btn big alt" data-act="refuerzo"><span>Refuerzo: lo que faltaba<small>${BANK.length - REFUERZO_DESDE} preguntas nuevas de luces, motos 125, pendientes, señales, agentes y marcas viales</small></span><span>→</span></button>
     <button class="btn big alt" data-act="repaso" ${fails ? '' : 'disabled'}><span>Repasar mis fallos<small>${fails ? fails + ' preguntas pendientes de aprender' : 'Aún no tienes fallos pendientes'}</small></span><span>→</span></button></div>
     <label class="optline" for="optvideo"><input type="checkbox" id="optvideo" ${DB.prefs.video ? 'checked' : ''}><span>Incluir en el examen una pregunta con vídeo de percepción del riesgo, como anunció la DGT. Se ve hasta 3 veces antes de ver la pregunta y el tiempo se amplía según la duración del vídeo.</span></label>
@@ -2792,6 +2949,7 @@ document.addEventListener('click', (e) => {
   else if (a === 'go-study') start('study', pickStudy(cfg.topic, cfg.n));
   else if (a === 'topic') start('study', pickStudy(b.dataset.t, 0));
   else if (a === 'miexamen') start('study', shuf(BANK.filter(q => q.id >= EXAMEN_DESDE).map(q => q.id)));
+  else if (a === 'examen30') start('study', shuf(BANK.filter(q => q.id >= VIDEO_DESDE).map(q => q.id)));
   else if (a === 'refuerzo') start('study', shuf(BANK.filter(q => q.id >= REFUERZO_DESDE).map(q => q.id)));
   else if (a === 'repaso') start('study', shuf(BANK.filter(q => status(q.id) === 'fail').map(q => q.id)));
   else if (a === 'again') start('study', pickStudy(cfg.topic, cfg.n));

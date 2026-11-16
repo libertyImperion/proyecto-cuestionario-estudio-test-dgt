@@ -8,10 +8,12 @@ Descarga el repositorio y abre `index.html` en el navegador (doble clic). No nec
 ## Qué incluye
 - **Examen simulado:** 30 preguntas, 30 minutos, 3 opciones, máximo 3 fallos, sin volver atrás. Opcionalmente incluye **una pregunta con vídeo de percepción del riesgo**, como anunció la DGT: se ve hasta 3 veces antes de ver la pregunta y el tiempo se amplía según la duración del vídeo.
 - **Modo estudio:** explicación inmediata al contestar, por tema o mezclado.
+- **Aprender: velocidades y alcohol:** apartado ilustrado con el cuadro general de velocidades y las tasas máximas de alcohol, con modo de cifras ocultas para ponerse a prueba.
 - **Lo que me salió en el examen:** preguntas creadas a partir de temas que el autor recuerda de su examen real.
+- **Mi examen completo:** las 30 preguntas de un examen real, redactadas de nuevo y con su explicación.
 - **Repasar mis fallos:** solo las preguntas falladas y aún no dominadas.
 - **Progreso** guardado en el navegador (`localStorage`): aciertos, preguntas dominadas por tema, historial de exámenes y preferencias.
-- **Banco:** 305 preguntas originales. Las 182 primeras, en 15 temas: 48 de señales, 33 de novedades 2026 (usuarios vulnerables) y 6 de percepción del riesgo con escena animada.
+- **Banco:** 335 preguntas originales. Las 182 primeras, en 15 temas: 48 de señales, 33 de novedades 2026 (usuarios vulnerables) y 6 de percepción del riesgo con escena animada.
 - **Gráficos:** señales oficiales españolas (`img/senales/`), semáforos, líneas, cruces con vehículos, esquemas propios (distancia de detención, regla de los 2 segundos, aquaplaning, posición lateral de seguridad, reposacabezas) y escenas animadas de tráfico. Salen en la explicación tras contestar.
 - **Panel «Novedades y datos oficiales del examen»** en la pantalla de inicio, con enlaces al BOE y a la DGT.
 

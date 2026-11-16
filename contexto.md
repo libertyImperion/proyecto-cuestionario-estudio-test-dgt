@@ -1,7 +1,7 @@
 # Test DGT · Permiso B
 
 **Objetivo:** aprobar el examen teórico del permiso B practicando con un simulador que explique cada respuesta.
-**Estado (2026-11-02):** v4. 305 preguntas. Actualizado a la reforma del Reglamento (RD 518/2026, en vigor desde el 1-10-2026).
+**Estado (2026-11-16):** v4. 335 preguntas, con el apartado «Aprender: velocidades y alcohol». Actualizado a la reforma del Reglamento (RD 518/2026, en vigor desde el 1-10-2026).
 **Repo:** público.
 
 ## Próximos pasos
