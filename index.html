@@ -183,6 +183,18 @@ details.info h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .0
 details.info ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
 details.info a { color: var(--blue); }
 
+/* manual de la DGT en modo lectura */
+.mz h1 { font-size: clamp(26px, 5.5vw, 34px); font-weight: 800; margin-bottom: 6px; }
+.mz .lead { color: var(--muted); margin: 0 0 14px; max-width: 64ch; }
+.mz-bar { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-bottom: 12px; }
+.mz-bar .sp { flex: 1; }
+.mz-bar label { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.mz-bar input { font: inherit; width: 76px; padding: 6px 8px; border-radius: 8px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); }
+.mz-bar a { color: var(--blue); font-size: 14px; font-weight: 600; }
+.mz-doc { display: block; width: min(1100px, 100vw - 32px); margin-left: 50%; transform: translateX(-50%); height: max(520px, 100vh - 150px); height: max(520px, 100dvh - 150px); border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.mz .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.mz .card a { color: var(--blue); }
+
 /* aprender: cuadro de velocidades y tasas de alcohol */
 .lz h1 { font-size: clamp(28px, 6vw, 38px); font-weight: 800; margin-bottom: 6px; }
 .lz .lead { color: var(--muted); margin: 0 0 14px; max-width: 62ch; }
@@ -2532,6 +2544,8 @@ function loadDB() {
   try { const j = localStorage.getItem(KEY); if (j) { const x = JSON.parse(j); if (x && x.stats) o = x; } } catch (e) {}
   if (!o) o = { stats: {}, exams: [] };
   o.prefs = Object.assign({ video: true }, o.prefs);
+  o.prefs.manual = Object.assign({ doc: 'manual' }, o.prefs.manual);
+  o.prefs.manual.pag = Object.assign({ manual: 1, dic: 1 }, o.prefs.manual.pag);
   return o;
 }
 let DB = loadDB();
@@ -2606,7 +2620,7 @@ function barHtml() {
 function render() {
   $bar.innerHTML = barHtml();
   stopVideo();
-  $app.innerHTML = view === 'home' ? homeHtml() : view === 'cfg' ? cfgHtml() : view === 'aprende' ? aprendeHtml() : view === 'q' ? qHtml() : resultHtml();
+  $app.innerHTML = view === 'home' ? homeHtml() : view === 'cfg' ? cfgHtml() : view === 'aprende' ? aprendeHtml() : view === 'manual' ? manualHtml() : view === 'q' ? qHtml() : resultHtml();
   hydrateVideos();
 }
 
@@ -2655,6 +2669,7 @@ function homeHtml() {
     <button class="btn big" data-act="exam"><span>Examen simulado<small>30 preguntas · 30 min${DB.prefs.video ? ' + vídeo' : ''} · sin volver atrás, como el real</small></span><span>→</span></button>
     <button class="btn big alt" data-act="cfg"><span>Modo estudio<small>Verás la explicación al contestar cada pregunta</small></span><span>→</span></button>
     <button class="btn big alt" data-act="aprende"><span>Aprender: velocidades y alcohol<small>Cuadro general de velocidades y tasas máximas de alcohol, con ilustraciones</small></span><span>→</span></button>
+    <button class="btn big alt" data-act="manual"><span>Manual oficial de la DGT<small>Manual del permiso B en lectura fácil y su diccionario, para leer aquí mismo</small></span><span>→</span></button>
     <button class="btn big alt" data-act="miexamen"><span>Lo que me salió en el examen<small>${BANK.length - EXAMEN_DESDE} preguntas sobre lo que recuerdas de tu examen real</small></span><span>→</span></button>
     <button class="btn big alt" data-act="examen30"><span>Mi examen completo del 2 de noviembre<small>Las ${BANK.length - VIDEO_DESDE} preguntas que te salieron, con su explicación</small></span><span>→</span></button>
     <button class="btn big alt" data-act="refuerzo"><span>Refuerzo: lo que faltaba<small>${BANK.length - REFUERZO_DESDE} preguntas nuevas de luces, motos 125, pendientes, señales, agentes y marcas viales</small></span><span>→</span></button>
@@ -2678,6 +2693,31 @@ function homeHtml() {
   h += resetAsk
     ? '<p class="note">¿Borrar todo tu progreso? <button class="linkbtn" data-act="reset-yes">Sí, borrar</button> <button class="linkbtn" data-act="reset-no">Cancelar</button></p>'
     : '<p class="note"><button class="linkbtn" data-act="reset">Borrar mi progreso</button></p>';
+  return h;
+}
+
+/* ================= MANUAL DE LA DGT EN MODO LECTURA =================
+   Los PDF (edición de junio de 2025) están en manual/ y no se suben al repositorio: son de la DGT y pesan 59 MB.
+   Solo se muestran al abrir el simulador desde el ordenador; en la copia web se enlaza a la página de la DGT. */
+const MANUAL = {
+  manual: { n: 'Manual del permiso B', f: 'manual/manual-permiso-b-lectura-facil.pdf' },
+  dic: { n: 'Diccionario', f: 'manual/diccionario-permiso-b-lectura-facil.pdf' }
+};
+const MANUAL_DGT = 'https://www.dgt.es/nuestros-servicios/para-colaboradores-y-empresas/autoescuelas/seguimiento-de-ensenanza-a-la-conduccion/';
+function manualHtml() {
+  const m = DB.prefs.manual, d = MANUAL[m.doc] || MANUAL.manual, pag = m.pag[m.doc] || 1;
+  const local = location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname);
+  const tabs = Object.keys(MANUAL).map(k => `<button class="chip${k === m.doc ? ' on' : ''}" data-act="mdoc" data-d="${k}" aria-pressed="${k === m.doc}">${MANUAL[k].n}</button>`).join('');
+  let h = `<div class="mz"><h1>Manual oficial de la DGT</h1>
+    <p class="lead">Manual del permiso B en lectura fácil y su diccionario de términos, publicados por la DGT. Es la edición de junio de 2025: no recoge la reforma de octubre de 2026 (ciclistas, patinetes y motos), que sí está en las preguntas de este simulador.</p>`;
+  if (!local) return h + `<div class="card"><p style="margin:0 0 8px"><b>Los PDF solo están en la versión del ordenador.</b> Ábrela con el acceso directo «Test DGT» para leerlos aquí.</p>
+    <p style="margin:0">También puedes descargarlos gratis de la <a href="${MANUAL_DGT}" target="_blank" rel="noopener">página de la DGT</a>.</p></div>
+    <div class="lz-end"><button class="btn ghost" data-act="home">Volver al inicio</button></div></div>`;
+  h += `<div class="mz-bar"><div class="chips">${tabs}</div><span class="sp"></span>
+    <label for="mpag">Me quedé en la página <input id="mpag" type="number" min="1" inputmode="numeric" value="${pag}"></label>
+    <a href="${d.f}#page=${pag}" target="_blank" rel="noopener">Abrir en pestaña nueva</a></div>
+    <iframe class="mz-doc" src="${d.f}#page=${pag}" title="${d.n}"></iframe>
+    <p class="note" style="margin-top:10px">Escribe la página donde lo dejas y pulsa Intro: la próxima vez se abrirá por ahí. Si no ves el documento, usa «Abrir en pestaña nueva».</p></div>`;
   return h;
 }
 
@@ -2944,6 +2984,8 @@ document.addEventListener('click', (e) => {
   else if (a === 'cfg') { view = 'cfg'; render(); }
   else if (a === 'aprende') { view = 'aprende'; tapa = false; render(); window.scrollTo(0, 0); }
   else if (a === 'tapa') { tapa = !tapa; render(); }
+  else if (a === 'manual') { view = 'manual'; render(); window.scrollTo(0, 0); }
+  else if (a === 'mdoc') { DB.prefs.manual.doc = b.dataset.d; saveDB(); render(); }
   else if (a === 'cf') b.classList.add('on');
   else if (a === 'n') { cfg.n = +b.dataset.n; render(); }
   else if (a === 'go-study') start('study', pickStudy(cfg.topic, cfg.n));
@@ -2971,6 +3013,7 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('change', (e) => {
   if (e.target.id === 'topic') cfg.topic = e.target.value;
+  else if (e.target.id === 'mpag') { const m = DB.prefs.manual; m.pag[m.doc] = Math.max(1, Math.floor(+e.target.value) || 1); saveDB(); render(); }
   else if (e.target.id === 'optvideo') { DB.prefs.video = e.target.checked; saveDB(); render(); }
 });
 document.addEventListener('keydown', (e) => {
@@ -2981,6 +3024,7 @@ document.addEventListener('keydown', (e) => {
   else if (k === 'enter' && e.target.tagName !== 'BUTTON') next();
 });
 
+if (location.hash === '#manual') view = 'manual';
 render();
 </script>
 
