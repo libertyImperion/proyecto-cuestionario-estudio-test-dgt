@@ -9,7 +9,7 @@ Descarga el repositorio y abre `index.html` en el navegador (doble clic). No nec
 - **Examen simulado:** 30 preguntas, 30 minutos, 3 opciones, máximo 3 fallos, sin volver atrás. Opcionalmente incluye **una pregunta con vídeo de percepción del riesgo**, como anunció la DGT: se ve hasta 3 veces antes de ver la pregunta y el tiempo se amplía según la duración del vídeo.
 - **Modo estudio:** explicación inmediata al contestar, por tema o mezclado.
 - **Aprender: velocidades y alcohol:** apartado ilustrado con el cuadro general de velocidades y las tasas máximas de alcohol, con modo de cifras ocultas para ponerse a prueba.
-- **Manual oficial de la DGT:** lector integrado del Manual del permiso B en lectura fácil y su diccionario, con marcador de página. Los PDF no van en el repositorio: descárgalos de la [DGT](https://www.dgt.es/nuestros-servicios/para-colaboradores-y-empresas/autoescuelas/seguimiento-de-ensenanza-a-la-conduccion/) y guárdalos en `manual/` como `manual-permiso-b-lectura-facil.pdf` y `diccionario-permiso-b-lectura-facil.pdf`.
+- **Manual oficial de la DGT:** lector integrado del Manual del permiso B en lectura fácil y su diccionario, con marcador de página. Los dos PDF están en `manual/`; son publicaciones gratuitas de la [DGT](https://www.dgt.es/nuestros-servicios/para-colaboradores-y-empresas/autoescuelas/seguimiento-de-ensenanza-a-la-conduccion/) (edición de junio de 2025) y sus derechos son de la DGT.
 - **Lo que me salió en el examen:** preguntas creadas a partir de temas que el autor recuerda de su examen real.
 - **Mi examen completo:** las 30 preguntas de un examen real, redactadas de nuevo y con su explicación.
 - **Repasar mis fallos:** solo las preguntas falladas y aún no dominadas.
