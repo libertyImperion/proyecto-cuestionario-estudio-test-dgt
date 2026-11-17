@@ -191,6 +191,24 @@ details.info a { color: var(--blue); }
 .mz-bar label { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .mz-bar input { font: inherit; width: 76px; padding: 6px 8px; border-radius: 8px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); }
 .mz-bar a { color: var(--blue); font-size: 14px; font-weight: 600; }
+.mz-full { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 15px; }
+.mz-view { position: relative; }
+.mz-view .mz-exit { display: none; }
+.mz-view.on { position: fixed; inset: 0; z-index: 1000; background: #1f2937; display: flex; flex-direction: column; }
+.mz-view.on .mz-exit { display: flex; align-items: center; gap: 10px; padding: 8px 12px; color: #fff; font-weight: 600; font-size: 15px; }
+.mz-view.on .mz-exit span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mz-view.on .mz-doc { width: 100%; height: auto; flex: 1; margin: 0; transform: none; border: 0; border-radius: 0; }
+body.mz-lock { overflow: hidden; }
+.mz-vids { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 12px; font-size: 14px; font-weight: 600; }
+.mz-vids select { font: inherit; font-weight: 500; padding: 6px 8px; border-radius: 8px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); max-width: 100%; }
+.mz-view.on .mz-exit select { max-width: 40vw; }
+.vmodal { position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.82); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.vmodal .box { width: min(1100px, 100%); }
+.vmodal .hd { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 600; margin-bottom: 8px; flex-wrap: wrap; }
+.vmodal .hd span { flex: 1; }
+.vmodal .hd a { color: #9cc3ff; font-size: 14px; }
+.vmodal .fr { position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100dvh - 90px); background: #000; border-radius: 10px; overflow: hidden; }
+.vmodal iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .mz-doc { display: block; width: min(1100px, 100vw - 32px); margin-left: 50%; transform: translateX(-50%); height: max(520px, 100vh - 150px); height: max(520px, 100dvh - 150px); border: 1px solid var(--line); border-radius: 10px; background: #fff; }
 .mz .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
 .mz .card a { color: var(--blue); }
@@ -2703,6 +2721,30 @@ const MANUAL = {
   manual: { n: 'Manual del permiso B', f: 'manual/manual-permiso-b-lectura-facil.pdf' },
   dic: { n: 'Diccionario', f: 'manual/diccionario-permiso-b-lectura-facil.pdf' }
 };
+/* Vídeos enlazados dentro del manual (YouTube y Vimeo de la DGT), con su página.
+   [página, id de YouTube] o [página, 'v' + id de Vimeo + '/' + clave]. Extraídos del propio PDF. */
+const MANUAL_VIDS = [[6,"lGDRbI-m88g"],[7,"19tcul_qN98"],[8,"bMvcKJufDQk"],[11,"TBERC3yG5Ls"],[13,"piQJl2Lqw5U"],[16,"77FWCs3gISA"],[17,"6W7RLayjyxE"],[19,"kqE9yQIsfeU"],[21,"0abcH6iDi6Q"],[23,"CGS_ZCUCcu4"],[27,"smHguR5f9oM"],[28,"PYXCpMKob9Q"],[28,"Ej3nSLgn4tM"],[28,"i9uOKY2nBmk"],[34,"uYDotVVHWs4"],[37,"6EErwIryMws"],[40,"T0zNF3Q7TEQ"],[46,"FPxmy9Vm3YU"],[51,"R6os5OSNaSc"],[51,"v805027278/0aab1070fa"],[52,"3hS4zNCLcDA"],[58,"7UsCBWG6QnU"],[59,"fVmbNWEg0iQ"],[67,"SjVP2ayUSFk"],[67,"12Y0W9ScW6s"],[68,"gF7KVbdkSA0"],[70,"Tt0tG8-KLIY"],[73,"z92x1QgjnRI"],[75,"u_9KqvWTsgA"],[75,"G5o8bcjV6cY"],[76,"tJDNXWyV9mc"],[77,"UdnVHW3BQW8"],[77,"Hev9tEcGUoc"],[78,"yAI4Yl1ZcrQ"],[82,"XKeQZaqG7PU"],[83,"024fHfqpNLY"],[83,"OPW19c1wxq8"],[87,"1gLWzOv7Mtw"],[88,"8sG2Gdo_Nzo"],[93,"dXqsekZfZUI"],[94,"v805057971/71a68915a8"],[97,"_Ums2ioEpVQ"],[98,"wNiQiAtxpQU"],[98,"fS1vQG8hwVc"],[99,"wYqQa21x4Xw"],[102,"UXDbSDkuBnU"],[102,"BBU4HEnye_Q"],[103,"xheE0i7UMec"],[110,"jBAAR37VZmg"],[112,"6NXVkiPA5_A"],[112,"6KlqdQlxE3A"],[116,"GvOnuCYkQvY"],[118,"06K6_QejqvY"],[118,"LnmFw64oeYc"],[121,"cH-8z9U9_uY"],[122,"l0LlIww_QzY"],[123,"9dmaP445Qbc"],[124,"Gpnol8dorbc"],[125,"GCqWMSKpyOU"],[127,"1X-p_O6zFN0"],[128,"2t_BTQVA4LY"],[130,"vPN6z28_b7M"],[131,"ZSZkMXBs8rM"],[133,"sofV88C2hDg"],[134,"v805056182/e6811a8980"],[135,"v805057663/18e9d70a23"],[136,"v806690372/f9cbe4689b"],[138,"v805056955/9d891ee2bb"],[142,"HfWDJqK2qoY"],[142,"4sF4TBzZWBk"],[143,"MLfLGykwH0E"],[144,"AluEM5tPJZ0"],[145,"qHTNWhV8Qvc"],[146,"UtuF9ngm4-s"],[147,"faqODETCmqw"],[147,"qq5-nXZrVO0"],[148,"vrujSkrI3s8"],[148,"jDx970E-48Q"],[149,"PzB9dggqKrE"],[150,"3impyDqbiaA"],[151,"XjR_G7eJxZU"],[151,"bYwB996pQrM"],[152,"8j6Wx8XnIqw"],[155,"8JOQZ2wSuq8"],[155,"z7_LSb5p5-c"],[156,"YPYCsxS1IWI"],[162,"RIvguDnfYpk"],[163,"FT52EKT8t_Y"],[201,"aU_amiqMmvg"],[202,"otgyQzs3r8Q"],[204,"wUBZfdvlrRI"],[210,"RW5iYaTYHt8"],[214,"P1UUJRwGeuI"],[215,"yOv_8T7wb6M"],[216,"2KnxWIbbRqE"],[218,"3u7NYNehoNc"],[220,"DZ8Sp0nMytI"],[222,"t0Uxxly3V9s"],[227,"A8aV-YpeXw8"],[227,"PkcVHR91Qmk"],[229,"TJ-Cb5gvlrY"],[229,"xSo_YWGTtgE"],[230,"mCJiOfdnkuI"],[231,"WBMElIf9uPA"],[232,"zZPHvshSamg"],[234,"5c8bYbmnLRU"],[235,"ePCCz2C4n-E"],[239,"dnAthudcUf8"],[241,"PSSl_67jV5w"],[248,"4o8fHR4HCwY"],[250,"nPQfetH1SYk"],[250,"KALavjBMt3k"],[264,"X0qNav6SlUw"],[271,"oliAvZmrOgM"],[272,"RXxrTnHtVsw"],[273,"tkaYTZEmM_U"],[274,"scK_fXomius"],[275,"8PoObaw_w30"],[276,"SD3Z5Ib-Lfk"],[276,"4jw-9ZMtnR8"],[281,"3JEECJUHnP0"],[285,"Bi0acFZns3I"],[286,"vKR0RIL2a-0"],[287,"_RYrnlvliW0"],[287,"rk18euacMeQ"],[290,"jRzNwqjkf4s"],[290,"9dfkFRcdSQ0"],[291,"6yyc1bwA6RY"],[292,"z3s9NI2up8Y"],[294,"IvRweY1GGk0"],[296,"pScAVjxLe6k"],[302,"VVI7mthnX40"],[305,"6A3V9vElr2g"],[305,"FIvcO6FIJOE"],[306,"mx7Io_UFR6k"],[310,"jBJ7SuhN9m4"],[311,"uxaOyzVxGuM"],[316,"oKq5HuIH52Q"],[321,"AI_nfOKJS1Q"],[321,"S3NHUp2fAN4"],[323,"pBAQg_Ks5sA"],[324,"Irwjz35W8eY"],[328,"jp3NQmVjQhU"],[347,"bst2hR-avyA"],[348,"_5XQnfH4iZ0"],[354,"QLrcYJGmmus"],[368,"qVb84b1Sr2M"],[369,"wudKcH2KKEA"],[370,"u459iDoJaTM"],[372,"V79lo96UfL0"],[377,"Ha_ZQit-Rl0"],[386,"BSA56DNzRz8"],[387,"E8vtCJwGf9Y"],[390,"2Pd8opwS-Yk"],[415,"9BBc2Ocjhmc"],[432,"loWswGXYBus"],[440,"2dgpHqJfAF0"],[443,"Bc85owYseeM"],[444,"v805057336/1f164194f8"],[445,"Exewq95GWnk"],[452,"0CTT-ijcnnw"],[459,"0gpcuGCGDZ4"],[460,"UqGq7c0orB0"]];
+function vidOpts(pag) {
+  let sel = MANUAL_VIDS.findIndex(v => v[0] >= pag); if (sel < 0) sel = MANUAL_VIDS.length - 1;
+  const cnt = {};
+  return MANUAL_VIDS.map((v, i) => { cnt[v[0]] = (cnt[v[0]] || 0) + 1; const varios = MANUAL_VIDS.filter(w => w[0] === v[0]).length > 1;
+    return `<option value="${i}"${i === sel ? ' selected' : ''}>Página ${v[0]}${varios ? ' · vídeo ' + cnt[v[0]] : ''}</option>`; }).join('');
+}
+function vidPlay(i) {
+  const v = MANUAL_VIDS[i]; if (!v) return;
+  let src, ext;
+  if (v[1][0] === 'v' && /^v\d/.test(v[1])) { const [id, h] = v[1].slice(1).split('/'); src = `https://player.vimeo.com/video/${id}?autoplay=1${h ? '&h=' + h : ''}`; ext = `https://vimeo.com/${id}${h ? '/' + h : ''}`; }
+  else { src = `https://www.youtube-nocookie.com/embed/${v[1]}?autoplay=1&rel=0`; ext = `https://www.youtube.com/watch?v=${v[1]}`; }
+  vidClose();
+  const m = document.createElement('div'); m.className = 'vmodal'; m.id = 'vmodal';
+  m.innerHTML = `<div class="box" role="dialog" aria-label="Vídeo del manual, página ${v[0]}"><div class="hd"><span>Vídeo del manual · página ${v[0]}</span>
+    <a href="${ext}" target="_blank" rel="noopener">Si no se reproduce, ábrelo aquí</a>
+    <button class="btn mz-full" data-act="vclose">Cerrar (Esc)</button></div>
+    <div class="fr"><iframe src="${src}" title="Vídeo del manual" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>`;
+  (document.fullscreenElement || document.webkitFullscreenElement || document.body).appendChild(m);
+  m.querySelector('button').focus();
+}
+function vidClose() { const m = document.getElementById('vmodal'); if (m) m.remove(); }
 const MANUAL_DGT = 'https://www.dgt.es/nuestros-servicios/para-colaboradores-y-empresas/autoescuelas/seguimiento-de-ensenanza-a-la-conduccion/';
 function manualHtml() {
   const m = DB.prefs.manual, d = MANUAL[m.doc] || MANUAL.manual, pag = m.pag[m.doc] || 1;
@@ -2715,11 +2757,33 @@ function manualHtml() {
     <div class="lz-end"><button class="btn ghost" data-act="home">Volver al inicio</button></div></div>`;
   h += `<div class="mz-bar"><div class="chips">${tabs}</div><span class="sp"></span>
     <label for="mpag">Me quedé en la página <input id="mpag" type="number" min="1" inputmode="numeric" value="${pag}"></label>
-    <a href="${d.f}#page=${pag}" target="_blank" rel="noopener">Abrir en pestaña nueva</a></div>
-    <iframe class="mz-doc" src="${d.f}#page=${pag}" title="${d.n}"></iframe>
-    <p class="note" style="margin-top:10px">Escribe la página donde lo dejas y pulsa Intro: la próxima vez se abrirá por ahí. Si no ves el documento, usa «Abrir en pestaña nueva».</p></div>`;
+    <a href="${d.f}#page=${pag}" target="_blank" rel="noopener">Abrir en pestaña nueva</a>
+    <button class="btn mz-full" data-act="mfull" aria-label="Ver el documento en pantalla completa">Pantalla completa</button></div>
+    ${m.doc === 'manual' ? `<div class="mz-vids"><label for="mvid">Vídeos del manual (${MANUAL_VIDS.length}):</label><select id="mvid">${vidOpts(pag)}</select><button class="btn mz-full" data-act="vplaym" data-s="mvid">Ver aquí</button></div>` : ''}
+    <div class="mz-view" id="mzview"><div class="mz-exit"><span>${d.n}</span>${m.doc === 'manual' ? `<select id="mvid2" aria-label="Vídeos del manual">${vidOpts(pag)}</select><button class="btn mz-full" data-act="vplaym" data-s="mvid2">Ver vídeo</button>` : ''}<button class="btn mz-full" data-act="mfull-off">Salir de pantalla completa (Esc)</button></div>
+    <iframe class="mz-doc" src="${d.f}#page=${pag}" title="${d.n}" allowfullscreen></iframe></div>
+    <p class="note" style="margin-top:10px">Escribe la página donde lo dejas y pulsa Intro: la próxima vez se abrirá por ahí. «Pantalla completa» ocupa toda la pantalla para leer mejor; sal con Esc. Cuando el manual enlace un vídeo, elige su página en «Vídeos del manual» y se verá aquí mismo. Si no ves el documento, usa «Abrir en pestaña nueva».</p></div>`;
   return h;
 }
+
+/* Pantalla completa del visor: usa la pantalla completa del sistema si el navegador la permite
+   y, además, amplía el visor a toda la ventana (así funciona también si la API no está disponible). */
+function mzFull(on) {
+  const v = document.getElementById('mzview'); if (!v) return;
+  const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+  if (on) {
+    v.classList.add('on'); document.body.classList.add('mz-lock');
+    const req = v.requestFullscreen || v.webkitRequestFullscreen;
+    if (req && !fsEl) try { const r = req.call(v); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+  } else {
+    v.classList.remove('on'); document.body.classList.remove('mz-lock');
+    const ex = document.exitFullscreen || document.webkitExitFullscreen;
+    if (fsEl && ex) try { const r = ex.call(document); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+  }
+}
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
+  if (!(document.fullscreenElement || document.webkitFullscreenElement)) { const v = document.getElementById('mzview'); if (v && v.classList.contains('on')) { vidClose(); mzFull(false); } }
+}));
 
 /* ================= APRENDER: VELOCIDADES Y ALCOHOL =================
    Cifras comprobadas en el BOE (texto consolidado, noviembre de 2026): arts. 20, 48 y 50 del Reglamento General
@@ -2978,6 +3042,7 @@ function examIds() {
 }
 
 document.addEventListener('click', (e) => {
+  if (e.target.id === 'vmodal') { vidClose(); return; }
   const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
   const a = b.dataset.act;
   if (a === 'exam') start('exam', examIds());
@@ -2986,6 +3051,10 @@ document.addEventListener('click', (e) => {
   else if (a === 'tapa') { tapa = !tapa; render(); }
   else if (a === 'manual') { view = 'manual'; render(); window.scrollTo(0, 0); }
   else if (a === 'mdoc') { DB.prefs.manual.doc = b.dataset.d; saveDB(); render(); }
+  else if (a === 'mfull') mzFull(true);
+  else if (a === 'mfull-off') mzFull(false);
+  else if (a === 'vplaym') { const el = document.getElementById(b.dataset.s); if (el) vidPlay(+el.value); }
+  else if (a === 'vclose' || b.id === 'vmodal') vidClose();
   else if (a === 'cf') b.classList.add('on');
   else if (a === 'n') { cfg.n = +b.dataset.n; render(); }
   else if (a === 'go-study') start('study', pickStudy(cfg.topic, cfg.n));
@@ -3017,6 +3086,8 @@ document.addEventListener('change', (e) => {
   else if (e.target.id === 'optvideo') { DB.prefs.video = e.target.checked; saveDB(); render(); }
 });
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('vmodal')) { vidClose(); return; }
+  if (e.key === 'Escape' && document.querySelector('.mz-view.on')) { mzFull(false); return; }
   if (view !== 'q' || e.target.tagName === 'SELECT') return;
   const k = e.key.toLowerCase();
   const m = { '1': 0, '2': 1, '3': 2, a: 0, b: 1, c: 2 };
