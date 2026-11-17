@@ -209,6 +209,12 @@ body.mz-lock { overflow: hidden; }
 .vmodal .hd a { color: #9cc3ff; font-size: 14px; }
 .vmodal .fr { position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100dvh - 90px); background: #000; border-radius: 10px; overflow: hidden; }
 .vmodal iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vmodal .x { position: fixed; top: 12px; right: 12px; z-index: 2; font-size: 17px; padding: 12px 18px; box-shadow: 0 2px 10px rgba(0,0,0,.5); }
+.vmodal .ld { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #e5e7eb; font-weight: 600; text-align: center; padding: 16px; }
+.vmodal .ld small { font-weight: 500; color: #cbd5e1; max-width: 480px; }
+.vmodal .acts { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 12px; }
+.vmodal .acts a { display: inline-flex; align-items: center; text-decoration: none; }
+body.v-open .mz-doc { visibility: hidden; }
 .mz-doc { display: block; width: min(1100px, 100vw - 32px); margin-left: 50%; transform: translateX(-50%); height: max(520px, 100vh - 150px); height: max(520px, 100dvh - 150px); border: 1px solid var(--line); border-radius: 10px; background: #fff; }
 .mz .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
 .mz .card a { color: var(--blue); }
@@ -2730,21 +2736,46 @@ function vidOpts(pag) {
   return MANUAL_VIDS.map((v, i) => { cnt[v[0]] = (cnt[v[0]] || 0) + 1; const varios = MANUAL_VIDS.filter(w => w[0] === v[0]).length > 1;
     return `<option value="${i}"${i === sel ? ' selected' : ''}>Página ${v[0]}${varios ? ' · vídeo ' + cnt[v[0]] : ''}</option>`; }).join('');
 }
+let vidTimer = 0;
 function vidPlay(i) {
   const v = MANUAL_VIDS[i]; if (!v) return;
-  let src, ext;
-  if (v[1][0] === 'v' && /^v\d/.test(v[1])) { const [id, h] = v[1].slice(1).split('/'); src = `https://player.vimeo.com/video/${id}?autoplay=1${h ? '&h=' + h : ''}`; ext = `https://vimeo.com/${id}${h ? '/' + h : ''}`; }
-  else { src = `https://www.youtube-nocookie.com/embed/${v[1]}?autoplay=1&rel=0`; ext = `https://www.youtube.com/watch?v=${v[1]}`; }
-  vidClose();
+  let src, ext, sitio;
+  if (/^v\d/.test(v[1])) { const [id, h] = v[1].slice(1).split('/'); src = `https://player.vimeo.com/video/${id}?autoplay=1${h ? '&h=' + h : ''}`; ext = `https://vimeo.com/${id}${h ? '/' + h : ''}`; sitio = 'Vimeo'; }
+  else { src = `https://www.youtube-nocookie.com/embed/${v[1]}?autoplay=1&rel=0`; ext = `https://www.youtube.com/watch?v=${v[1]}`; sitio = 'YouTube'; }
+  vidClose(true);
   const m = document.createElement('div'); m.className = 'vmodal'; m.id = 'vmodal';
-  m.innerHTML = `<div class="box" role="dialog" aria-label="Vídeo del manual, página ${v[0]}"><div class="hd"><span>Vídeo del manual · página ${v[0]}</span>
-    <a href="${ext}" target="_blank" rel="noopener">Si no se reproduce, ábrelo aquí</a>
-    <button class="btn mz-full" data-act="vclose">Cerrar (Esc)</button></div>
-    <div class="fr"><iframe src="${src}" title="Vídeo del manual" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>`;
+  m.innerHTML = `<button class="btn x" data-act="vclose">Cerrar vídeo</button>
+    <div class="box" role="dialog" aria-label="Vídeo del manual, página ${v[0]}"><div class="hd"><span>Vídeo del manual · página ${v[0]}</span></div>
+    <div class="fr"><div class="ld" id="vld">Cargando vídeo…<small>Si no arranca, ábrelo en ${sitio} o ciérralo para seguir leyendo. También vale la tecla Esc o el botón Atrás.</small></div></div>
+    <div class="acts"><a class="btn ghost" href="${ext}" target="_blank" rel="noopener">Abrir en ${sitio} (pestaña nueva)</a><button class="btn" data-act="vclose">Volver al manual</button></div></div>`;
   (document.fullscreenElement || document.webkitFullscreenElement || document.body).appendChild(m);
-  m.querySelector('button').focus();
+  document.body.classList.add('v-open');
+  try { history.pushState({ vid: 1 }, ''); } catch (e) {}
+  m.querySelector('.x').focus();
+  // El reproductor se crea después de pintar la ventana: así los botones responden aunque el vídeo tarde.
+  setTimeout(() => {
+    const fr = m.querySelector('.fr'); if (!fr.isConnected) return;
+    const f = document.createElement('iframe');
+    f.title = 'Vídeo del manual'; f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media'; f.allowFullscreen = true;
+    f.referrerPolicy = 'strict-origin-when-cross-origin'; f.style.opacity = '0';
+    f.onload = () => { f.style.opacity = '1'; const l = document.getElementById('vld'); if (l) l.remove(); };
+    f.src = src; fr.appendChild(f);
+    vidTimer = setTimeout(() => { const l = document.getElementById('vld'); if (l) l.firstChild.textContent = 'El vídeo está tardando demasiado.'; }, 10000);
+  }, 50);
 }
-function vidClose() { const m = document.getElementById('vmodal'); if (m) m.remove(); }
+function vidClose(fromHistory) {
+  clearTimeout(vidTimer);
+  const m = document.getElementById('vmodal'); if (!m) return;
+  const f = m.querySelector('iframe'); if (f) f.src = 'about:blank';
+  m.remove(); document.body.classList.remove('v-open');
+  if (!fromHistory && history.state && history.state.vid) try { history.back(); } catch (e) {}
+}
+// Atrás del navegador: deja la pantalla como dice el historial (vídeo abierto, pantalla completa o manual normal).
+window.addEventListener('popstate', () => {
+  const st = history.state || {};
+  if (!st.vid) vidClose(true);
+  if (!st.vid && !st.mz) mzFull(false, true);
+});
 const MANUAL_DGT = 'https://www.dgt.es/nuestros-servicios/para-colaboradores-y-empresas/autoescuelas/seguimiento-de-ensenanza-a-la-conduccion/';
 function manualHtml() {
   const m = DB.prefs.manual, d = MANUAL[m.doc] || MANUAL.manual, pag = m.pag[m.doc] || 1;
@@ -2768,21 +2799,27 @@ function manualHtml() {
 
 /* Pantalla completa del visor: usa la pantalla completa del sistema si el navegador la permite
    y, además, amplía el visor a toda la ventana (así funciona también si la API no está disponible). */
-function mzFull(on) {
+function mzFull(on, fromHistory) {
   const v = document.getElementById('mzview'); if (!v) return;
   const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
   if (on) {
+    if (v.classList.contains('on')) return;
     v.classList.add('on'); document.body.classList.add('mz-lock');
+    try { history.pushState({ mz: 1 }, ''); } catch (e) {}
     const req = v.requestFullscreen || v.webkitRequestFullscreen;
     if (req && !fsEl) try { const r = req.call(v); if (r && r.catch) r.catch(() => {}); } catch (e) {}
   } else {
+    if (!v.classList.contains('on')) return;
+    vidClose(true);
     v.classList.remove('on'); document.body.classList.remove('mz-lock');
+    if (!fromHistory && history.state && history.state.vid) try { history.go(-2); } catch (e) {}
+    else if (!fromHistory && history.state && history.state.mz) try { history.back(); } catch (e) {}
     const ex = document.exitFullscreen || document.webkitExitFullscreen;
     if (fsEl && ex) try { const r = ex.call(document); if (r && r.catch) r.catch(() => {}); } catch (e) {}
   }
 }
 ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
-  if (!(document.fullscreenElement || document.webkitFullscreenElement)) { const v = document.getElementById('mzview'); if (v && v.classList.contains('on')) { vidClose(); mzFull(false); } }
+  if (!(document.fullscreenElement || document.webkitFullscreenElement)) { const v = document.getElementById('mzview'); if (v && v.classList.contains('on')) mzFull(false); }
 }));
 
 /* ================= APRENDER: VELOCIDADES Y ALCOHOL =================
